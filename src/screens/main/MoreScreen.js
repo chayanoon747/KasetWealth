@@ -1,5 +1,5 @@
 import { View, Text, Image, Touchable, TouchableOpacity} from "react-native";
-import { showUser, updatephoneNumber, delelteUser } from "../../firebase/UserModel";
+import { showUser, updatePhoneNumber, delelteUser } from "../../firebase/UserModel";
 import { signOut } from "../../firebase/AuthModel";
 
 export const MoreScreen = ({navigation})=>{
@@ -24,7 +24,7 @@ export const MoreScreen = ({navigation})=>{
             </TouchableOpacity>
 
             <TouchableOpacity style={{alignItems:'center'}}
-                onPress={updatephoneNumber} 
+                onPress={updatePhoneNumber} 
             >
                 <Text>Update Phone number</Text>
             </TouchableOpacity>

@@ -36,7 +36,7 @@ export const showUser = (user, profile, success, unsuccess)=>{
     })
 }
 
-export const updatephoneNumber = ()=>{
+export const updatePhoneNumber = ()=>{
     firestore()
     .collection('users')
     .doc('jlbEv9VKPhgwNT4ZJmYI')
@@ -59,5 +59,9 @@ export const delelteUser = ()=>{
     .delete()
     .then(() => {
         console.log('User deleted!');
-    });
+    })
+    .catch((error)=>{
+        console.error(`delelteUser error: ${error}`)
+        console.error(msg)
+    })
 }
