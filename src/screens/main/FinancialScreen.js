@@ -1,6 +1,7 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-export const FinancialScreen = ()=>{
+
+export const FinancialScreen = ({navigation})=>{
     return(
         <SafeAreaView style={{flex:1, padding:30, backgroundColor:'#fffffa'}}>
             {/* ยอดเงินคงเหลือ */}
@@ -71,12 +72,20 @@ export const FinancialScreen = ()=>{
 
             <View style={{flex:0.5, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff'}}>
                 <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
-                    <TouchableOpacity style={{flex:1, alignItems:'center'}}>
+                    <TouchableOpacity style={{flex:1, alignItems:'center'}} 
+                        onPress={()=>{
+                            navigation.navigate('CategorySelectionScreen')
+                        }}
+                    >
                         <Image source={require('../../assets/revenueIcon2.png')} style={{width: 50, height:50}} />
                         <Text style={[styles.bodyText,{paddingTop:5}]}>รายได้</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{flex:1, alignItems:'center'}}>
+                    <TouchableOpacity style={{flex:1, alignItems:'center'}}
+                        onPress={()=>{
+                            navigation.navigate('AddCategoryScreen')
+                        }}
+                    >
                         <Image source={require('../../assets/expenseIcon2.png')} style={{width: 50, height:50}} />
                         <Text style={[styles.bodyText,{paddingTop:5}]}>ค่าใช้จ่าย</Text>
                     </TouchableOpacity>

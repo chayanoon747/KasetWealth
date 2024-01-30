@@ -65,3 +65,73 @@ export const delelteUser = ()=>{
         console.error(msg)
     })
 }
+
+export const filterAge = ()=>{
+    firestore()
+    .collection('users')
+    .where('age', '>=', 18)
+    .get()
+    .then((querySnapshot )=>{
+        console.log('Total users: ', querySnapshot.size);
+        querySnapshot.forEach(doc => {
+            console.log('User Email: ', doc.data().email);
+        });
+    })
+}
+
+export const limitingData = ()=>{
+    firestore()
+    .collection('users')
+    .where('age', '>=', 18)
+    .limit(20)
+    .get()
+    .then(querySnapshot => {
+        console.log('Total users: ', querySnapshot.size);
+        querySnapshot.forEach(doc => {
+            console.log('User Email: ', doc.data().email);
+        });
+    });
+}
+
+export const orderingData = ()=>{
+    firestore()
+    .collection('Users')
+    .orderBy('age', 'desc')
+    .get()
+    .then(querySnapshot => {
+        console.log('Total users: ', querySnapshot.size);
+        querySnapshot.forEach(doc => {
+            console.log('User Email: ', doc.data().email);
+        });
+    });
+}
+
+export const startEndOrderingData = ()=>{
+    firestore()
+    .collection('Users')
+    .orderBy('age', 'desc')
+    .startAt(18)
+    .endAt(30)
+    .get()
+    .then(querySnapshot => {
+        console.log('Total users: ', querySnapshot.size);
+        querySnapshot.forEach(doc => {
+            console.log('User Email: ', doc.data().email);
+        });
+    });
+}
+
+/*const snapshot = await firestore()
+  .collection('Users')
+  .where(Filter.and(Filter('user', '==', 'Tim'), Filter('email', '==', 'tim@example.com')))
+  .get();*/
+
+/*const snapshot2 = await firestore()
+  .collection('Users')
+  .where(
+    Filter.or(
+      Filter.and(Filter('user', '==', 'Tim'), Filter('email', '==', 'tim@example.com')),
+      Filter.and(Filter('user', '==', 'Dave'), Filter('email', '==', 'dave@example.com')),
+    ),
+  )
+  .get();*/

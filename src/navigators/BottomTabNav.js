@@ -4,6 +4,7 @@ import { OverviewScreen } from '../screens/main/OverviewScreen';
 import { FinancialScreen } from '../screens/main/FinancialScreen';
 import { PetScreen } from '../screens/main/PetScreen';
 import { MoreScreen } from '../screens/main/MoreScreen';
+import { IncomeStackNav } from './IncomeStackNav';
 
 
 export const BottomTabNav = ({navigation})=>{
@@ -13,12 +14,14 @@ export const BottomTabNav = ({navigation})=>{
             initialRouteName='OverviewScreen'
             screenOptions={{
                 headerStyle:{
+                    height:80,
                     backgroundColor:'#0ABAB5',
                 },
                 headerTitleAlign: 'center',
                 headerTitleStyle:{
                     fontSize:24,
-                    fontFamily:'ZenOldMincho-Bold'
+                    fontFamily:'ZenOldMincho-Bold',
+                    color:'#ffffff'
                 },
                 tabBarStyle:{
                     height:'8%',
@@ -50,7 +53,7 @@ export const BottomTabNav = ({navigation})=>{
             }}
             />
 
-            <BottomTab.Screen name="Financial" component={FinancialScreen} 
+            <BottomTab.Screen name="IncomeStackNav" component={IncomeStackNav} 
             options={{
                 title:'Financial',
                 tabBarIcon:({focused, color, size})=>{
@@ -64,6 +67,7 @@ export const BottomTabNav = ({navigation})=>{
                     <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Financial</Text>
                   )
                 },
+                headerShown:false
             }}
             />
 
@@ -86,7 +90,7 @@ export const BottomTabNav = ({navigation})=>{
             listeners={({ navigation }) => ({
                 tabPress: (e) => {
                   e.preventDefault(); // Prevent default action
-                  navigation.replace('PetStackNav'); // Replace the current screen with "Pet" screen in the stack
+                  navigation.push('PetStackNav'); // Replace the current screen with "Pet" screen in the stack
                 },
               })}
             />
