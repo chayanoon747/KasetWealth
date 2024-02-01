@@ -3,12 +3,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Shadow }  from 'react-native-shadow-2';
 import { useEffect, useState } from "react";
 import { retrieveCategory } from "../../../firebase/UserModel";
-import { useSelector } from 'react-redux'
+import { resetIcon } from "../../../navigators/IncomeStackNav";
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedItems } from '../../../redux/variableSlice'
 
 export const CategorySelectionScreen = ({navigation})=>{
+    
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
     console.log(userUID);
+
+    const editStatus = useSelector((state)=>state.variables.isEdit)
+    console.log(editStatus);
+
+    const selectedItems = useSelector(state => state.variables.selectedItems);
+
+    const dispatch = useDispatch();
     
     const [category1, setCategory1] = useState([]);
     const [category2, setCategory2] = useState([]);
@@ -52,24 +62,47 @@ export const CategorySelectionScreen = ({navigation})=>{
         }
     };
 
-    const renderItem = ({ item }) => (
-        //console.log(category),
-        <TouchableOpacity style={{width:'20%', height:'50%', alignItems:'center', marginVertical:5}}
-            onPress={() => handleItemPress(item)}
-        >
-            <View style={{justifyContent:'center', alignItems:'center'}}>
-                <Image source={require('../../../assets/circle.png')} width={25} height={25} style/>
-                <Image style={{position:'absolute'}} source={{uri: item.photoURL}} width={23} height={23}/>
-            </View>
-            
-            <Text style={{fontSize:12, fontWeight:'bold'}}>{item.subCategory}</Text>
-        </TouchableOpacity>
-    );
+    const renderItem = ({ item }) => {
+        const isSelected = selectedItems.includes(item);
+       
+        return(
+            <TouchableOpacity style={{width:'20%', height:'50%', alignItems:'center', marginVertical:5}}
+                onPress={() => handleItemPress(item)}
+            >
+                <View style={{justifyContent:'center', alignItems:'center'}}>
+                    {isSelected ? (
+                        <Image source={require('../../../assets/circleGreen.png')} width={25} height={25} />
+                        ) : (
+                        <Image source={require('../../../assets/circle.png')} width={25} height={25} />
+                    )}
+                    <Image style={{position:'absolute'}} source={{uri: item.photoURL}} width={23} height={23}/>
+                </View>
+                
+                <Text style={{fontSize:12, fontWeight:'bold'}}>{item.subCategory}</Text>
+            </TouchableOpacity>
+        )
+    };
 
     const handleItemPress = (item) => {
-        // ทำการนำข้อมูลไปยังหน้าถัดไป
-        navigation.navigate('AddCategoryScreen', { itemData: item });
-      };
+        if (!editStatus) {
+            if(item.category != 'เพิ่ม'){
+                navigation.navigate('AddInputScreen', { itemData: item });
+            }else{
+                navigation.navigate('AddCategoryScreen');
+            }
+
+            
+        } else {
+            const isItemSelected = selectedItems.includes(item);
+    
+            if (isItemSelected) {
+                dispatch(setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item)));
+            } else {
+                dispatch(setSelectedItems([...selectedItems, item]));
+            }
+        }
+    };
+    
 
     return(
         <SafeAreaView style={{flex:1, paddingHorizontal:20, backgroundColor:'#fffffa'}}>

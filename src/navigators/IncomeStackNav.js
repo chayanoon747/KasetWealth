@@ -1,18 +1,22 @@
+import React, { useState } from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import { FinancialScreen } from "../screens/main/FinancialScreen";
 import { CategorySelectionScreen } from "../screens/main/Income/CategorySelectionScreen";
 import { AddCategoryScreen } from "../screens/main/Income/AddCategoryScreen";
 import { EditCategoryIcon } from "../screens/main/Income/EditCategoryIcon";
 import { AddInputScreen } from "../screens/main/Income/AddInputScreen";
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Image } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
-
+import { useDispatch } from 'react-redux';
+import { setEditStatus, setSelectedItems } from '../redux/variableSlice';
 
 export const IncomeStackNav = ({navigation})=>{
-  const { width, height } = Dimensions.get('window');
-
   const Stack = createNativeStackNavigator()
+
+  const [isEdit, setIsEdit] = useState(false);
+
+  const dispatch = useDispatch();
 
   return(
     <Stack.Navigator
@@ -48,20 +52,42 @@ export const IncomeStackNav = ({navigation})=>{
               
               <TouchableOpacity style={{marginLeft:15}}
                 onPress={()=>{
-                  navigation.navigate('FinancialScreen');
+                  if(isEdit){
+                    dispatch(setSelectedItems([]));
+                    dispatch(setEditStatus(false));
+                    setIsEdit(false)
+                  }else{
+                    navigation.navigate('FinancialScreen');
+                  }
+                  
                 }}
               >
-                <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
+                {isEdit ? (
+                  <Image source={require('../assets/cancelIcon.png')} width={30} height={30} color="#ffffff"/>
+                ) : (
+                  <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
+                )}
+                
               </TouchableOpacity>
 
               <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff'}}>รายได้</Text>
               
               <TouchableOpacity style={{marginRight:15}}
                 onPress={()=>{
-                  navigation.navigate('FinancialScreen');
+                  if(!isEdit){
+                    dispatch(setEditStatus(true));
+                    setIsEdit(true);
+                  }else{
+                    
+                  }
+                  
                 }}
               >
-                <IconFeather name="edit" size={30} color="#ffffff"/>
+                {isEdit ? (
+                  <Image source={require('../assets/trashIcon.png')} width={30} height={30} color="#ffffff"/>
+                ) : (
+                  <IconFeather name="edit" size={30} color="#ffffff" />
+                )}
               </TouchableOpacity>
 
             </View>
@@ -77,7 +103,7 @@ export const IncomeStackNav = ({navigation})=>{
             <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
-                  navigation.navigate('FinancialScreen');
+                  navigation.navigate('CategorySelectionScreen');
                 }}
               >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -115,7 +141,7 @@ export const IncomeStackNav = ({navigation})=>{
             <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
-                  navigation.pop();
+                  navigation.navigate('CategorySelectionScreen');
                 }}
               >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -128,3 +154,4 @@ export const IncomeStackNav = ({navigation})=>{
     </Stack.Navigator>
   )
 }
+
