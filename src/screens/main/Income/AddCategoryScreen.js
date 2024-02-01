@@ -3,7 +3,10 @@ import { TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Shadow } from "react-native-shadow-2";
 
-export const AddCategoryScreen = ({navigation})=>{
+export const AddCategoryScreen = ({route, navigation})=>{
+    const { itemData } = route.params;
+    console.log(itemData.subCategory);
+    
     return(
         <ScrollView style={{flex:1, backgroundColor:'#fffffa', paddingHorizontal:20}}>
             <View style={{height:100}}></View>

@@ -9,10 +9,11 @@ export const CategorySelectionScreen = ({navigation})=>{
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
     console.log(userUID);
-
+    
     const [category1, setCategory1] = useState([]);
     const [category2, setCategory2] = useState([]);
     const [category3, setCategory3] = useState([]);
+    
 
     useEffect(() => {
         retrieveData();
@@ -20,18 +21,31 @@ export const CategorySelectionScreen = ({navigation})=>{
 
     const retrieveData = async () => {
         try {
+            const items1 = [];
+            const items2 = [];
+            const items3 = [];
+
             const categoryData = await retrieveCategory(userUID);
-            /*for (const categoryItem of categoryData) {
-                
-                
-                if (categoryItem.category == "รายได้จากการทำงาน") {
-                    
-                    const dataForWork = categoryItem.data; 
-                    console.log(dataForWork)
-                    console.log("Found data for work:", dataForWork);
+            for (const item of categoryData) {
+                if (item.category == "รายได้จากการทำงาน" || item.category == "เพิ่ม") {
+                    items1.push(item);
                 }
-            }*/
-            setCategory1([categoryData][0]);
+            }
+
+            for (const item of categoryData) {
+                if (item.category == "รายได้จากสินทรัพย์" || item.category == "เพิ่ม") {
+                    items2.push(item);
+                }
+            }
+            for (const item of categoryData) {
+                if (item.category == "รายได้อื่นๆ" || item.category == "เพิ่ม") {
+                    items3.push(item);
+                }
+            }
+            setCategory1(items1);
+            setCategory2(items2);
+            setCategory3(items3);
+            //setCategory1([categoryData][0]);
             //console.log(category1);
         } catch (error) {
             console.error('Error retrieving data:', error);
@@ -40,15 +54,22 @@ export const CategorySelectionScreen = ({navigation})=>{
 
     const renderItem = ({ item }) => (
         //console.log(category),
-        <TouchableOpacity style={{flex:1, alignItems:'center', justifyContent:'center', padding:5}}>
-            <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+        <TouchableOpacity style={{width:'20%', height:'50%', alignItems:'center', marginVertical:5}}
+            onPress={() => handleItemPress(item)}
+        >
+            <View style={{justifyContent:'center', alignItems:'center'}}>
                 <Image source={require('../../../assets/circle.png')} width={25} height={25} style/>
-                <Image style={{position:'absolute'}} source={{uri: item.photoURL}} width={25} height={25}/>
+                <Image style={{position:'absolute'}} source={{uri: item.photoURL}} width={23} height={23}/>
             </View>
             
             <Text style={{fontSize:12, fontWeight:'bold'}}>{item.subCategory}</Text>
         </TouchableOpacity>
     );
+
+    const handleItemPress = (item) => {
+        // ทำการนำข้อมูลไปยังหน้าถัดไป
+        navigation.navigate('AddCategoryScreen', { itemData: item });
+      };
 
     return(
         <SafeAreaView style={{flex:1, paddingHorizontal:20, backgroundColor:'#fffffa'}}>
@@ -59,7 +80,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                             <Text style={styles.headerText}>รายได้จากการทำงาน</Text>
                         </View>
                         <View style={{flex:3}}>
-                            <FlatList style={{flex:1}}
+                            <FlatList
                                 data={category1}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
@@ -78,7 +99,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                         </View>
                         <View style={{flex:3}}>
                             <FlatList
-                                data={category1}
+                                data={category2}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
                                 numColumns={5}
@@ -96,8 +117,8 @@ export const CategorySelectionScreen = ({navigation})=>{
                             <Text style={styles.headerText}>รายได้อื่นๆ</Text>
                         </View>
                         <View style={{flex:3}}>
-                            <FlatList 
-                                data={category1}
+                            <FlatList
+                                data={category3}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
                                 numColumns={5} 
