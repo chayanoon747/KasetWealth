@@ -1,6 +1,12 @@
 import { View, Text, Image, ScrollView, TouchableOpacity} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from 'react-redux'
+
 export const OverviewScreen = ()=>{
+    const user = useSelector((state)=>state.auths);
+    const userUID = user[0].uid;
+    console.log(userUID);
+    
     return(
         <SafeAreaView style={{flex:1}}>
             <ScrollView style={{flex:1, padding:10}}>

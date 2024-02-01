@@ -5,10 +5,13 @@ import { SafeAreaView} from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from "react";
 import { signUpEmailPass } from "../../firebase/AuthModel";
+import { useDispatch } from "react-redux";
+import { clearProfile, addProfile } from "../../redux/authSlice";
 
 export const SignUpScreen = ({ navigation })=>{
     const [profile, setProfile] = useState({'email':'','password':'','cfPassword':'','phoneNumber':''})
     const [eventTextInput, setEventTextInput] = useState(0);
+    const dispatch = useDispatch()
 
     const setEmail = (text) => {
         setProfile(oldValue => ({
@@ -38,7 +41,14 @@ export const SignUpScreen = ({ navigation })=>{
         }))
     }
 
-    const success = (email) => {
+    const success = async(user) => {
+        const { uid, email } = user;
+        const userData = {
+            uid,
+            email
+        };
+        dispatch(clearProfile());
+        dispatch(addProfile(userData));
         Alert.alert(`${email} has been added to system`)
         navigation.navigate('BottomTabNav')
     }
@@ -90,7 +100,7 @@ export const SignUpScreen = ({ navigation })=>{
             break;
         }
     
-        if (isEmailValid && isPasswordValid && isPhoneNumberValid) {
+        if (isEmailValid && isPasswordValid && isCFPasswordValid && isPhoneNumberValid) {
             console.log('success');
             signUpEmailPass(profile, success, unsuccess);
           } else {

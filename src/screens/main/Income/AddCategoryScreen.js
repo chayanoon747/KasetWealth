@@ -27,8 +27,8 @@ export const AddCategoryScreen = ({navigation})=>{
                         <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
                     </TouchableOpacity>
                 </Shadow>
+                
             </View>
-            
         </ScrollView>
     )
 }

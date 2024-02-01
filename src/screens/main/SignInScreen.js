@@ -5,12 +5,15 @@ import { SafeAreaView} from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from "react";
 import { signInEmailPass } from "../../firebase/AuthModel";
+import { useDispatch } from "react-redux";
+import { clearProfile, addProfile } from "../../redux/authSlice";
 
 export const SignInScreen = ({ navigation })=>{
 
     const [credential,setCredential] = useState({email:'',password:''})
     const [isEmailFocused, setIsEmailFocused] = useState(false);
     const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+    const dispatch = useDispatch()
 
     const setEmail = (text) => {
         setCredential(oldValue => ({
@@ -26,7 +29,14 @@ export const SignInScreen = ({ navigation })=>{
         }))
     }
 
-    const success = async(item) => {
+    const success = async(user) => {
+        const { uid, email } = user;
+        const userData = {
+            uid,
+            email
+        };
+        dispatch(clearProfile());
+        dispatch(addProfile(userData));
         navigation.navigate('BottomTabNav')
     }
     
