@@ -21,16 +21,16 @@ export const CategorySelectionScreen = ({navigation})=>{
     const retrieveData = async () => {
         try {
             const categoryData = await retrieveCategory(userUID);
-            for (const categoryItem of categoryData) {
+            /*for (const categoryItem of categoryData) {
                 
-                // เช็คว่า key ของ categoryItem ตรงกับ "รายได้จากการทำงาน" หรือไม่
+                
                 if (categoryItem.category == "รายได้จากการทำงาน") {
-                    // ทำสิ่งที่คุณต้องการ เช่น เก็บข้อมูลลงในตัวแปร
-                    const dataForWork = categoryItem.data; // ตัวอย่างเท่านี้
+                    
+                    const dataForWork = categoryItem.data; 
                     console.log(dataForWork)
                     console.log("Found data for work:", dataForWork);
                 }
-            }
+            }*/
             setCategory1([categoryData][0]);
             //console.log(category1);
         } catch (error) {
