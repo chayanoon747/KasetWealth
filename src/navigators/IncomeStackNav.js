@@ -10,6 +10,7 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { useDispatch } from 'react-redux';
 import { setEditStatus, setSelectedItems } from '../redux/variableSlice';
+import { setItemPhotoURL } from '../redux/variableSlice';
 
 export const IncomeStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
@@ -103,6 +104,7 @@ export const IncomeStackNav = ({navigation})=>{
             <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
+                  dispatch(setItemPhotoURL(""))
                   navigation.navigate('CategorySelectionScreen');
                 }}
               >
@@ -122,7 +124,7 @@ export const IncomeStackNav = ({navigation})=>{
             <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
-                  navigation.navigate('AddCategoryScreen');
+                  navigation.navigate('AddCategoryScreen', {itemData:"" , });
                 }}
               >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>

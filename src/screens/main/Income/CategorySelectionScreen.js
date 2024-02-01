@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { retrieveCategory } from "../../../firebase/UserModel";
 import { resetIcon } from "../../../navigators/IncomeStackNav";
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedItems } from '../../../redux/variableSlice'
+import { setSelectedItems, setItemCategory } from '../../../redux/variableSlice'
 
 export const CategorySelectionScreen = ({navigation})=>{
     
@@ -17,6 +17,7 @@ export const CategorySelectionScreen = ({navigation})=>{
     console.log(editStatus);
 
     const selectedItems = useSelector(state => state.variables.selectedItems);
+    console.log(selectedItems);
 
     const dispatch = useDispatch();
     
@@ -37,18 +38,18 @@ export const CategorySelectionScreen = ({navigation})=>{
 
             const categoryData = await retrieveCategory(userUID);
             for (const item of categoryData) {
-                if (item.category == "รายได้จากการทำงาน" || item.category == "เพิ่ม") {
+                if (item.category == "รายได้จากการทำงาน") {
                     items1.push(item);
                 }
             }
 
             for (const item of categoryData) {
-                if (item.category == "รายได้จากสินทรัพย์" || item.category == "เพิ่ม") {
+                if (item.category == "รายได้จากสินทรัพย์") {
                     items2.push(item);
                 }
             }
             for (const item of categoryData) {
-                if (item.category == "รายได้อื่นๆ" || item.category == "เพิ่ม") {
+                if (item.category == "รายได้อื่นๆ") {
                     items3.push(item);
                 }
             }
@@ -85,9 +86,10 @@ export const CategorySelectionScreen = ({navigation})=>{
 
     const handleItemPress = (item) => {
         if (!editStatus) {
-            if(item.category != 'เพิ่ม'){
+            if(item.subCategory != 'เพิ่ม'){
                 navigation.navigate('AddInputScreen', { itemData: item });
             }else{
+                dispatch(setItemCategory(item.category));
                 navigation.navigate('AddCategoryScreen');
             }
 

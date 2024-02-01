@@ -25,6 +25,11 @@ export const addUser = (user, profile, success, unsuccess)=>{
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285536837120000/moneyBagIcon.png?ex=65cce6a9&is=65ba71a9&hm=341087710d064155bbb00b1bd78c50a7246b87616c9e8e1e71804006b85ab279&",
         },
         {
+            category: "รายได้จากการทำงาน",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&",
+        },
+        {
             category: "รายได้จากสินทรัพย์",
             subCategory: "ดอกเบี้ย",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202579229234040882/cashTimeIcon.png?ex=65cdf82f&is=65bb832f&hm=72ce112b5ec39c60cd125d93d39b57bb691374791ba26ccafc77ffd5c376891f&",
@@ -45,12 +50,17 @@ export const addUser = (user, profile, success, unsuccess)=>{
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202579304937029715/moneyBagIcon2.png?ex=65cdf841&is=65bb8341&hm=53cf8b2c21891aff78c744655abed808c8c98d91f70b2da12ab1d8b01b5c1b24&",
         },
         {
+            category: "รายได้จากสินทรัพย์",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&",
+        },
+        {
             category: "รายได้อื่นๆ",
             subCategory: "เงินรางวัล",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202579330262376488/cashGift.png?ex=65cdf847&is=65bb8347&hm=8fcae151cf1bd20770083613acc950edc8d345f382cbdcddb70d480021ce2fe7&",
         },
         {
-            category: "เพิ่ม",
+            category: "รายได้อื่นๆ",
             subCategory: "เพิ่ม",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&",
         },
@@ -75,80 +85,6 @@ export const addUser = (user, profile, success, unsuccess)=>{
     })
 }
 
-/*export const showUser = (user, profile, success, unsuccess)=>{
-  
-    firestore()
-    .collection('users')
-    .get()
-    .then(querySnapshot =>{
-        console.log('Total users: ', querySnapshot.size);
-        querySnapshot.forEach(doc => {
-            console.log('User Email: ', doc.data().email);
-        });
-    })
-    .catch((error)=>{
-      console.error(`addUser in users collection error: ${error}`)
-      console.error(msg)
-    })
-}
-
-export const updatePhoneNumber = ()=>{
-    firestore()
-    .collection('users')
-    .doc('jlbEv9VKPhgwNT4ZJmYI')
-    .update({
-        phoneNumber: '123456789',
-    })
-    .then(() => {
-        console.log('User updated!');
-    })
-    .catch((error)=>{
-        console.error(`updatephoneNumber error: ${error}`)
-        console.error(msg)
-    })
-}
-
-export const delelteUser = ()=>{
-    firestore()
-    .collection('users')
-    .doc('jlbEv9VKPhgwNT4ZJmYI')
-    .delete()
-    .then(() => {
-        console.log('User deleted!');
-    })
-    .catch((error)=>{
-        console.error(`delelteUser error: ${error}`)
-        console.error(msg)
-    })
-}
-
-export const filterAge = ()=>{
-    firestore()
-    .collection('users')
-    .where('age', '>=', 18)
-    .get()
-    .then((querySnapshot )=>{
-        console.log('Total users: ', querySnapshot.size);
-        querySnapshot.forEach(doc => {
-            console.log('User Email: ', doc.data().email);
-        });
-    })
-}
-
-export const limitingData = ()=>{
-    firestore()
-    .collection('users')
-    .where('age', '>=', 18)
-    .limit(20)
-    .get()
-    .then(querySnapshot => {
-        console.log('Total users: ', querySnapshot.size);
-        querySnapshot.forEach(doc => {
-            console.log('User Email: ', doc.data().email);
-        });
-    });
-}*/
-
 export const retrieveCategory = (userUID) => {
     return firestore()
         .collection('users')
@@ -171,20 +107,51 @@ export const retrieveCategory = (userUID) => {
         });
 }
 
+export const addCategories = (userUID, category, subCategory, photoURL) => {
+    const newCategory = {
+        category: category,
+        subCategory: subCategory,
+        photoURL: photoURL
+    };
 
+    return firestore()
+        .collection('users')
+        .doc(userUID)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                const existingCategories = doc.data().categories;
 
-
-/*const snapshot = await firestore()
-  .collection('Users')
-  .where(Filter.and(Filter('user', '==', 'Tim'), Filter('email', '==', 'tim@example.com')))
-  .get();*/
-
-/*const snapshot2 = await firestore()
-  .collection('Users')
-  .where(
-    Filter.or(
-      Filter.and(Filter('user', '==', 'Tim'), Filter('email', '==', 'tim@example.com')),
-      Filter.and(Filter('user', '==', 'Dave'), Filter('email', '==', 'dave@example.com')),
-    ),
-  )
-  .get();*/
+                // เช็คว่า category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
+                const isDuplicate = existingCategories.some(category => 
+                    category.category === newCategory.category && category.subCategory === newCategory.subCategory
+                );
+                
+                if (!isDuplicate) {
+                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
+                    return firestore()
+                        .collection('users')
+                        .doc(userUID)
+                        .update({
+                            categories: firestore.FieldValue.arrayUnion(newCategory)
+                        });
+                } else {
+                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
+                    console.log('Duplicate category and subCategory. Cannot add.');
+                    Alert.alert("มีชื่อรายได้ซ้ำ ไม่สามารถบันทึกได้")
+                    return null;
+                }
+            } else {
+                console.log("No such document!");
+                return null;
+            }
+        })
+        .then(() => {
+            console.log("Category added successfully!");
+        })
+        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+        .catch((error) => {
+            console.error("Error adding category:", error);
+            throw error;
+        });
+};
