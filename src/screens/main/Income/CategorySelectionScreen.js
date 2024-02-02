@@ -150,6 +150,8 @@ export const CategorySelectionScreen = ({navigation})=>{
                         console.log(selectedItems);
                         RemoveCategoryIcon(userUID, selectedItems)
                         setIsDelete(!isDelete)
+                        setIsEdit(false)
+                        dispatch(setEditStatus(false));
                     }
                     }}
                 >

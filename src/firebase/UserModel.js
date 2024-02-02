@@ -124,54 +124,54 @@ export const retrieveCategory = (userUID) => {
         });
 }
 
-export const addCategories = (userUID, category, subCategory, photoURL) => {
-    const newCategory = {
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
+    export const addCategories = (userUID, category, subCategory, photoURL) => {
+        const newCategory = {
+            category: category,
+            subCategory: subCategory,
+            photoURL: photoURL
+        };
 
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
+        return firestore()
+            .collection('users')
+            .doc(userUID)
+            .get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const existingCategories = doc.data().categories;
 
-                // เช็คว่า category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
+                    // เช็คว่า category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
+                    const isDuplicate = existingCategories.some(category => 
+                        category.category === newCategory.category && category.subCategory === newCategory.subCategory
+                    );
+                    
+                    if (!isDuplicate) {
+                        // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
+                        return firestore()
+                            .collection('users')
+                            .doc(userUID)
+                            .update({
+                                categories: firestore.FieldValue.arrayUnion(newCategory)
+                            });
+                    } else {
+                        // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
+                        console.log('Duplicate category and subCategory. Cannot add.');
+                        Alert.alert("มีชื่อรายได้ซ้ำ ไม่สามารถบันทึกได้")
+                        return null;
+                    }
                 } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อรายได้ซ้ำ ไม่สามารถบันทึกได้")
+                    console.log("No such document!");
                     return null;
                 }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            console.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
+            })
+            .then(() => {
+                console.log("Category added successfully!");
+            })
+            //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error adding category:", error);
+                throw error;
+            });
+    };
 
 export const RemoveCategoryIcon = (userUID, selectedItems) => {
     return firestore()
