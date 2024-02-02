@@ -85,6 +85,23 @@ export const addUser = (user, profile, success, unsuccess)=>{
     })
 }
 
+export const addFinancials = (user)=>{
+    const Transactions = []
+    firestore()
+    .collection('financials')
+    .doc(user.uid)
+    .set({
+        Transactions: Transactions
+    })
+    .then(()=>{
+        console.log("addFinancials success")
+    })
+    .catch((error) => {
+        console.error("Error addFinancials:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
+
 export const retrieveCategory = (userUID) => {
     return firestore()
         .collection('users')
@@ -171,3 +188,30 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
             throw error;
         });
 }
+
+export const addIncome = (userUID, category, subCategory, input)=>{
+    const newTransaction = {
+        category: category,
+        subCategory: subCategory,
+        date: "",
+        detail: input.detail,
+        value: input.value
+    };
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .update({
+        Transactions: firestore.FieldValue.arrayUnion(newTransaction)
+    })
+    .then(() => {
+        console.log("Transactions added successfully!");
+    })
+    //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+    .catch((error) => {
+        console.error("Error adding transactions:", error);
+        throw error;
+    });
+
+
+};

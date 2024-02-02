@@ -1,9 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 const INIT_VARIABLES = {
     isEdit: false,
     selectedItems:[],
     category: "",
     photoURL: "",
+    date: ""
 }
 
 const variableSlice = createSlice({
@@ -23,9 +25,12 @@ const variableSlice = createSlice({
       setItemPhotoURL(state, action) {
         state.photoURL = action.payload;
       },
+      setDate(state, action) {
+        state.date = action.payload;
+      },
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemCategory, setItemPhotoURL } = actions;
+export const { setEditStatus, setSelectedItems, setItemCategory, setItemPhotoURL, setDate } = actions;
 export default reducer;

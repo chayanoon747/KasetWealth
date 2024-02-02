@@ -6,6 +6,10 @@ import { retrieveCategory } from "../../../firebase/UserModel";
 import { resetIcon } from "../../../navigators/IncomeStackNav";
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedItems, setItemCategory } from '../../../redux/variableSlice'
+import IconFeather from 'react-native-vector-icons/Feather';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import { RemoveCategoryIcon } from "../../../firebase/UserModel";
+import { setEditStatus } from "../../../redux/variableSlice";
 
 export const CategorySelectionScreen = ({navigation})=>{
     
@@ -20,15 +24,18 @@ export const CategorySelectionScreen = ({navigation})=>{
     //console.log(selectedItems);
 
     const dispatch = useDispatch();
+
+    const [isEdit, setIsEdit] = useState(false);
     
     const [category1, setCategory1] = useState([]);
     const [category2, setCategory2] = useState([]);
     const [category3, setCategory3] = useState([]);
+    const [isDelete, setIsDelete] = useState(false);
     
 
     useEffect(() => {
         retrieveData();
-    }, []);
+    }, [isDelete]);
 
     const retrieveData = async () => {
         try {
@@ -108,61 +115,112 @@ export const CategorySelectionScreen = ({navigation})=>{
     
 
     return(
-        <SafeAreaView style={{flex:1, paddingHorizontal:20, backgroundColor:'#fffffa'}}>
-            <View style={{flex:1, marginVertical:10}}>
-                <Shadow style={{width:'100%', height:'100%'}} distance={10} startColor={"#0ABAB5"} offset={[8,6]}>
-                    <View style={styles.box}>
-                        <View style={styles.boxhead}>
-                            <Text style={styles.headerText}>รายได้จากการทำงาน</Text>
-                        </View>
-                        <View style={{flex:3}}>
-                            <FlatList
-                                data={category1}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={renderItem}
-                                numColumns={5}
-                            />
-                        </View>
-                    </View>
-                </Shadow>
-            </View>
-            
-            <View style={{flex:1, marginVertical:10}}>
-                <Shadow style={{width:'100%', height:'100%'}} distance={10} startColor={"#0ABAB5"} offset={[8,6]}>
-                    <View style={styles.box}>
-                        <View style={styles.boxhead}>
-                            <Text style={styles.headerText}>รายได้จากสินทรัพย์</Text>
-                        </View>
-                        <View style={{flex:3}}>
-                            <FlatList
-                                data={category2}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={renderItem}
-                                numColumns={5}
-                            />
-                            
-                        </View>
-                    </View>
-                </Shadow>
+        <SafeAreaView style={{flex:1, backgroundColor:'#fffffa'}}>
+            <View style={{flex:1, paddingBottom:20}}>
+                <View style={{flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center', justifyContent:'space-between'}}>
+                
+                <TouchableOpacity style={{marginLeft:15}}
+                    onPress={()=>{
+                    if(isEdit){
+                        dispatch(setSelectedItems([]));
+                        dispatch(setEditStatus(false));
+                        setIsEdit(false)
+                    }else{
+                        navigation.navigate('FinancialScreen');
+                    }
+                    
+                    }}
+                >
+                    {isEdit ? (
+                    <Image source={require('../../../assets/cancelIcon.png')} width={30} height={30} color="#ffffff"/>
+                    ) : (
+                    <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
+                    )}
+                    
+                </TouchableOpacity>
+
+                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff'}}>รายได้</Text>
+                
+                <TouchableOpacity style={{marginRight:15}}
+                    onPress={()=>{
+                    if(!isEdit){
+                        dispatch(setEditStatus(true));
+                        setIsEdit(true);
+                    }else{
+                        console.log(selectedItems);
+                        RemoveCategoryIcon(userUID, selectedItems)
+                        setIsDelete(!isDelete)
+                    }
+                    }}
+                >
+                    {isEdit ? (
+                    <Image source={require('../../../assets/trashIcon.png')} width={30} height={30} color="#ffffff"/>
+                    ) : (
+                    <IconFeather name="edit" size={30} color="#ffffff" />
+                    )}
+                </TouchableOpacity>
+
+                </View>
             </View>
 
-            <View style={{flex:1, marginVertical:10}}>
-                <Shadow style={{width:'100%', height:'100%'}} distance={10} startColor={"#0ABAB5"} offset={[8,6]}>
-                    <View style={styles.box}>
-                        <View style={styles.boxhead}>
-                            <Text style={styles.headerText}>รายได้อื่นๆ</Text>
+            <View style={{flex:9, paddingHorizontal:20}}>
+                <View style={{flex:3, marginVertical:10}}>
+                    <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
+                        <View style={styles.box}>
+                            <View style={styles.boxhead}>
+                                <Text style={styles.headerText}>รายได้จากการทำงาน</Text>
+                            </View>
+                            <View style={{flex:3}}>
+                                <FlatList
+                                    data={category1}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={renderItem}
+                                    numColumns={5}
+                                />
+                            </View>
                         </View>
-                        <View style={{flex:3}}>
-                            <FlatList
-                                data={category3}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={renderItem}
-                                numColumns={5} 
-                            />
+                    </Shadow>
+                </View>
+                
+                <View style={{flex:3, marginVertical:10}}>
+                    <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
+                        <View style={styles.box}>
+                            <View style={styles.boxhead}>
+                                <Text style={styles.headerText}>รายได้จากสินทรัพย์</Text>
+                            </View>
+                            <View style={{flex:3}}>
+                                <FlatList
+                                    data={category2}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={renderItem}
+                                    numColumns={5}
+                                />
+                                
+                            </View>
                         </View>
-                    </View>
-                </Shadow>
+                    </Shadow>
+                </View>
+
+                <View style={{flex:3, marginVertical:10}}>
+                    <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
+                        <View style={styles.box}>
+                            <View style={styles.boxhead}>
+                                <Text style={styles.headerText}>รายได้อื่นๆ</Text>
+                            </View>
+                            <View style={{flex:3}}>
+                                <FlatList
+                                    data={category3}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={renderItem}
+                                    numColumns={5} 
+                                />
+                            </View>
+                        </View>
+                    </Shadow>
+                </View>
             </View>
+            
+           
         </SafeAreaView>
     )
 }

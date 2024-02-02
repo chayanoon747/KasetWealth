@@ -5,6 +5,7 @@ import { CategorySelectionScreen } from "../screens/main/Income/CategorySelectio
 import { AddCategoryScreen } from "../screens/main/Income/AddCategoryScreen";
 import { EditCategoryIcon } from "../screens/main/Income/EditCategoryIcon";
 import { AddInputScreen } from "../screens/main/Income/AddInputScreen";
+import { CalendarScreen } from '../screens/main/Income/CalendarScreen';
 import { View, Text, TouchableOpacity, Dimensions, Image } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -54,7 +55,8 @@ export const IncomeStackNav = ({navigation})=>{
       <Stack.Screen
         name='CategorySelectionScreen'
         component={CategorySelectionScreen}
-        options={{ 
+        options={{headerShown:false}}
+        /*options={{ 
           header: () => (
             <View style={{flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center', justifyContent:'space-between'}}>
               
@@ -100,7 +102,7 @@ export const IncomeStackNav = ({navigation})=>{
 
             </View>
           )
-        }}
+        }}*/
       />
 
       <Stack.Screen
@@ -155,7 +157,36 @@ export const IncomeStackNav = ({navigation})=>{
               >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
               </TouchableOpacity>
-              <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>รายละเอียด</Text>
+              <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center'}}>รายละเอียด</Text>
+
+              <TouchableOpacity style={{marginRight:15}}
+                onPress={()=>{
+                  navigation.navigate('CalendarScreen')
+                }}
+              >
+                <Image source={require('../assets/calendarIcon.png')} width={30} height={30} />
+              </TouchableOpacity>
+
+              
+            </View>
+          )
+        }}
+      />
+
+<Stack.Screen
+        name='CalendarScreen'
+        component={CalendarScreen}
+        options={{
+          header: () => (
+            <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
+              <TouchableOpacity style={{width:35, marginLeft:15}}
+                onPress={()=>{
+                  navigation.navigate('AddInputScreen');
+                }}
+              >
+                <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
+              </TouchableOpacity>
+              <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>ปฏิทิน</Text>
             </View>
           )
         }}
