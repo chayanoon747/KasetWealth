@@ -8,9 +8,10 @@ import { AddInputScreen } from "../screens/main/Income/AddInputScreen";
 import { View, Text, TouchableOpacity, Dimensions, Image } from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setEditStatus, setSelectedItems } from '../redux/variableSlice';
 import { setItemPhotoURL } from '../redux/variableSlice';
+import { RemoveCategoryIcon } from '../firebase/UserModel';
 
 export const IncomeStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
@@ -18,6 +19,12 @@ export const IncomeStackNav = ({navigation})=>{
   const [isEdit, setIsEdit] = useState(false);
 
   const dispatch = useDispatch();
+
+  const user = useSelector((state)=>state.auths);
+  const userUID = user[0].uid;
+
+  const selectedItems = useSelector((state)=>state.variables.selectedItems)
+  
 
   return(
     <Stack.Navigator
@@ -79,9 +86,9 @@ export const IncomeStackNav = ({navigation})=>{
                     dispatch(setEditStatus(true));
                     setIsEdit(true);
                   }else{
-                    
+                    console.log(selectedItems);
+                    RemoveCategoryIcon(userUID, selectedItems)
                   }
-                  
                 }}
               >
                 {isEdit ? (

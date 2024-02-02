@@ -15,7 +15,6 @@ const variableSlice = createSlice({
         state.isEdit = action.payload;
       },
       setSelectedItems(state, action) {
-        // ใช้การกำหนดค่าตรงๆ แทนการ push
         state.selectedItems = action.payload;
       },
       setItemCategory(state, action) {

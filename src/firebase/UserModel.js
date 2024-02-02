@@ -155,3 +155,19 @@ export const addCategories = (userUID, category, subCategory, photoURL) => {
             throw error;
         });
 };
+
+export const RemoveCategoryIcon = (userUID, selectedItems) => {
+    return firestore()
+        .collection('users')
+        .doc(userUID)
+        .update({
+            categories: firestore.FieldValue.arrayRemove(...selectedItems)
+        })
+        .then(() => {
+            console.log("Categories removed successfully!");
+        })
+        .catch((error) => {
+            console.error("Error removing categories:", error);
+            throw error;
+        });
+}

@@ -11,13 +11,13 @@ export const CategorySelectionScreen = ({navigation})=>{
     
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
-    console.log(userUID);
+    //console.log(userUID);
 
     const editStatus = useSelector((state)=>state.variables.isEdit)
-    console.log(editStatus);
+    //console.log(editStatus);
 
     const selectedItems = useSelector(state => state.variables.selectedItems);
-    console.log(selectedItems);
+    //console.log(selectedItems);
 
     const dispatch = useDispatch();
     
@@ -101,6 +101,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                 dispatch(setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item)));
             } else {
                 dispatch(setSelectedItems([...selectedItems, item]));
+                console.log(selectedItems);
             }
         }
     };

@@ -19,7 +19,6 @@ export const AddCategoryScreen = ({route, navigation})=>{
 
     const photoURLItem = useSelector((state)=>state.variables.photoURL)
     console.log(photoURLItem);
-    
 
     const [newCategory, setNewCategory] = useState({
         category: categoryItem,
