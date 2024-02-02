@@ -243,47 +243,47 @@ const CategoryFairness = [
     },
     {
         category: 'ความงาม',
-        indexID: 'index1',
+        subCategory: 'index1',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602002291494922/index1.png?ex=65ce0d64&is=65bb9864&hm=17a79fe03538c23e8d681a3276e8489a370674b6255ad6a101542bacf502a39a&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index2',
+        subCategory: 'index2',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602002580770876/index2.png?ex=65ce0d64&is=65bb9864&hm=edc0fc5347c0c0df26c4314e76f303e4f1b5ab61d5baec84bce755f4d07f1821&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index3',
+        subCategory: 'index3',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602002828492881/index3.png?ex=65ce0d64&is=65bb9864&hm=37b948ce863ba49e3d8e40775f881d8661ced600ad266620198a1233959a1141&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index4',
+        subCategory: 'index4',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602003059183656/index4.png?ex=65ce0d64&is=65bb9864&hm=d16d50015f395108b8911f3743b9a81041e6de4fa5b2402989e9e595927a2d0c&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index5',
+        subCategory: 'index5',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602003335880744/index5.png?ex=65ce0d64&is=65bb9864&hm=e617d0fc9f7295043fe4f85e30c0d8b247b40fdd76cbd0708b0597d18d3edbea&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index6',
+        subCategory: 'index6',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602003621224488/index6.png?ex=65ce0d64&is=65bb9864&hm=4b9c988a23a1a6185d107a7471e8535a3afcc8547f757b2c052095f2aaceb8fa&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index7',
+        subCategory: 'index7',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602004447363082/index7.png?ex=65ce0d65&is=65bb9865&hm=c1e6fc742931037ee721f3489c1bccc3bebd7d416540d3dfbcf1b55ca12d5f42&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index8',
+        subCategory: 'index8',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602004929585212/index8.png?ex=65ce0d65&is=65bb9865&hm=b420ac533b922088f758585155d362d74ac083b9e3dc3dc83bbdfe0d90a1991f&'
     },
     {
         category: 'ความงาม',
-        indexID: 'index9',
+        subCategory: 'index9',
         photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202602005185429514/index9.png?ex=65ce0d65&is=65bb9865&hm=c0532044e39ee5d18501d1149c9295d3e6363b9ea4b9ae863656ee03defdabae&'
-    }        
+    }
 ]
