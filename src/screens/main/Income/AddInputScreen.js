@@ -1,20 +1,29 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert} from "react-native";
 import { ScrollView } from "react-native";
 import { TextInput } from "react-native-paper";
 import { Shadow } from "react-native-shadow-2";
 import { setItemPhotoURL } from "../../../redux/variableSlice";
 import firestore from '@react-native-firebase/firestore';
-import { addIncome } from "../../../firebase/UserModel";
+import { addTransaction } from "../../../firebase/UserModel";
 import { useSelector} from 'react-redux'
 import { useState } from "react";
 
-export const AddInputScreen = ({route, navigation})=>{
+export const AddInputScreen = ({ navigation })=>{
 
-    const { itemData } = route.params;
-    console.log(itemData.subCategory);
+    const itemData = useSelector((state)=>state.variables.itemData);
+    console.log(itemData);
+
+    const selectedDate = useSelector((state)=>state.variables.selectedDate);
+    console.log(selectedDate);
 
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
 
     const [input,setInput] = useState({detail:'',value:''})
 
@@ -30,6 +39,29 @@ export const AddInputScreen = ({route, navigation})=>{
             ...oldValue,
             value:text
         }))
+    }
+
+    const handleAddTransaction = ()=>{
+        if(input.value == ""){
+            Alert.alert('กรุณาระบุจำนวนเงิน')
+        }else{
+            const value = parseFloat(input.value)
+            console.log(value)
+            if(!isNaN(value)){
+                if(selectedDate == ""){
+                    addTransaction(userUID, itemData, input, formattedDate)
+                }else{
+                    addTransaction(userUID, itemData, input, selectedDate)
+                }
+                
+                navigation.navigate('FinancialScreen')
+            }else{
+                Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
+            }
+        }
+
+       
+        
     }
 
     
@@ -56,7 +88,7 @@ export const AddInputScreen = ({route, navigation})=>{
                 <TextInput style={{flex:1,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:22, justifyContent:'center', alignItems:'center'}}
                     placeholder='ระบุจำนวนเงิน' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
                     value={input.value} onChangeText={(text)=>{setValue(text)}} keyboardType="number-pad"
-                    >  
+                    >
                 </TextInput>
             </View>
             <View style={{height:20}}></View>
@@ -65,7 +97,7 @@ export const AddInputScreen = ({route, navigation})=>{
                 <TextInput style={{flex:3,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:18, justifyContent:'start', alignItems:'start'}}
                     placeholder='รายละเอียดเพิ่มเติม' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
                     value={input.detail} onChangeText={(text)=>{setDetail(text)}}
-                    >  
+                >  
                 </TextInput>
             </View>
             <View style={{height:10}}></View>
@@ -73,10 +105,7 @@ export const AddInputScreen = ({route, navigation})=>{
             <View style={{height:100, justifyContent:'center', paddingHorizontal:3}}>
                 <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
                     <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
-                        onPress={()=>{
-                            addIncome(userUID, itemData.category, itemData.subCategory, input)
-                            navigation.navigate('FinancialScreen')
-                        }}
+                        onPress={handleAddTransaction}
                     >
                         <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
                     </TouchableOpacity>

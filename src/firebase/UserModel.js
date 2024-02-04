@@ -91,7 +91,7 @@ export const addFinancials = (user)=>{
     .collection('financials')
     .doc(user.uid)
     .set({
-        Transactions: Transactions
+        transactions: Transactions
     })
     .then(()=>{
         console.log("addFinancials success")
@@ -189,11 +189,12 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
         });
 }
 
-export const addIncome = (userUID, category, subCategory, input)=>{
+export const addTransaction = (userUID, itemData, input, selectedDate)=>{
     const newTransaction = {
-        category: category,
-        subCategory: subCategory,
-        date: "",
+        category: itemData.category,
+        subCategory: itemData.subCategory,
+        photoURL: itemData.photoURL,
+        date: selectedDate,
         detail: input.detail,
         value: input.value
     };
@@ -202,7 +203,7 @@ export const addIncome = (userUID, category, subCategory, input)=>{
     .collection('financials')
     .doc(userUID)
     .update({
-        Transactions: firestore.FieldValue.arrayUnion(newTransaction)
+        transactions: firestore.FieldValue.arrayUnion(newTransaction)
     })
     .then(() => {
         console.log("Transactions added successfully!");
@@ -212,6 +213,66 @@ export const addIncome = (userUID, category, subCategory, input)=>{
         console.error("Error adding transactions:", error);
         throw error;
     });
-
-
 };
+
+export const  retrieveDataAsset = (userUID)=>{
+    const assetData = {
+        liquid:[],
+        invest:[],
+        personal:[]
+    }
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.category == 'สินทรัพย์สภาพคล่อง'){
+                    assetData.liquid.push(element)
+                }
+                if(element.category == 'สินทรัพย์ลงทุน'){
+                    assetData.invest.push(element)
+                }
+                if(element.category == 'สินทรัพย์ส่วนตัว'){
+                    assetData.personal.push(element)
+                }
+            });
+
+            //console.log(assetData)
+            return assetData
+        }
+    })
+}
+
+export const  retrieveDataLiability = (userUID)=>{
+    const liabilityData = {
+        short:[],
+        long:[],
+    }
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.category == 'หนี้สินระยะสั้น'){
+                    liabilityData.short.push(element)
+                }
+                if(element.category == 'หนี้สินระยะยาว'){
+                    liabilityData.long.push(element)
+                }
+            });
+
+            console.log(liabilityData)
+            return liabilityData
+        }
+    })
+}

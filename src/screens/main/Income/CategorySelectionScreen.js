@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { retrieveCategory } from "../../../firebase/UserModel";
 import { resetIcon } from "../../../navigators/IncomeStackNav";
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedItems, setItemCategory } from '../../../redux/variableSlice'
+import { setSelectedItems, setItemCategory, setItemData } from '../../../redux/variableSlice'
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { RemoveCategoryIcon } from "../../../firebase/UserModel";
@@ -94,7 +94,8 @@ export const CategorySelectionScreen = ({navigation})=>{
     const handleItemPress = (item) => {
         if (!editStatus) {
             if(item.subCategory != 'เพิ่ม'){
-                navigation.navigate('AddInputScreen', { itemData: item });
+                dispatch(setItemData(item))
+                navigation.navigate('AddInputScreen');
             }else{
                 dispatch(setItemCategory(item.category));
                 navigation.navigate('AddCategoryScreen');
