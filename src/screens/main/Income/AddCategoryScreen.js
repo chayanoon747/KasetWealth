@@ -14,6 +14,10 @@ export const AddCategoryScreen = ({route, navigation})=>{
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
+    //
+    const transactionTypeItem = useSelector((state)=>state.variables.transactionType)
+    console.log(transactionTypeItem);
+    //
     const categoryItem = useSelector((state)=>state.variables.category)
     console.log(categoryItem);
 
@@ -21,6 +25,7 @@ export const AddCategoryScreen = ({route, navigation})=>{
     console.log(photoURLItem);
 
     const [newCategory, setNewCategory] = useState({
+        transactionType: transactionTypeItem,
         category: categoryItem,
         subCategory: "empty",
         photoURL: photoURLItem
@@ -28,7 +33,7 @@ export const AddCategoryScreen = ({route, navigation})=>{
 
     const addDataItem = ()=>{
         if(photoURLItem){
-            addCategories(userUID, newCategory.category, newCategory.subCategory, photoURLItem);
+            addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem);
             handleSubmitItem();
         }else{
             Alert.alert("Please enter a photo")
@@ -60,7 +65,7 @@ export const AddCategoryScreen = ({route, navigation})=>{
                 
                 <TextInput style={{flex:1, width:'100%', backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:22, justifyContent:'center', alignItems:'center'}}
                     placeholder='ระบุชื่อ' underlineColor='#0ABAB5' activeUnderlineColor="#0ABAB5" placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
-                    onChangeText={(text) => setNewCategory({ ...newCategory, subCategory: text })}>  
+                    onChangeText={(text) => setNewCategory({ ...newCategory, transactionType:transactionTypeItem,subCategory: text })}>  
                 </TextInput>
             </View>
             <View style={{height:100}}></View>

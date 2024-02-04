@@ -78,7 +78,18 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         
         return liabilityValues
     }
-
+    const getAssetLiquidValue = (itemsDataAsset)=>{
+        let assetLiquidValue = 0;
+        itemsDataAsset.liquid.forEach(element => {
+            assetLiquidValue += parseFloat(element.value);
+        });
+    }
+    const getAssetInVestValue = (itemsDataAsset)=>{
+        let assetLiquidValue = 0;
+        itemsDataAsset.liquid.forEach(element => {
+            assetLiquidValue += parseFloat(element.value);
+        });
+    }
     const handleSelectedGraph = ()=>{
         setSelectedType('graph')
     }

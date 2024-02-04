@@ -9,12 +9,14 @@ import { useSelector} from 'react-redux'
 import { useState } from "react";
 
 export const AddInputScreen = ({ navigation })=>{
-
-    const itemData = useSelector((state)=>state.variables.itemData);
+    //itemData มี category,subcategory,url
+    const itemData = useSelector((state)=>state.variables.itemData); 
     console.log(itemData);
-
+    
     const selectedDate = useSelector((state)=>state.variables.selectedDate);
     console.log(selectedDate);
+
+    const transactionType = useSelector((state)=>state.variables.transactionType);
 
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
@@ -42,16 +44,17 @@ export const AddInputScreen = ({ navigation })=>{
     }
 
     const handleAddTransaction = ()=>{
+        //input มี 2 key คือ value กับ details
         if(input.value == ""){
             Alert.alert('กรุณาระบุจำนวนเงิน')
         }else{
             const value = parseFloat(input.value)
             console.log(value)
             if(!isNaN(value)){
-                if(selectedDate == ""){
-                    addTransaction(userUID, itemData, input, formattedDate)
-                }else{
-                    addTransaction(userUID, itemData, input, selectedDate)
+                if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัย
+                    addTransaction(userUID,itemData, input, formattedDate)
+                }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
+                    addTransaction(userUID ,itemData, input, selectedDate)
                 }
                 
                 navigation.navigate('FinancialScreen')

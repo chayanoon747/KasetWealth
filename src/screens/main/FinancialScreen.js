@@ -1,8 +1,11 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AssetLiabilityDetailScreen } from "./AssetLiabilityDetailScreen";
+import { useDispatch } from "react-redux";
+import { setItemTransactionType } from "../../redux/variableSlice";
 
 export const FinancialScreen = ({navigation})=>{
+    const dispatch = useDispatch();
     return(
         <SafeAreaView style={{flex:1, padding:30, backgroundColor:'#fffffa'}}>
             {/* ยอดเงินคงเหลือ */}
@@ -79,7 +82,9 @@ export const FinancialScreen = ({navigation})=>{
                 <View style={{flex:1, flexDirection:'row', alignItems:'center'}}>
                     <TouchableOpacity style={{flex:1, alignItems:'center'}} 
                         onPress={()=>{
+                            dispatch(setItemTransactionType("รายได้"));
                             navigation.navigate('CategorySelectionScreen')
+                            
                         }}
                     >
                         <Image source={require('../../assets/revenueIcon2.png')} style={{width: 50, height:50}} />
@@ -88,6 +93,7 @@ export const FinancialScreen = ({navigation})=>{
 
                     <TouchableOpacity style={{flex:1, alignItems:'center'}}
                         onPress={()=>{
+                            dispatch(setItemTransactionType("ค่าใช้จ่าย"));
                             navigation.navigate('AddCategoryScreen')
                         }}
                     >
@@ -95,12 +101,21 @@ export const FinancialScreen = ({navigation})=>{
                         <Text style={[styles.bodyText,{paddingTop:5}]}>ค่าใช้จ่าย</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{flex:1, alignItems:'center'}}>
+                    <TouchableOpacity style={{flex:1, alignItems:'center'}}
+                        onPress={()=>{
+                            dispatch(setItemTransactionType("สินทรัพย์"));
+                            navigation.navigate('AddCategoryScreen')
+                        }}>
                         <Image source={require('../../assets/assetIcon2.png')} style={{width: 50, height:50}} />
                         <Text style={[styles.bodyText,{paddingTop:5}]}>สินทรัพย์</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{flex:1, alignItems:'center'}}>
+                    <TouchableOpacity style={{flex:1, alignItems:'center'}}
+                        onPress={()=>{
+                            dispatch(setItemTransactionType("หนี้สิน"));
+                            //รอหน้าเพื่อนเสร็จ
+                            navigation.navigate('AddCategoryScreen')
+                        }}>
                         <Image source={require('../../assets/liabilityIcon2.png')} style={{width: 50, height:50}} />
                         <Text style={[styles.bodyText,{paddingTop:5}]}>หนี้สิน</Text>
                     </TouchableOpacity>

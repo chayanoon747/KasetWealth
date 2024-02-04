@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const INIT_VARIABLES = {
     isEdit: false,
     selectedItems:[],
+    transactionType: "",
     category: "",
     photoURL: "",
     itemData: {},
@@ -20,6 +21,9 @@ const variableSlice = createSlice({
       setSelectedItems(state, action) {
         state.selectedItems = action.payload;
       },
+      setItemTransactionType(state, action) {
+        state.transactionType = action.payload;
+      },
       setItemCategory(state, action) {
         state.category = action.payload;
       },
@@ -36,5 +40,5 @@ const variableSlice = createSlice({
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate } = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType,setItemCategory, setItemPhotoURL, setItemData, setSelectedDate } = actions;
 export default reducer;
