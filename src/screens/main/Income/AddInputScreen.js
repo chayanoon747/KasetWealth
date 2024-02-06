@@ -11,10 +11,10 @@ import { useState } from "react";
 export const AddInputScreen = ({ navigation })=>{
     //itemData มี category,subcategory,url
     const itemData = useSelector((state)=>state.variables.itemData); 
-    console.log(itemData);
+    //console.log(itemData);
     
     const selectedDate = useSelector((state)=>state.variables.selectedDate);
-    console.log(selectedDate);
+    //console.log(selectedDate);
 
     const transactionType = useSelector((state)=>state.variables.transactionType);
 
@@ -49,7 +49,7 @@ export const AddInputScreen = ({ navigation })=>{
             Alert.alert('กรุณาระบุจำนวนเงิน')
         }else{
             const value = parseFloat(input.value)
-            console.log(value)
+            //console.log(value)
             if(!isNaN(value)){
                 if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัย
                     addTransaction(userUID,itemData, input, formattedDate)

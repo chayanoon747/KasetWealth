@@ -109,7 +109,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                 dispatch(setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item)));
             } else {
                 dispatch(setSelectedItems([...selectedItems, item]));
-                console.log(selectedItems);
+                //console.log(selectedItems);
             }
         }
     };
@@ -148,7 +148,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                         dispatch(setEditStatus(true));
                         setIsEdit(true);
                     }else{
-                        console.log(selectedItems);
+                        //console.log(selectedItems);
                         RemoveCategoryIcon(userUID, selectedItems)
                         setIsDelete(!isDelete)
                         setIsEdit(false)

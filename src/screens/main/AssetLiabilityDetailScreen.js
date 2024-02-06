@@ -23,7 +23,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         getDataAsset();
         getDataLiability();
         setNetWealthValue(assetValues - liabilityValues)
-        console.log(netWealthValue)
+        //console.log(netWealthValue)
     },[assetValues, liabilityValues])
 
     const getDataAsset = async()=>{
