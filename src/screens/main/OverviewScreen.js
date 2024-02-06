@@ -43,7 +43,8 @@ export const OverviewScreen = ()=>{
 
                             <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
                                     <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30}}>1,532,000</Text>
-                                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:18, paddingTop:14}}>THB</Text>
+                                   {/*  <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:18, paddingTop:14}}>THB</Text> */}
+                                    <Image source={require('../../assets/overview_1.png')} style={{width: 100, height:100}} />
                             </View>
 
                             <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
@@ -63,7 +64,8 @@ export const OverviewScreen = ()=>{
                         <View style={{flex:5, flexDirection:'column', paddingHorizontal:10}}>
 
                             <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'right', paddingTop:1}}>
-                                    <Text style={{flex:6, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30,paddingTop:3, textAlign:'right'}}>8,207</Text>
+                                <Image source={require('../../assets/overview_2.png')} style={{width: 100, height:100}} />
+                                <Text style={{flex:6, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30,paddingTop:3, textAlign:'right'}}>8,207</Text>
                             </View>
 
                             <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'right', paddingTop:1}}>
@@ -85,8 +87,9 @@ export const OverviewScreen = ()=>{
                          </View>
                         <View style={{flex:5, flexDirection:'column', paddingHorizontal:10}}>
 
-                            <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
+                            <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>   
                                     <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Regular', fontSize:30}}>5.87 เท่า </Text>
+                                    <Image source={require('../../assets/overview_3.png')} style={{width: 100, height:100}} />
                             </View>
 
                             <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
@@ -110,11 +113,13 @@ export const OverviewScreen = ()=>{
                         <View style={{flex:5, flexDirection:'column', paddingHorizontal:10}}>
 
                             <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'right', paddingTop:1}}>
+                                    <Image source={require('../../assets/overview_4.png')} style={{width: 100, height:100}} />
                                     <Text style={{flex:6, color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3, textAlign:'right'}}>0 เท่า</Text>
                             </View>
 
                             <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'right', paddingTop:1}}>
-                                    <Text style={{flex:4, color:'#000000',fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:8, textAlign:'right'}}>จากเกณฑ์ ควร มากกว่าหรือเท่ากับ 1 เท่า ของค่าใช้จ่ายรวม</Text>
+                                <Text style={{flex:4, color:'#000000',fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:8, textAlign:'right'}}></Text>
+                                <Text style={{flex:4, color:'#000000',fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:8, textAlign:'right'}}>จากเกณฑ์ ควร มากกว่าหรือเท่ากับ 1 เท่า ของค่าใช้จ่ายรวม</Text>
                             </View>
 {/*                             <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
                                 <Text style={{flex:1, color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}>ปัจจุบันอัตราส่วนความมั่งคั่งของคุณอยู่ในเกณฑ์ แย่ เพราะคุณไม่มีรายได้จาก
