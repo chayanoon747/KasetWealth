@@ -109,6 +109,7 @@ export const BottomTabNav = ({navigation})=>{
                     <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>More</Text>
                   )
                 },
+                headerShown:false,
             }}
             />
 
