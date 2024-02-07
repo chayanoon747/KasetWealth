@@ -1,18 +1,19 @@
-import { View, Text, StyleSheet, ScrollView, Image, FlatList, Touchable, TouchableOpacity} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Shadow }  from 'react-native-shadow-2';
+import { Shadow } from "react-native-shadow-2";
 import { useEffect, useState } from "react";
 import { retrieveCategory } from "../../../firebase/UserModel";
 import { resetIcon } from "../../../navigators/IncomeStackNav";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setSelectedItems, setItemCategory, setItemData } from '../../../redux/variableSlice'
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { RemoveCategoryIcon } from "../../../firebase/UserModel";
 import { setEditStatus } from "../../../redux/variableSlice";
+import { useSelector } from "react-redux";
 
-export const CategorySelectionScreen = ({navigation})=>{
-    
+export const CategoryAssetSelectionScreen = ({navigation})=>{
+
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
     //console.log(userUID);
@@ -45,18 +46,18 @@ export const CategorySelectionScreen = ({navigation})=>{
 
             const categoryData = await retrieveCategory(userUID);
             for (const item of categoryData) {
-                if (item.category == "รายได้จากการทำงาน") {
+                if (item.category == "สินทรัพย์สภาพคล่อง") {
                     items1.push(item);
                 }
             }
 
             for (const item of categoryData) {
-                if (item.category == "รายได้จากสินทรัพย์") {
+                if (item.category == "สินทรัพย์ลงทุน") {
                     items2.push(item);
                 }
             }
             for (const item of categoryData) {
-                if (item.category == "รายได้อื่นๆ") {
+                if (item.category == "สินทรัพย์ส่วนตัว") {
                     items3.push(item);
                 }
             }
@@ -113,7 +114,6 @@ export const CategorySelectionScreen = ({navigation})=>{
             }
         }
     };
-    
 
     return(
         <SafeAreaView style={{flex:1, backgroundColor:'#fffffa'}}>
@@ -140,7 +140,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                     
                 </TouchableOpacity>
 
-                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff'}}>รายได้</Text>
+                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff'}}>สินทรัพย์</Text>
                 
                 <TouchableOpacity style={{marginRight:15}}
                     onPress={()=>{
@@ -171,7 +171,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                     <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
                         <View style={styles.box}>
                             <View style={styles.boxhead}>
-                                <Text style={styles.headerText}>รายได้จากการทำงาน</Text>
+                                <Text style={styles.headerText}>สินทรัพย์สภาพคล่อง</Text>
                             </View>
                             <View style={{flex:3}}>
                                 <FlatList
@@ -189,7 +189,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                     <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
                         <View style={styles.box}>
                             <View style={styles.boxhead}>
-                                <Text style={styles.headerText}>รายได้จากสินทรัพย์</Text>
+                                <Text style={styles.headerText}>สินทรัพย์ลงทุน</Text>
                             </View>
                             <View style={{flex:3}}>
                                 <FlatList
@@ -208,7 +208,7 @@ export const CategorySelectionScreen = ({navigation})=>{
                     <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
                         <View style={styles.box}>
                             <View style={styles.boxhead}>
-                                <Text style={styles.headerText}>รายได้อื่นๆ</Text>
+                                <Text style={styles.headerText}>สินทรัพย์ส่วนตัว</Text>
                             </View>
                             <View style={{flex:3}}>
                                 <FlatList
@@ -221,12 +221,11 @@ export const CategorySelectionScreen = ({navigation})=>{
                         </View>
                     </Shadow>
                 </View>
-            </View>
-            
-           
+            </View>          
         </SafeAreaView>
     )
 }
+
 const styles = StyleSheet.create({
     headerText:{
         fontFamily:'ZenOldMincho-Bold', 
