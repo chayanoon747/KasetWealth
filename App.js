@@ -6,7 +6,8 @@ import { Provider } from 'react-redux';
 import {store} from './src/redux/store';
 
 export default function App() {
-  const label = 0;
+  const label = 1;
+ 
   return  (
     <SafeAreaView style={{flex:1}}>
       <Provider store={store}>

@@ -1,5 +1,6 @@
 import auth from '@react-native-firebase/auth';
 import {addUser, addFinancials} from './UserModel';
+//
 
 export const signUpEmailPass = (profile, success, unsuccess)=>{
     console.log(`email: ${profile.email}`)
