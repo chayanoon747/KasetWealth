@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import { Alert } from 'react-native';
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -512,153 +513,6 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
             throw error;
         });
 };
-export const addCategoriesExpenses = (userUID,category, subCategory, photoURL) => {
-    const newCategory = {
-        transactionType: "ค่าใช้จ่าย",
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
-
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
-
-                // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                    
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
-                } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
-                }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            onsole.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
-export const addCategoriesAsset = (userUID,category, subCategory, photoURL) => {
-    const newCategory = {
-        transactionType: "สินทรัพย์",
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
-
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
-
-                // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                    
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
-                } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
-                }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            onsole.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
-export const addCategoriesLiability = (userUID,category, subCategory, photoURL) => {
-    const newCategory = {
-        transactionType: "หนี้สิน",
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
-
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
-
-                // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                    
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
-                } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
-                }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            onsole.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
 export const RemoveCategoryIcon = (userUID, selectedItems) => {
     return firestore()
         .collection('users')
@@ -675,31 +529,39 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
         });
 }
 
-export const addTransaction = (userUID, itemData, input, selectedDate)=>{
-    const newTransaction = {
-        transactionType: itemData.transactionType,
-        category: itemData.category,
-        subCategory: itemData.subCategory,
-        photoURL: itemData.photoURL,
-        date: selectedDate,
-        detail: input.detail,
-        value: input.value
-    };
+export const addTransaction = (userUID, itemData, input, selectedDate) => {
+    // ตรวจสอบว่าค่า value ไม่เป็น 0
+    if (input.value !== 0) {
+        const newTransaction = {
+            transactionType: itemData.transactionType,
+            category: itemData.category,
+            subCategory: itemData.subCategory,
+            photoURL: itemData.photoURL,
+            date: selectedDate,
+            detail: input.detail,
+            value: input.value
+        };
 
-    return firestore()
-    .collection('financials')
-    .doc(userUID)
-    .update({
-        transactions: firestore.FieldValue.arrayUnion(newTransaction)
-    })
-    .then(() => {
-        console.log("Transactions added successfully!");
-    })
-    //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-    .catch((error) => {
-        console.error("Error adding transactions:", error);
-        throw error;
-    });
+        return firestore()
+            .collection('financials')
+            .doc(userUID)
+            .update({
+                transactions: firestore.FieldValue.arrayUnion(newTransaction)
+            })
+            .then(() => {
+                console.log("Transactions added successfully!");
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error adding transactions:", error);
+                throw error;
+            });
+    } else {
+        // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
 };
 //ดึง value ทั้งหมด
 export const  retrieveDataAsset = (userUID)=>{
@@ -734,6 +596,8 @@ export const  retrieveDataAsset = (userUID)=>{
         }
     })
 }
+
+
 
 export const  retrieveDataLiability = (userUID)=>{
     const liabilityData = {
