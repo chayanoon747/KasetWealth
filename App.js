@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, SafeAreaView} from "react-native";
+import { View, Text, SafeAreaView, Image} from "react-native";
 import { NavigationContainer } from '@react-navigation/native'
 import { StackNav } from './src/navigators/StackNav';
 import { Provider } from 'react-redux';
