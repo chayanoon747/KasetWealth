@@ -14,6 +14,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setEditStatus, setSelectedDate, setSelectedItems } from '../redux/variableSlice';
 import { setItemPhotoURL } from '../redux/variableSlice';
 import { RemoveCategoryIcon } from '../firebase/UserModel';
+import { CategoryExpensesSelectionScreen } from "../screens/main/Expenses/CategoryExpensesSelectionScreen";
+import { CategoryAssetSelectionScreen } from "../screens/main/Asset/CategoryAssetSelectionScreen";
+import { CategoryLiabilitySelectionScreen } from "../screens/main/Liability/CategoryLiabilitySelectionScreen";
+import { Icon } from 'react-native-paper';
 
 export const IncomeStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
@@ -25,6 +29,7 @@ export const IncomeStackNav = ({navigation})=>{
   const user = useSelector((state)=>state.auths);
   const userUID = user[0].uid;
 
+  const transactionTypeItem = useSelector((state)=>state.variables.transactionType)
   const selectedItems = useSelector((state)=>state.variables.selectedItems)
   const selectedDate = useSelector((state)=>state.variables.selectedDate)
   console.log(selectedDate)
@@ -114,6 +119,24 @@ export const IncomeStackNav = ({navigation})=>{
       />
 
       <Stack.Screen
+        name='CategoryExpensesSelectionScreen'
+        component={CategoryExpensesSelectionScreen}
+        options={{headerShown:false}}
+      />
+
+      <Stack.Screen
+        name='CategoryAssetSelectionScreen'
+        component={CategoryAssetSelectionScreen}
+        options={{headerShown:false}}
+      />
+
+      <Stack.Screen
+        name='CategoryLiabilitySelectionScreen'
+        component={CategoryLiabilitySelectionScreen}
+        options={{headerShown:false}}
+      />
+
+      <Stack.Screen
         name='AddCategoryScreen'
         component={AddCategoryScreen}
         options={{ 
@@ -122,7 +145,18 @@ export const IncomeStackNav = ({navigation})=>{
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
                   dispatch(setItemPhotoURL(""))
-                  navigation.navigate('CategorySelectionScreen');
+                  if (transactionTypeItem === "รายได้") {
+                    navigation.navigate('CategorySelectionScreen');
+                  }
+                  if (transactionTypeItem === "ค่าใช้จ่าย") {
+                    navigation.navigate('CategoryExpensesSelectionScreen');
+                  }
+                  if (transactionTypeItem === "สินทรัพย์") {
+                    navigation.navigate('CategoryAssetSelectionScreen');
+                  }
+                  if (transactionTypeItem === "หนี้สิน") {
+                    navigation.navigate('CategoryLiabilitySelectionScreen');
+                  }
                 }}
               >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -233,6 +267,8 @@ export const IncomeStackNav = ({navigation})=>{
           )
         }}
       />
+
+      
     </Stack.Navigator>
   )
 }
