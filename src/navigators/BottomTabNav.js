@@ -33,7 +33,7 @@ export const BottomTabNav = ({navigation})=>{
                 title:'Overview',
                 headerLeft:()=>{
                     return(
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('More')}>
                             <Image source={require('../assets/profile.png')} style={{ width: 32, height: 32, marginLeft:'10%'}} />
                         </TouchableOpacity>
                     )
