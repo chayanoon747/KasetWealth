@@ -421,7 +421,8 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                             </View>
                         )}   
                     </View>
-                    {/*sdsdsdsdsdsdsd */}
+                    {/*sdsdsdsdsdsdsdsdsdsdsdsd */}
+                    {/* testsave */}
                     <View style={{borderTopWidth:assetValues == 0 && liabilityValues == 0 ? 0 : 1, width:'100%'}}></View>
                     {netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150 && (
                         <View style={{ flexDirection: 'column-reverse', marginLeft: 210 }}>
