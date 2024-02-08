@@ -1,11 +1,14 @@
 import React from "react";
-import {createNativeStackNavigator} from '@react-navigation/native-stack'
-import { SplashScreen } from '../screens/main/SplashScreen'
-import { SignInScreen } from '../screens/main/SignInScreen'
-import { SignUpScreen } from '../screens/main/SignUpScreen'
-import { SelectSignInSignUpScreen } from '../screens/main/SelectSignInSignUpScreen'
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { SplashScreen } from '../screens/main/SplashScreen';
+import { SignInScreen } from '../screens/main/SignInScreen';
+import { SignUpScreen } from '../screens/main/SignUpScreen';
+import { SelectSignInSignUpScreen } from '../screens/main/SelectSignInSignUpScreen';
 import { PetStackNav } from "./PetStackNav";
-import { BottomTabNav } from './BottomTabNav'
+import { BottomTabNav } from './BottomTabNav';
+import { ForgetPasswordScreen } from "../screens/main/ForgetPasswordScreen";
+import { ChangePasswordScreen } from "../screens/main/ChangePasswordScreen";
+import { MoreScreen } from "../screens/main/MoreScreen";
 
 export const StackNav = ()=>{
   const Stack = createNativeStackNavigator()
@@ -49,6 +52,24 @@ export const StackNav = ()=>{
       <Stack.Screen
         name='PetStackNav'
         component={PetStackNav}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name='ForgetPasswordScreen'
+        component={ForgetPasswordScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name='ChangePasswordScreen'
+        component={ChangePasswordScreen}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name='MoreScreen'
+        component={MoreScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
