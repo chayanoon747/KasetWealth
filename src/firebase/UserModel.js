@@ -471,12 +471,23 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         subCategory: subCategory,
         photoURL: photoURL
     };
-
+    const plusIcon = {
+        transactionType: transactionType,
+        category: category,
+        subCategory: 'เพิ่ม',
+        photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&'
+    }
     return firestore()
         .collection('users')
         .doc(userUID)
         .get()
         .then((doc) => {
+            firestore()
+                .collection('users')
+                .doc(userUID)
+                .update({
+                    categories: firestore.FieldValue.arrayRemove(plusIcon)
+                })
             if (doc.exists) {
                 const existingCategories = doc.data().categories;
 
@@ -487,22 +498,36 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
                     
                 if (!isDuplicate) {
                     // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
+                    return    firestore()
                         .collection('users')
                         .doc(userUID)
                         .update({
                             categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
+                        })
+                        .then (()=>{
+                            return   firestore()
+                                    .collection('users')
+                                    .doc(userUID)
+                                    .update({
+                                        categories: firestore.FieldValue.arrayUnion(plusIcon)
+                                    })
+                        })
                 } else {
                     // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
                     console.log('Duplicate category and subCategory. Cannot add.');
                     Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
+                    return firestore()
+                            .collection('users')
+                            .doc(userUID)
+                            .update({
+                                categories: firestore.FieldValue.arrayUnion(plusIcon)
+                            })
                 }
             } else {
                 console.log("No such document!");
                 return null;
             }
+
         })
         .then(() => {
             console.log("Category added successfully!");
