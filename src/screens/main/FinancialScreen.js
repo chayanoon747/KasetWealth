@@ -94,7 +94,7 @@ export const FinancialScreen = ({navigation})=>{
                     <TouchableOpacity style={{flex:1, alignItems:'center'}}
                         onPress={()=>{
                             dispatch(setItemTransactionType("ค่าใช้จ่าย"));
-                            navigation.navigate('AddCategoryScreen')
+                            navigation.navigate('CategoryExpensesSelectionScreen')
                         }}
                     >
                         <Image source={require('../../assets/expenseIcon2.png')} style={{width: 50, height:50}} />
@@ -104,7 +104,7 @@ export const FinancialScreen = ({navigation})=>{
                     <TouchableOpacity style={{flex:1, alignItems:'center'}}
                         onPress={()=>{
                             dispatch(setItemTransactionType("สินทรัพย์"));
-                            navigation.navigate('AddCategoryScreen')
+                            navigation.navigate('CategoryAssetSelectionScreen')
                         }}>
                         <Image source={require('../../assets/assetIcon2.png')} style={{width: 50, height:50}} />
                         <Text style={[styles.bodyText,{paddingTop:5}]}>สินทรัพย์</Text>
@@ -114,7 +114,7 @@ export const FinancialScreen = ({navigation})=>{
                         onPress={()=>{
                             dispatch(setItemTransactionType("หนี้สิน"));
                             //รอหน้าเพื่อนเสร็จ
-                            navigation.navigate('AddCategoryScreen')
+                            navigation.navigate('CategoryLiabilitySelectionScreen')
                         }}>
                         <Image source={require('../../assets/liabilityIcon2.png')} style={{width: 50, height:50}} />
                         <Text style={[styles.bodyText,{paddingTop:5}]}>หนี้สิน</Text>

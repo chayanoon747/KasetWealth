@@ -34,68 +34,6 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         setNetWealthValue(assetValues - liabilityValues)
         console.log(netWealthValue)
     },[assetValues, liabilityValues])
-
-    //test
-    const newItemAssetSolid ={
-        transactionType: "สินทรัพย์",
-        category: "สินทรัพย์สภาพคล่อง",
-        subCategory: "เงินฝากกระแสรายวัน",
-        photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204095691962449960/bi_cash-coin.png?ex=65d37c7f&is=65c1077f&hm=3968a3f849ab80c7da271880ecd440c7ee1fd9f2bfd6fa1dcc4bce80e32d8958&"
-    }
-    const newInputAssetSolid = {
-        detail: "",
-        value: 1000000
-    }
-    const newItemAssetInvest ={
-        transactionType: "สินทรัพย์",
-        category: "สินทรัพย์ลงทุน",
-        subCategory: "สลากออมทรัพย์",
-        photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204096445297336380/mdi_cash-100.png?ex=65d37d33&is=65c10833&hm=5c6996464172ee977ad9d42e5a9aff1533fca2f41a4cccdaa08f1366632db63f&"
-    }
-    const newInputAssetInvest = {
-        detail: "",
-        value: 300000
-    }
-
-    const newItemAssetPersonal = {
-        transactionType: "สินทรัพย์",
-        category: "สินทรัพย์ส่วนตัว",
-        subCategory: "รถ",
-        photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204096811053097051/maki_car.png?ex=65d37d8a&is=65c1088a&hm=27cd8e75e3649648755c11196081e84ce80f48af01f7eb7aefd734b3c6e0273d&"
-    }
-    const newInputAssetPersonal ={
-        detail: "",
-        value: 300000
-    }
-    const newItemLiabilityShort = {
-        transactionType: "หนี้สิน",
-        category: "หนี้สินระยะสั้น",
-        subCategory: "หนี้บัตรเครดิต",
-        photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204097298175492166/bytesize_creditcard.png?ex=65d37dfe&is=65c108fe&hm=26d7f60e9e1280dd6f56506fce7bfefa3e42dfa0ad068dc4f35514f5c2de4c1f&"
-    }
-    const newInputLiabilityShort ={
-        detail: "",
-        value: 150000
-    }
-
-    const newItemLiabilityLong = {
-        transactionType: "หนี้สิน",
-        category: "หนี้สินระยะยาว",
-        subCategory: "หนี้กยศ.",
-        photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204097683652878406/Vector.png?ex=65d37e5a&is=65c1095a&hm=05a9a4d1fedfaae72cfa4d3a1c6515e40d812fba652ae0b62b53769028fdd73f&"
-    }
-    const newInputLiabilityLong ={
-        detail: "",
-        value: 150000
-    }
-    // useEffect(()=>{
-    //     addTransaction(userUID,newItemAssetSolid,newInputAssetSolid, "2024-02-05");
-    //     addTransaction(userUID,newItemAssetInvest,newInputAssetInvest,"2024-02-05");
-    //     addTransaction(userUID,newItemAssetPersonal,newInputAssetPersonal, "2024-02-05");
-    //     addTransaction(userUID,newItemLiabilityShort,newInputLiabilityShort, "2024-02-05");
-    //     addTransaction(userUID,newItemLiabilityLong,newInputLiabilityLong, "2024-02-05");
-    //     console.log('addTransaction success');
-    // },[])
         
     const getDataAsset = async()=>{
         try{
@@ -103,7 +41,6 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
             setAssetData(itemsDataAsset);
             let height = 240 + (itemsDataAsset.liquid.length * 45) + (itemsDataAsset.invest.length * 45) + (itemsDataAsset.personal.length * 45)
             setAssetContainerHeight(height)
-            //console.log(containerHeight)
             setAssetValues(getAssetValues(itemsDataAsset));
             setAssetLiquidValue(getAssetLiquidValue(itemsDataAsset));
             setAssetInvestValue(getAssetInvestValue(itemsDataAsset));
@@ -119,7 +56,6 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
             setLiabilityData(itemsDataLiability);
             let height = 240 + (itemsDataLiability.short.length * 45) + (itemsDataLiability.long.length * 45)
             setLiabilityContainerHeight(height)
-            //console.log(containerHeight)
             setLiabilityValues(getLiabilityValues(itemsDataLiability));
             setLiabilityShortValues(getLiabilityShortValues(itemsDataLiability));
             setliabilityLongValues(getLiabilityLongValues(itemsDataLiability));
@@ -139,7 +75,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         itemsDataAsset.personal.forEach(element => {
             assetValues += parseFloat(element.value);
         });
-        //console.log("get asset success")
+        
         return assetValues
     }
     const getAssetLiquidValue = (itemsDataAsset)=>{
@@ -147,16 +83,16 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         itemsDataAsset.liquid.forEach(element => {
             assetLiquidValue += parseFloat(element.value);
         });
-        //console.log("get asset liquid success")
+        
         return assetLiquidValue;
     }
-    //console.log(assetValues)
+    
     const getAssetInvestValue = (itemsDataAsset)=>{
         let assetInvestValue = 0;
         itemsDataAsset.invest.forEach(element => {
             assetInvestValue += parseFloat(element.value);
         });
-        //console.log("get asset Invest success")
+        
         return assetInvestValue;
     }
 
@@ -165,7 +101,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         itemsDataAsset.personal.forEach(element => {
             assetPersonalValue += parseFloat(element.value);
         });
-        //console.log("get asset Personal success")
+        
         return assetPersonalValue;
     }
     const getLiabilityValues = (itemsDataLiability)=>{
@@ -176,7 +112,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         itemsDataLiability.long.forEach(element => {
             liabilityValues += parseFloat(element.value);
         });
-        //console.log("get liability success")
+        
         return liabilityValues
     }
     const getLiabilityShortValues = (itemsDataLiability)=>{
@@ -184,7 +120,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         itemsDataLiability.short.forEach(element => {
             liabilityShortValues += parseFloat(element.value);
         });
-        //console.log("get liability short success")
+        
         return liabilityShortValues
     }
     const getLiabilityLongValues = (itemsDataLiability)=>{
@@ -192,9 +128,74 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         itemsDataLiability.long.forEach(element => {
             liabilityLongValues += parseFloat(element.value);
         });
-        //console.log("get liability long success")
+        
         return liabilityLongValues
     }
+
+    const percentageOfAssets = ()=>{
+        return assetValues > 0 ? '(100.00%)' : '(0%)'
+    }
+    const percentageOfLiability = ()=>{
+        if(assetValues > 0){
+            let percentageOfLiabilityValue = (liabilityValues/assetValues*100).toFixed(2)
+            return percentageOfLiabilityValue > 0 ? `(${percentageOfLiabilityValue}%)` : `(0%)`
+        }else{
+            if(liabilityValues > 0){
+                let percentageOfLiabilityValue = 100
+                return percentageOfLiabilityValue > 0 ? `(${percentageOfLiabilityValue}%)` : `(0%)`
+            }else{
+                let percentageOfLiabilityValue = 0
+                return percentageOfLiabilityValue > 0 ? `(${percentageOfLiabilityValue}%)` : `(0%)`
+            }
+            
+            
+        }   
+    }
+    const percentageOfNetWealth = ()=>{
+        let percentageOfnetWealthValue = (netWealthValue/assetValues*100).toFixed(2)
+        return percentageOfnetWealthValue > 0 ? `(${percentageOfnetWealthValue}%)` : `(0%)`
+    }
+    const percentageOfAssetLiquid = ()=>{
+        let percentageOfAssetLiquid = (assetLiquidValue/assetValues*100).toFixed(2)
+        return percentageOfAssetLiquid > 0 ? `(${percentageOfAssetLiquid}%)` : `(0%)`
+    }
+    const percentageOfAssetInvest = ()=>{
+        let percentageOfAssetInvest = (assetInvestValue/assetValues*100).toFixed(2)
+        return percentageOfAssetInvest > 0 ? `(${percentageOfAssetInvest}%)` : `(0%)`
+    }
+    const percentageOfAssetPersonal = ()=>{
+        let percentageOfAssetPersonal = (assetPersonalValue/assetValues*100).toFixed(2)
+        return percentageOfAssetPersonal > 0 ? `(${percentageOfAssetPersonal}%)` : `(0%)`
+    }
+    const percentageOfLiabilityShort = ()=>{
+        if(assetValues > 0){
+            let percentageOfLiabilityShort = (liabilityShortValues/assetValues*100).toFixed(2)
+            return percentageOfLiabilityShort > 0 ? `(${percentageOfLiabilityShort}%)` : `(0%)`
+        }else{
+            let percentageOfLiabilityShort = (liabilityShortValues/liabilityValues*100).toFixed(2)
+            return percentageOfLiabilityShort > 0 ? `(${percentageOfLiabilityShort}%)` : `(0%)`
+        }   
+    }
+    const percentageOfLiabilityLong = ()=>{
+        if(assetValues > 0){
+            let percentageOfLiabilityLong = (liabilityLongValues/assetValues*100).toFixed(2)
+            return percentageOfLiabilityLong > 0 ? `(${percentageOfLiabilityLong}%)` : `(0%)`
+        }else{
+            let percentageOfLiabilityLong = (liabilityLongValues/liabilityValues*100).toFixed(2)
+            return percentageOfLiabilityLong > 0 ? `(${percentageOfLiabilityLong}%)` : `(0%)`
+        }   
+    }
+
+    const heightOfAssetLiquid = ()=>{
+        return assetLiquidValue/liabilityValues*150
+    }
+    const heightOfAssetInvest = ()=>{
+        return assetInvestValue/liabilityValues*150
+    }
+    const heightOfAssetPersonal = ()=>{
+        return assetPersonalValue/liabilityValues*150
+    }
+    
     
     const handleSelectedGraph = ()=>{
         setSelectedType('graph')
@@ -303,161 +304,160 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
             </View>
         )
     }
-   //console.log(-netWealthValue/assetValues*150); //150
-   //console.log(-netWealthValue/liabilityValues*150) //75
+   
     const componentGraph = ()=>{
+        console.log(typeof assetValues);
         return(
             <View style ={{flex:1}}>
-                {assetValues && liabilityValues && assetLiquidValue && assetInvestValue && assetPersonalValue && liabilityShortValues && liabilityShortValues &&(
-                    <View style={{flex:1,backgroundColor:"#fffffA",marginTop:25,alignItems:'center'}}>
-                        <View style={{flexDirection:'row'}}>
-                            <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
-                                <Text style={styles.textHeaderGraph}>สินทรัพย์</Text>
-                                <Text style={styles.textHeaderValueGraph}>{assetValues.toLocaleString()}</Text>
-                                <Text style={styles.textHeaderValueGraph}>(100.00%)</Text>
-                            </View>
-                            <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
-                                <Text style={styles.textHeaderGraph}>หนี้สิน</Text>
-                                <Text style={styles.textHeaderValueGraph}>{liabilityValues.toLocaleString()}</Text>
-                                <Text style={styles.textHeaderValueGraph}>({(liabilityValues/assetValues*100).toFixed(2)}%)</Text>
-                            </View>
-                            <View style={{flexDirection:'column',width:100,marginBottom:20}}>
-                                <Text style={styles.textHeaderGraph}>ความมั่งคั่งสุทธิ</Text>
-                                <Text style={styles.textHeaderValueGraph}>{netWealthValue.toLocaleString()}</Text>
-                                <Text style={styles.textHeaderValueGraph}>({(netWealthValue/assetValues*100).toFixed(2)}%)</Text>
-                            </View>
+                <View style={{flex:1,backgroundColor:"#fffffA",marginTop:25,alignItems:'center'}}>
+                    <View style={{flexDirection:'row'}}>
+                        <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
+                            <Text style={styles.textHeaderGraph}>สินทรัพย์</Text>
+                            <Text style={styles.textHeaderValueGraph}>{assetValues}</Text>
+                            <Text style={styles.textHeaderValueGraph}>{percentageOfAssets()}</Text>
                         </View>
-                        {/* 100% = height:150 เทียบเอา ตอนเอาค่ามาลงสร้างกราฟ */}
-                    
-                        <View style={{flexDirection: 'row',borderBottomWidth:1,borderBottomColor:'#D2DBD6'}}>
-                            <View style={{flexDirection:'column-reverse',marginHorizontal:20}}>
-                                {/* กรณีที่ค่า หนี้สิน > สินทรัพย์ ต้องมีการปรับสเกลกราฟใหม่ */}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
-                                    <View style={{ height:assetPersonalValue/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FFFF00" }}>
-                                        <Text style={styles.textValueinGraph}>{assetPersonalValue.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
-                                    <View style={{ height:assetInvestValue/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#EEE8AA" }}>
-                                        <Text style={styles.textValueinGraph}>{assetInvestValue.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
-                                    <View style={{ height:assetLiquidValue/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FFFACD" }}>
-                                        <Text style={styles.textValueinGraph}>{assetLiquidValue.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {/* กรณีที่ค่า หนี้สิน <= สินทรัพย์ ใช้สเกลเดิม */}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
-                                    <View style={{ height: assetPersonalValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end',backgroundColor: "#FFFF00" }}>
-                                        <Text style={styles.textValueinGraph}>{assetPersonalValue.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
-                                    <View style={{ height: assetInvestValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: "#EEE8AA" }}>
-                                        <Text style={styles.textValueinGraph}>{assetInvestValue.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
-                                    <View style={{ height: assetLiquidValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: "#FFFACD" }}>
-                                        <Text style={styles.textValueinGraph}>{assetLiquidValue.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                            </View>
-                            <View style={{ flexDirection: 'column-reverse', marginHorizontal: 20 }}>
-                                {/* กรณีที่ หนี้สิน > สินทรัพย์ ใช้สเกลเดิม*/}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
-                                    <View style={{ height:liabilityShortValues/assetValues*150 , width: 65,flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
-                                        <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
-                                    <View style={{ height:liabilityLongValues/assetValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
-                                        <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {/* กรณีที่ หนี้สิน < สินทรัพย์ ต้องมีการปรับสเกลกราฟใหม่ */}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
-                                    <View style={{ height:liabilityShortValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
-                                        <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
-                                    <View style={{ height:liabilityLongValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
-                                        <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
-                                    </View>
-                                )}
-                                
-                            </View>
-                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 < 150 && (
-                                <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 17.5 }}>
-                                    {assetValues && liabilityLongValues && netWealthValue >= 0 && (
-                                        <View style={{ height: netWealthValue/assetValues*150, width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
-                                            <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
-                                        </View>
-                                    )}
+                        <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
+                            <Text style={styles.textHeaderGraph}>หนี้สิน</Text>
+                            <Text style={styles.textHeaderValueGraph}>{liabilityValues}</Text>
+                            <Text style={styles.textHeaderValueGraph}>{percentageOfLiability()}</Text>
+                        </View>
+                        <View style={{flexDirection:'column',width:100,marginBottom:20}}>
+                            <Text style={styles.textHeaderGraph}>ความมั่งคั่งสุทธิ</Text>
+                            <Text style={styles.textHeaderValueGraph}>{netWealthValue}</Text>
+                            <Text style={styles.textHeaderValueGraph}>{percentageOfNetWealth()}</Text>
+                        </View>
+                    </View>
+                   
+                    <View style={{flexDirection: 'row',borderBottomWidth:1,borderBottomColor:'#D2DBD6'}}>
+                        <View style={{flexDirection:'column-reverse',marginHorizontal:20}}>
+                            
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
+                                <View style={{ height:heightOfAssetPersonal() , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FFFF00" }}>
+                                    <Text style={styles.textValueinGraph}>{assetPersonalValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
+                                <View style={{ height:heightOfAssetInvest() , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#EEE8AA" }}>
+                                    <Text style={styles.textValueinGraph}>{assetInvestValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
+                                <View style={{ height:heightOfAssetLiquid() , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FFFACD" }}>
+                                    <Text style={styles.textValueinGraph}>{assetLiquidValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {/* กรณีที่ค่า หนี้สิน <= สินทรัพย์ ใช้สเกลเดิม */}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height: assetPersonalValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end',backgroundColor: "#FFFF00" }}>
+                                    <Text style={styles.textValueinGraph}>{assetPersonalValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height: assetInvestValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: "#EEE8AA" }}>
+                                    <Text style={styles.textValueinGraph}>{assetInvestValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height: assetLiquidValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: "#FFFACD" }}>
+                                    <Text style={styles.textValueinGraph}>{assetLiquidValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                        </View>
+                        <View style={{ flexDirection: 'column-reverse', marginHorizontal: 20 }}>
+                            
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height:liabilityShortValues/assetValues*150 , width: 65,flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height:liabilityLongValues/assetValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
+                                <View style={{ height:liabilityShortValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
                                 </View>
                             )}
                             {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
-                                <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 50 }}>
-                                    {assetValues && liabilityLongValues && netWealthValue >= 0 && (
-                                        <View style={{ height: netWealthValue/assetValues*150, width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
-                                            <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
-                                        </View>
-                                    )}
+                                <View style={{ height:liabilityLongValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
                                 </View>
                             )}
-                           
+
+                            {assetValues == 0 && liabilityShortValues + liabilityLongValues > 0 && (
+                                <View style={{ height:liabilityShortValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {assetValues == 0 && liabilityShortValues + liabilityLongValues > 0 && (
+                                <View style={{ height:liabilityLongValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                                
                         </View>
-                        {netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150 && (
-                            <View style={{ flexDirection: 'column-reverse', marginLeft: 210 }}>
-                                {assetValues && liabilityLongValues && netWealthValue && (
-                                    <View style={{ height: -netWealthValue/liabilityValues*150, width: 65,flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
-                                        <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
+                        
+                        {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 < 150 && (
+                            <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 17.5 }}>
+                                {netWealthValue >= 0 && (
+                                    <View style={{ height: netWealthValue/assetValues*150, width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                        <Text style={styles.textValueinGraph}>{netWealthValue}</Text>
                                     </View>
                                 )}
                             </View>
                         )}
-                        {netWealthValue < 0 && -netWealthValue/assetValues*150 > 150 && (
-                            <View style={{ flexDirection: 'column-reverse',paddingHorizontal:50,marginLeft: 210 }}>
-                                {assetValues && liabilityLongValues && netWealthValue && (
-                                    <View style={{ height: -netWealthValue/liabilityValues*150, width: 65, flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                        {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
+                            <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 50 }}>
+                                {netWealthValue >= 0 && (
+                                    <View style={{ height: netWealthValue/assetValues*150, width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
                                         <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
                                     </View>
                                 )}
                             </View>
-                        )}
+                        )}   
+                    </View>
+                    {netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150 && (
+                        <View style={{ flexDirection: 'column-reverse', marginLeft: 210 }}>
+                            <View style={{ height: -netWealthValue/liabilityValues*150, width: 65,flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
+                            </View>
+                        </View>
+                    )}
+                    {netWealthValue < 0 && -netWealthValue/assetValues*150 > 150 && (
+                        <View style={{ flexDirection: 'column-reverse',paddingHorizontal:50,marginLeft: 210 }}>
+                            <View style={{ height: -netWealthValue/liabilityValues*150, width: 65, flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
+                            </View>
+                        </View>
+                    )}
+                </View>
+                <View style={{flex:0.5,marginTop:100,flexDirection:'row',justifyContent:'center'}}>
+                    <View style={{flex:0.25,flexDirection: 'column',justifyContent:'center',alignItems: 'center'}}>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFACD'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#EEE8AA'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFF00'}}></View>
                     </View>
 
-                    
-                )}
-                {assetValues && liabilityValues && assetLiquidValue && assetInvestValue && assetPersonalValue && liabilityShortValues && liabilityShortValues &&(
-                    <View style={{flex:0.5,marginTop:100,flexDirection:'row',justifyContent:'center'}}>
-                        <View style={{flex:0.25,flexDirection: 'column',justifyContent:'center',alignItems: 'center'}}>
-                            <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFACD'}}></View>
-                            <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#EEE8AA'}}></View>
-                            <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFF00'}}></View>
-                        </View>
-
-                        <View style={{flexflexDirection: 'column',justifyContent:'center',marginHorizontal:8}}>
-                            <Text style={styles.textDetail}>สินทรัพย์สภาพคล่อง ({(assetLiquidValue/assetValues*100).toFixed(2)}%)</Text>
-                            <Text style={styles.textDetail}>สินทรัพย์ลงทุน ({(assetInvestValue/assetValues*100).toFixed(2)}%)</Text>
-                            <Text style={styles.textDetail}>สินทรัพยส่วนตัว ({(assetPersonalValue/assetValues*100).toFixed(2)}%)</Text>
-                        </View>
-                        <View style={{flex:0.25,flexDirection: 'column',justifyContent: 'center',alignItems: 'center'}}>
-                            <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FF0000'}}></View>
-                            <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FF8C00'}}></View>
-                            <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#B3DBD8'}}></View>
-                        </View>
-                        <View style={{flexDirection: 'column',justifyContent:'center',marginHorizontal:8}}>
-                            <Text style={styles.textDetail}>หนี้สินระยะสั้น ({(liabilityShortValues/assetValues*100).toFixed(2)}%)</Text>
-                            <Text style={styles.textDetail}>หนี้สินระยะยาว ({(liabilityLongValues/assetValues*100).toFixed(2)}%)</Text>
-                            <Text style={styles.textDetail}>ความมั่งคั่งสุทธิ ({(netWealthValue/assetValues*100).toFixed(2)}%)</Text>
-                        </View>
-                    </View> 
-                )}
+                    <View style={{flexflexDirection: 'column',justifyContent:'center',marginHorizontal:8}}>
+                        <Text style={styles.textDetail}>สินทรัพย์สภาพคล่อง {percentageOfAssetLiquid()}</Text>
+                        <Text style={styles.textDetail}>สินทรัพย์ลงทุน {percentageOfAssetInvest()}</Text>
+                        <Text style={styles.textDetail}>สินทรัพยส่วนตัว {percentageOfAssetPersonal()}</Text>
+                    </View>
+                    <View style={{flex:0.25,flexDirection: 'column',justifyContent: 'center',alignItems: 'center'}}>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FF0000'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FF8C00'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#B3DBD8'}}></View>
+                    </View>
+                    <View style={{flexDirection: 'column',justifyContent:'center',marginHorizontal:8}}>
+                        <Text style={styles.textDetail}>หนี้สินระยะสั้น {percentageOfLiabilityShort()}</Text>
+                        <Text style={styles.textDetail}>หนี้สินระยะยาว {percentageOfLiabilityLong()}</Text>
+                        <Text style={styles.textDetail}>ความมั่งคั่งสุทธิ {percentageOfNetWealth()}</Text>
+                    </View>
+                </View> 
             </View>
-            
         )
     }
 
