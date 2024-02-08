@@ -34,7 +34,10 @@ export const FinancialScreen = ({navigation})=>{
                 <View style={{flex:2, paddingHorizontal:5}}>
                     <View style={{flex:1}}></View>
                     <View style={{flex:1, borderTopWidth:1, borderColor:'#D2DBD6'}}>
-                        <TouchableOpacity style={{flex:1, padding:5}}>
+                        <TouchableOpacity style={{flex:1, padding:5}}
+                            onPress={()=>{
+                                navigation.navigate('IncomeAndExpensesScreen')
+                            }}>
                             <Text style={[styles.bodyText,{flex:1, textAlign:'right'}]}>{"แสดงรายละเอียดเพิ่มเติม  >"}</Text>
                         </TouchableOpacity>
                     </View>

@@ -1,5 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
+import uuid from 'react-native-uuid';
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -530,9 +531,10 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
 }
 
 export const addTransaction = (userUID, itemData, input, selectedDate) => {
-    // ตรวจสอบว่าค่า value ไม่เป็น 0
+    const transactionId = uuid.v4();;
     if (input.value !== 0) {
         const newTransaction = {
+            transactionId: transactionId,
             transactionType: itemData.transactionType,
             category: itemData.category,
             subCategory: itemData.subCategory,
@@ -626,4 +628,104 @@ export const  retrieveDataLiability = (userUID)=>{
             return liabilityData
         }
     })
+}
+
+export const  retrieveSelectedDataIncomeAndExp = (userUID, selectedDate)=>{
+    const IncomeAndExpensestData = []
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.date == selectedDate){
+                    if(element.transactionType == 'รายได้'){
+                        IncomeAndExpensestData.push(element)
+                    }
+                    if(element.transactionType == 'ค่าใช้จ่าย'){
+                        IncomeAndExpensestData.push(element)
+                    }
+                }
+            });
+
+            return IncomeAndExpensestData
+        }
+    })
+}
+
+export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
+    const IncomeAndExpensestData = {
+        income:[],
+        expenses:[],
+    }
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.transactionType == 'รายได้'){
+                    IncomeAndExpensestData.income.push(element)
+                }
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                    IncomeAndExpensestData.expenses.push(element)
+                }
+            });
+
+            return IncomeAndExpensestData
+        }
+    })
+}
+
+export const editTransaction = (userUID, itemData, input, success)=>{
+    
+    const docRef = firestore().collection('financials').doc(userUID);
+
+    docRef.get()
+    .then((doc) => {
+        if (doc.exists) {
+            const oldData = doc.data();
+            let transactions = oldData.transactions;
+
+            // ทำการแก้ไขข้อมูลที่ต้องการ
+            // ในตัวอย่างนี้เราจะแก้ไขค่า detail และ value ของ transaction ที่มี index เท่ากับ 0
+            transactions.forEach((element)=>{
+                if(itemData.transactionId == element.transactionId){
+                    element.detail = input.detail
+                    element.value = input.value
+                }
+            });
+
+            // สร้างออบเจกต์ที่มี key เป็น transactions และ value เป็นอาร์เรย์ transactions ที่แก้ไขแล้ว
+            const updatedData = {
+                transactions: transactions
+            };
+
+            // ทำการอัปเดตข้อมูลใน Firestore
+            return docRef.update(updatedData)
+                .then(() => {
+                    success()
+                })
+                .catch((error) => {
+                    console.error("Error updating document: ", error);
+                    throw error;
+                });
+        } else {
+            console.error("No such document!");
+            throw new Error("No such document!");
+        }
+    })
+    .catch((error) => {
+        console.error("Error getting document:", error);
+        throw error;
+    });
+
 }
