@@ -47,6 +47,18 @@ export const AddCategoryScreen = ({route, navigation})=>{
     const handleSubmitItem = () => {
         // ทำการนำข้อมูลไปยังหน้าถัดไปเมื่อกดปุ่ม บันทึกข้อมูล
         dispatch(setItemPhotoURL(""))
+        /*if (transactionTypeItem === "รายได้") {
+            navigation.navigate('CategorySelectionScreen');
+        }
+        if (transactionTypeItem === "ค่าใช้จ่าย") {
+            navigation.navigate('CategoryExpensesSelectionScreen');
+        }
+        if (transactionTypeItem === "สินทรัพย์") {
+            navigation.navigate('CategoryAssetSelectionScreen');
+        }
+        if (transactionTypeItem === "หนี้สิน") {
+            navigation.navigate('CategoryLiabilitySelectionScreen');
+        }*/
         navigation.navigate('FinancialScreen');
     };
 
@@ -77,18 +89,6 @@ export const AddCategoryScreen = ({route, navigation})=>{
                     <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
                         onPress={()=>{
                             addDataItem();
-                            if (transactionTypeItem === "รายได้") {
-                                navigation.navigate('CategorySelectionScreen');
-                            }
-                            if (transactionTypeItem === "ค่าใช้จ่าย") {
-                                navigation.navigate('CategoryExpensesSelectionScreen');
-                            }
-                            if (transactionTypeItem === "สินทรัพย์") {
-                                navigation.navigate('CategoryAssetSelectionScreen');
-                            }
-                            if (transactionTypeItem === "หนี้สิน") {
-                                navigation.navigate('CategoryLiabilitySelectionScreen');
-                            }
                         }}
                     >
                         <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
