@@ -309,7 +309,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         console.log(typeof assetValues);
         return(
             <View style ={{flex:1}}>
-                <View style={{flex:1,backgroundColor:"#fffffA",marginTop:25,alignItems:'center'}}>
+                <View style={{flex:1,backgroundColor:"#fffffA",marginTop:25,alignItems:'center', marginHorizontal:25}}>
                     <View style={{flexDirection:'row'}}>
                         <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
                             <Text style={styles.textHeaderGraph}>สินทรัพย์</Text>
@@ -328,7 +328,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                         </View>
                     </View>
                    
-                    <View style={{flexDirection: 'row',borderBottomWidth:1,borderBottomColor:'#D2DBD6'}}>
+                    <View style={{flexDirection: 'row',borderBottomColor:'#D2DBD6', marginLeft:(assetValues == 0) && (liabilityValues > 0) ? 130 : 0, width:'100%'}}>
                         <View style={{flexDirection:'column-reverse',marginHorizontal:20}}>
                             
                             {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
@@ -363,6 +363,8 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                                 </View>
                             )}
                         </View>
+                        
+                        
                         <View style={{ flexDirection: 'column-reverse', marginHorizontal: 20 }}>
                             
                             {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
@@ -397,8 +399,8 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                                     <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
                                 </View>
                             )}
-                                
                         </View>
+                        
                         
                         {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 < 150 && (
                             <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 17.5 }}>
@@ -419,6 +421,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                             </View>
                         )}   
                     </View>
+                    <View style={{borderTopWidth:assetValues == 0 && liabilityValues == 0 ? 0 : 1, width:'100%'}}></View>
                     {netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150 && (
                         <View style={{ flexDirection: 'column-reverse', marginLeft: 210 }}>
                             <View style={{ height: -netWealthValue/liabilityValues*150, width: 65,flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
@@ -434,7 +437,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                         </View>
                     )}
                 </View>
-                <View style={{flex:0.5,marginTop:100,flexDirection:'row',justifyContent:'center'}}>
+                <View style={{flex:0.5,marginTop:120,flexDirection:'row',justifyContent:'center'}}>
                     <View style={{flex:0.25,flexDirection: 'column',justifyContent:'center',alignItems: 'center'}}>
                         <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFACD'}}></View>
                         <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#EEE8AA'}}></View>
