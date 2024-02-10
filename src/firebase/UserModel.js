@@ -754,3 +754,22 @@ export const editTransaction = (userUID, itemData, input, success)=>{
     });
 
 }
+
+export const RemoveTransaction = (userUID, itemData, success) => {
+    console.log(userUID)
+    console.log(itemData)
+    return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .update({
+            transactions: firestore.FieldValue.arrayRemove(itemData)
+        })
+        .then(() => {
+            console.log("RemoveTransaction successfully!");
+            success()
+        })
+        .catch((error) => {
+            console.error("Error RemoveTransaction:", error);
+            throw error;
+        });
+}
