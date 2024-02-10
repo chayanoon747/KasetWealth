@@ -2,7 +2,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Alert} from "react-nat
 import { ScrollView } from "react-native";
 import { TextInput } from "react-native-paper";
 import { Shadow } from "react-native-shadow-2";
-import { addTransaction, editTransaction } from "../../firebase/UserModel";
+import { addTransaction, editTransaction, RemoveTransaction } from "../../firebase/UserModel";
 import { useSelector, useDispatch} from 'react-redux'
 import { useState, useEffect } from "react";
 
@@ -59,9 +59,9 @@ export const DetailScreen = ({navigation})=>{
              }
          }   
      }
-
-     
- 
+     const handleRemoveTransaction = ()=>{
+        RemoveTransaction(userUID,itemData, success)
+     }
      
      
      return(
@@ -113,7 +113,7 @@ export const DetailScreen = ({navigation})=>{
              <View style={{height:70, justifyContent:'center', paddingHorizontal:3}}>
                  <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#ff0000'} offset={[2, 4]}>
                      <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#ff0000', backgroundColor:'#ffffff'}}
-                         onPress={()=>{}}
+                         onPress={handleRemoveTransaction}
                      >
                          <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#ff0000', fontSize:22}}>ลบรายการ</Text>
                      </TouchableOpacity>
