@@ -1,17 +1,16 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, View, Text, TouchableOpacity } from "react-native"
-import { OverviewScreen } from '../screens/main/OverviewScreen';
-import { FinancialScreen } from '../screens/main/FinancialScreen';
 import { PetScreen } from '../screens/main/PetScreen';
 import { MoreScreen } from '../screens/main/MoreScreen';
 import { IncomeStackNav } from './IncomeStackNav';
+import { OverviewStackNav } from './OverviewStackNav';
 
 
 export const BottomTabNav = ({navigation})=>{
     const BottomTab = createBottomTabNavigator()
     return(
         <BottomTab.Navigator
-            initialRouteName='OverviewScreen'
+            initialRouteName='OverviewStackNav'
             screenOptions={{
                 headerStyle:{
                     height:80,
@@ -28,17 +27,9 @@ export const BottomTabNav = ({navigation})=>{
                 },
             }}
         >
-            <BottomTab.Screen name="Overview" component={OverviewScreen} 
+            <BottomTab.Screen name="OverviewStackNav" component={OverviewStackNav} 
             options={{
                 title:'Overview',
-                headerLeft:()=>{
-                    return(
-                        <TouchableOpacity onPress={() => navigation.navigate('More')}>
-                            <Image source={require('../assets/profile.png')} style={{ width: 32, height: 32, marginLeft:'10%'}} />
-                        </TouchableOpacity>
-                    )
-                    
-                },
                 tabBarIcon:({focused, color, size})=>{
                     const iconSource = focused ? require('../assets/overviewIconFocus.png') : require('../assets/overviewIcon.png');
                     return(
@@ -50,6 +41,7 @@ export const BottomTabNav = ({navigation})=>{
                     <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Overview</Text>
                   )
                 },
+                headerShown:false
             }}
             />
 

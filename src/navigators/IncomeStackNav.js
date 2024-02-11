@@ -19,6 +19,7 @@ import { CategoryAssetSelectionScreen } from "../screens/main/Asset/CategoryAsse
 import { CategoryLiabilitySelectionScreen } from "../screens/main/Liability/CategoryLiabilitySelectionScreen";
 import { IncomeAndExpensesScreen } from '../screens/main/IncomeAndExpensesScreen';
 import { DetailScreen } from '../screens/main/DetailScreen';
+import { OverviewGuideScreen } from '../screens/main/OverviewGuideScreen';
 
 export const IncomeStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
@@ -201,7 +202,19 @@ export const IncomeStackNav = ({navigation})=>{
                 <TouchableOpacity style={{width:35, marginLeft:15}}
                   onPress={()=>{
                     dispatch(setSelectedDate(""))
-                    navigation.navigate('CategorySelectionScreen');
+                    if (transactionTypeItem === "รายได้") {
+                      navigation.navigate('CategorySelectionScreen');
+                    }
+                    if (transactionTypeItem === "ค่าใช้จ่าย") {
+                      navigation.navigate('CategoryExpensesSelectionScreen');
+                    }
+                    if (transactionTypeItem === "สินทรัพย์") {
+                      navigation.navigate('CategoryAssetSelectionScreen');
+                    }
+                    if (transactionTypeItem === "หนี้สิน") {
+                      navigation.navigate('CategoryLiabilitySelectionScreen');
+                    }
+                    
                   }}
                 >
                   <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -339,6 +352,9 @@ export const IncomeStackNav = ({navigation})=>{
           )
         }}
       />
+
+      
+
 
       
     </Stack.Navigator>
