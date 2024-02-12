@@ -18,21 +18,29 @@ export const CalendarScreen = ({navigation})=>{
    
   return (
     <View style={styles.container}>
-      <Calendar
-        onDayPress = {onDayPress}
-        markedDates = {{
-          [localSelectedDate]: {selected: true, selectedColor: '#0ABAB5'},
-        }}
-      />
+      <View style={styles.calendarContainer}>
+        <Calendar
+          onDayPress={onDayPress}
+          markedDates={{
+            [localSelectedDate]: { selected: true, selectedColor: '#0ABAB5' },
+          }}
+        />
+      </View>
     </View>
   );
-}
+};
  
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 50,
+    backgroundColor: '#FFFFFA',
+    paddingTop: 35,
     paddingHorizontal: 50,
+  },
+  calendarContainer: {
+    borderWidth: 1, 
+    borderColor: 'black', 
+    borderRadius: 8, 
+    overflow: 'hidden', 
   },
 });
