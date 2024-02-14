@@ -14,36 +14,51 @@ export const AddCategoryScreen = ({route, navigation})=>{
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
-    //
+    
     const transactionTypeItem = useSelector((state)=>state.variables.transactionType)
-    console.log(transactionTypeItem);
-    //
+    //console.log(transactionTypeItem);
+    
     const categoryItem = useSelector((state)=>state.variables.category)
-    console.log(categoryItem);
+    //console.log(categoryItem);
 
     const photoURLItem = useSelector((state)=>state.variables.photoURL)
-    console.log(photoURLItem);
+    //console.log(photoURLItem);
 
     const [newCategory, setNewCategory] = useState({
         transactionType: transactionTypeItem,
         category: categoryItem,
-        subCategory: "empty",
+        subCategory: 'empty',
         photoURL: photoURLItem
     });
 
     const addDataItem = ()=>{
         if(photoURLItem){
-            addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem);
-            handleSubmitItem();
+            if(newCategory.subCategory != 'empty'){
+                addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem);
+                handleSubmitItem();
+            }else{
+                Alert.alert("กรุณาระบุชื่อ")
+            }
         }else{
-            Alert.alert("Please enter a photo")
+            Alert.alert("กรุณาเลือกรูปภาพ")
         }
-        
     }
 
     const handleSubmitItem = () => {
         // ทำการนำข้อมูลไปยังหน้าถัดไปเมื่อกดปุ่ม บันทึกข้อมูล
         dispatch(setItemPhotoURL(""))
+        /*if (transactionTypeItem === "รายได้") {
+            navigation.navigate('CategorySelectionScreen');
+        }
+        if (transactionTypeItem === "ค่าใช้จ่าย") {
+            navigation.navigate('CategoryExpensesSelectionScreen');
+        }
+        if (transactionTypeItem === "สินทรัพย์") {
+            navigation.navigate('CategoryAssetSelectionScreen');
+        }
+        if (transactionTypeItem === "หนี้สิน") {
+            navigation.navigate('CategoryLiabilitySelectionScreen');
+        }*/
         navigation.navigate('FinancialScreen');
     };
 

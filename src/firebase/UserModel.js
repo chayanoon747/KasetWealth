@@ -1,4 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
+import { Alert } from 'react-native';
+import uuid from 'react-native-uuid';
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -76,11 +78,332 @@ export const addUser = (user, profile, success, unsuccess)=>{
             subCategory: "เพิ่ม",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&",
         },
+        // Expensese
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "อาหาร",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433686733398036/pajamas_food.png?ex=65d4b748&is=65c24248&hm=dbe58d3297445bbe1e8ea433dea80ab5eae95b78a7483011a13cff9fc6f542c1&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "สาธารณูป\n      โภค",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433688264183808/tdesign_bill.png?ex=65d4b748&is=65c24248&hm=345382473e90edbd9ac57ab316c1d483b73b31af50a92d246921d78369f7600e&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "ค่าเดินทาง",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433688033501274/mdi_oil.png?ex=65d4b748&is=65c24248&hm=5385b40eaa6ff3ef399210c5a046799b0856f9473bd9650c4dd872d56e42b5d5&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "เสริมสวย",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433687832166491/mingcute_hair-2-line.png?ex=65d4b748&is=65c24248&hm=7b093bb8405872a00092166eafe208353ce5d9f540588458e1417af928751e04&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "ค่ารักษาพยาบาล",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433687630970921/mdi_hospital.png?ex=65d4b748&is=65c24248&hm=2792be563323ff9058a12cd8395d5f4111232f7678e227fccac25161fa6dcefc&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "ชำระหนี้",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433687421386763/iconoir_hand-cash.png?ex=65d4b748&is=65c24248&hm=e9574c992de862ad7c9d1f5e9880797f1c2465317d959e93f0c9a3213fff4c24&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "ภาษี",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433687186509854/memory_cash.png?ex=65d4b748&is=65c24248&hm=3445ef97bb8e3eddcefa380c2656965939c3d5285a87ea9ffb3815f0a60c7be6&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "ของใช้ในบ้าน",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433686972604436/Mask_group.png?ex=65d4b748&is=65c24248&hm=9f0cd365a71b9acd27f3f42e5f176b60e09571753fd5aba03fd54e32f4d76846&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายผันแปร",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "ค่าผ่อน/\nเช่าบ้าน",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433758506459166/mdi_cash-plus.png?ex=65d4b759&is=65c24259&hm=03a60133bfc4cb50a639e225539af4557b5c7dd2650b08d7e593c4f2a91c165e&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "ค่าผ่อนรถ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433758506459166/mdi_cash-plus.png?ex=65d4b759&is=65c24259&hm=03a60133bfc4cb50a639e225539af4557b5c7dd2650b08d7e593c4f2a91c165e&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "ค่าผ่อนสินค้า",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433758128967740/mdi_cash-clock.png?ex=65d4b759&is=65c24259&hm=5b9a8ae719df1b21a4eb9e98a2cc9c3d5de51ced3d1bf51a1990f4c2bbeb55d4&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "    ค่าผ่อน\nหนี้นอกระบบ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757881376768/mdi_cash-remove.png?ex=65d4b759&is=65c24259&hm=de1ac939e335084ea57035bd68f3b9878f7747c8cc2d335aad5b4a241f03ad82&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "  ค่าผ่อน\n   สินเชื้อ\nส่วนบุคคล",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757579509860/mdi_cash-fast.png?ex=65d4b759&is=65c24259&hm=3d4e0f10efbbb7d285f25f3de49bbc990010b31de407a196215502390d57cf4e&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "   ค่าผ่อน\nหนี้กยศ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757323403294/mdi_cash-lock.png?ex=65d4b759&is=65c24259&hm=d0952ae3fb64a13d98c048516f9e78ff757ea4ad4656aaca4cc80a458f703039&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "    ค่าผ่อน\nหนี้สหกรณ์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757097033748/mdi_cash-refund.png?ex=65d4b758&is=65c24258&hm=4a935f444c51d5231c50eca4f1809280c41ae878fd815ce1dedd9f390d9e5466&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "ค่าเบี้ยประกัน",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433758506459166/mdi_cash-plus.png?ex=65d4b759&is=65c24259&hm=03a60133bfc4cb50a639e225539af4557b5c7dd2650b08d7e593c4f2a91c165e&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายคงที่",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายออมและลงทุน",
+            subCategory: "ประกันสังคม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815829741578/streamline_insurance-hand-solid.png?ex=65d4b766&is=65c24266&hm=ea2f2d5f60f2870b787e1d8f89532f2ed83c08e55c477abb8d3ead9e38d59b31&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายออมและลงทุน",
+            subCategory: "สวัสดิการ\n การออม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815490273310/streamline_give-gift-solid.png?ex=65d4b766&is=65c24266&hm=db0247e222caf1735bafcbb895512f568843be4be15c3eef5ba93da09006e380&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายออมและลงทุน",
+            subCategory: "เงินออม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815284490250/tdesign_saving-pot.png?ex=65d4b766&is=65c24266&hm=e8e265bd5d90a8eb205b4e21b6b25f096bae4a3c2572b40c0a7001452686a799&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายออมและลงทุน",
+            subCategory: "เงินลงทุน",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815032954880/streamline_investment-selection-solid.png?ex=65d4b766&is=65c24266&hm=c4f2a8a5180c7cd11405f8d1e162384ce88831450107895477a0835f4a32b4ab&"
+        },
+        {
+            transactionType:"ค่าใช้จ่าย",
+            category: "ค่าใช้จ่ายออมและลงทุน",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        //Asset
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์สภาพคล่อง",
             subCategory: "เงินสด",
-            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435332683137035/mdi_cash.png?ex=65d4b8d0&is=65c243d0&hm=9eb5de5f54ff2be9653c6809411e60d81d772fdf5666b2e664b4fa95bfb7a3af&",
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์สภาพคล่อง",
+            subCategory: "  เงินฝาก\nออมทรัพย์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435332439740456/tabler_cash.png?ex=65d4b8d0&is=65c243d0&hm=03ace3c90240752d7692e5d018962e9b9fdb17dd90dad7cdfe39a4e3a77f01fe&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์สภาพคล่อง",
+            subCategory: "      เงิน\nฝากประจำ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435332146143322/tdesign_money.png?ex=65d4b8d0&is=65c243d0&hm=3a7e0437b26fd94039ee446e9905138416252d722022a039714fea4645af610d&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์สภาพคล่อง",
+            subCategory: "    เงินฝาก\nกระแสรายวัน",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435331940884500/bi_cash-coin.png?ex=65d4b8d0&is=65c243d0&hm=780234dd2fc5a70d6e7d6751637e3fbd6b011967fd06c2db7ba293cfada8dbd7&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์สภาพคล่อง",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "สลากออม\n    ทรัพย์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435375917891624/mdi_cash-100.png?ex=65d4b8da&is=65c243da&hm=e4dfb78aa18f5641893d7f09d64bfa5a6551104b883be2da1c92c24c8c1173f1&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "หุ้นสหกรณ์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435375452459088/Vector.png?ex=65d4b8da&is=65c243da&hm=1b0190d5bf60412ded15f483d1c6cb7155ddfac93051c92d028577a4bea5b956&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "กองทุนออม\n   เพื่อการ\n   เกษียณ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435375175761930/streamline_investment-selection-solid.png?ex=65d4b8da&is=65c243da&hm=458eba1bdaff2b8a2e28c5f5d0991432a63ea22262d1e6021a6fc7d58b5dee5f&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "ตราสารหนี้",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435374533902448/mdi_cash-edit.png?ex=65d4b8da&is=65c243da&hm=077a95ef525f4a8f750676188edaa2afac2443585fc9981d94df966c7906404b&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "กองทุนรวม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435375452459088/Vector.png?ex=65d4b8da&is=65c243da&hm=1b0190d5bf60412ded15f483d1c6cb7155ddfac93051c92d028577a4bea5b956&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "หุ้นสามัญ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435374265344040/mingcute_stock-line.png?ex=65d4b8da&is=65c243da&hm=fa89ddd4ae9b6d6473881d3548755b4ec8763cb517fc2df3b54fc77a9fd295f9&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "  อสังหาฯ\n(ขาย/เช่า)",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435373606969344/mdi_house-city-outline.png?ex=65d4b8da&is=65c243da&hm=67d56b57ff0f09fc338ef64c4ebc97b5d232f4c123c34c2732ad8abe8518ab68&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: " กรมธรรม์\nประกันชีวิต",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435373363826688/LifeInsurance.png?ex=65d4b8da&is=65c243da&hm=f4ab29aac1415a4b367204e46aa5c4a910240380cf9d26dd9170743e90bd7ee2&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ลงทุน",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ส่วนตัว",
+            subCategory: "  อสังหาฯ\n(อยู่อาศัย)",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435410042888202/mdi_house-city-outline.png?ex=65d4b8e3&is=65c243e3&hm=9887b716de3a7e663dd299a0226e2e2f5fe4bfd613050800da0900ad16956b1c&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ส่วนตัว",
+            subCategory: "รถ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435409787158599/maki_car.png?ex=65d4b8e3&is=65c243e3&hm=a797a669ac76ba800c877fdf265d15fd0be5e50c2547bf6afb211d33836b6d33&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ส่วนตัว",
+            subCategory: "เครื่องประดับ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435409505878016/map_jewelry-store.png?ex=65d4b8e2&is=65c243e2&hm=1708923ae17086f96f617bfe9153730f5639a615d91dc845f90838b37f88bd3c&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ส่วนตัว",
+            subCategory: "เครื่องใช้ใน\n      บ้าน",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435409145434143/Mask_group.png?ex=65d4b8e2&is=65c243e2&hm=83df901fab3e6ce0982cbc0214e7feaa8cdc84864a33aa3257d4846606762061&"
+        },
+        {
+            transactionType:"สินทรัพย์",
+            category: "สินทรัพย์ส่วนตัว",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        //Liability
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะสั้น",
+            subCategory: "      หนี้\nนอกระบบ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111718150205/Group.png?ex=65d4ba78&is=65c24578&hm=271ec956bb8f39be8580012b569ac6e479b24f05be4336c6b62600e68ce4ff72&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะสั้น",
+            subCategory: "       หนี้\nบัตรเครดิต",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111479210124/bytesize_creditcard.png?ex=65d4ba78&is=65c24578&hm=b166e1f2f5b81dd0a801533ce66b6d4309794c1c85e2a1fa351bd31fe0fb25a6&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะสั้น",
+            subCategory: "        หนี้\nผ่อนซื้อสินค้า",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111269236776/ProductInstallmentDebt.png?ex=65d4ba78&is=65c24578&hm=c9a52c0f736b8351763fe22454fe9aaef4a99bc5ace250a63131aa4a45fa7416&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะสั้น",
+            subCategory: "หนี้สินจาก\n สินทรัพย์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111059513384/LiabilitiesFromAssets.png?ex=65d4ba78&is=65c24578&hm=fc9c3953721344584f2307a8824a17cf44ed1d754e3a958695eacbd731faa2e8&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะสั้น",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "หนี้ที่อยู่อาศัย",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437146405175436/HousingDebt.png?ex=65d4ba81&is=65c24581&hm=0a736b439ac7c5b262a35874cdbce4eb4acd340514edbebd3e3fb7183e9004bd&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "หนี้รถ",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437146065174579/CarDebt.png?ex=65d4ba80&is=65c24580&hm=b726113bf5583a5f175601f68e91c81c30990c483c77c4eeed933c1aa7b91ddd&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "หนี้สินเชื่อ\nส่วนบุคคล",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437145801072670/PersonalLoanDebt.png?ex=65d4ba80&is=65c24580&hm=4b7922bdac4c790c8b1794c2f0978237a2ff760dc05e32fae1ef36f600549a01&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "หนี้กยศ.",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437145440489553/StudentLLoanFundDebt.png?ex=65d4ba80&is=65c24580&hm=466e56c1ef7ec4b62525bd4878988687cdaaff980959bfb11283458dc67cc2de&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "หนี้สหกรณ์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437145180307526/CooperativeDebt.png?ex=65d4ba80&is=65c24580&hm=540be0f6034037411939a8f9bea2fe38f4b236a44019907e1ad2bca545fabbda&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "หนี้สินจากสินทรัพย์",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437144907816980/LiabilitiesFromAssets.png?ex=65d4ba80&is=65c24580&hm=3ee4571cf4540a3f7a0930af2efb55a76b17f4108f3e201eeb6801bf04a43042&"
+        },
+        {
+            transactionType: "หนี้สิน",
+            category: "หนี้สินระยะยาว",
+            subCategory: "เพิ่ม",
+            photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&"
         }
     ]
     
@@ -149,12 +472,23 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         subCategory: subCategory,
         photoURL: photoURL
     };
-
+    const plusIcon = {
+        transactionType: transactionType,
+        category: category,
+        subCategory: 'เพิ่ม',
+        photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&'
+    }
     return firestore()
         .collection('users')
         .doc(userUID)
         .get()
         .then((doc) => {
+            firestore()
+                .collection('users')
+                .doc(userUID)
+                .update({
+                    categories: firestore.FieldValue.arrayRemove(plusIcon)
+                })
             if (doc.exists) {
                 const existingCategories = doc.data().categories;
 
@@ -165,172 +499,39 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
                     
                 if (!isDuplicate) {
                     // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
+                    return    firestore()
                         .collection('users')
                         .doc(userUID)
                         .update({
                             categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
+                        })
+                        .then (()=>{
+                            return   firestore()
+                                    .collection('users')
+                                    .doc(userUID)
+                                    .update({
+                                        categories: firestore.FieldValue.arrayUnion(plusIcon)
+                                    })
+                        })
                 } else {
                     // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
                     console.log('Duplicate category and subCategory. Cannot add.');
                     Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
+                    return firestore()
+                            .collection('users')
+                            .doc(userUID)
+                            .update({
+                                categories: firestore.FieldValue.arrayUnion(plusIcon)
+                            })
                 }
             } else {
                 console.log("No such document!");
                 return null;
             }
+
         })
         .then(() => {
             console.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
-export const addCategoriesExpenses = (userUID,category, subCategory, photoURL) => {
-    const newCategory = {
-        transactionType: "ค่าใช้จ่าย",
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
-
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
-
-                // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                    
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
-                } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
-                }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            onsole.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
-export const addCategoriesAsset = (userUID,category, subCategory, photoURL) => {
-    const newCategory = {
-        transactionType: "สินทรัพย์",
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
-
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
-
-                // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                    
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
-                } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
-                }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            onsole.log("Category added successfully!");
-        })
-        //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-        .catch((error) => {
-            console.error("Error adding category:", error);
-            throw error;
-        });
-};
-export const addCategoriesLiability = (userUID,category, subCategory, photoURL) => {
-    const newCategory = {
-        transactionType: "หนี้สิน",
-        category: category,
-        subCategory: subCategory,
-        photoURL: photoURL
-    };
-
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existingCategories = doc.data().categories;
-
-                // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
-                    
-                if (!isDuplicate) {
-                    // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
-                    return firestore()
-                        .collection('users')
-                        .doc(userUID)
-                        .update({
-                            categories: firestore.FieldValue.arrayUnion(newCategory)
-                        });
-                } else {
-                    // ถ้ามี object ของ categories ที่มีชื่อซ้ำกันแล้วให้แจ้งเตือนว่าไม่สามารถ add ได้
-                    console.log('Duplicate category and subCategory. Cannot add.');
-                    Alert.alert("มีชื่อซ้ำ ไม่สามารถบันทึกได้")
-                    return null;
-                }
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        })
-        .then(() => {
-            onsole.log("Category added successfully!");
         })
         //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
         .catch((error) => {
@@ -354,31 +555,40 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
         });
 }
 
-export const addTransaction = (userUID, itemData, input, selectedDate)=>{
-    const newTransaction = {
-        transactionType: itemData.transactionType,
-        category: itemData.category,
-        subCategory: itemData.subCategory,
-        photoURL: itemData.photoURL,
-        date: selectedDate,
-        detail: input.detail,
-        value: input.value
-    };
+export const addTransaction = (userUID, itemData, input, selectedDate) => {
+    const transactionId = uuid.v4();;
+    if (input.value !== 0) {
+        const newTransaction = {
+            transactionId: transactionId,
+            transactionType: itemData.transactionType,
+            category: itemData.category,
+            subCategory: itemData.subCategory,
+            photoURL: itemData.photoURL,
+            date: selectedDate,
+            detail: input.detail,
+            value: input.value
+        };
 
-    return firestore()
-    .collection('financials')
-    .doc(userUID)
-    .update({
-        transactions: firestore.FieldValue.arrayUnion(newTransaction)
-    })
-    .then(() => {
-        console.log("Transactions added successfully!");
-    })
-    //กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
-    .catch((error) => {
-        console.error("Error adding transactions:", error);
-        throw error;
-    });
+        return firestore()
+            .collection('financials')
+            .doc(userUID)
+            .update({
+                transactions: firestore.FieldValue.arrayUnion(newTransaction)
+            })
+            .then(() => {
+                console.log("Transactions added successfully!");
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error adding transactions:", error);
+                throw error;
+            });
+    } else {
+        // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
 };
 //ดึง value ทั้งหมด
 export const  retrieveDataAsset = (userUID)=>{
@@ -414,6 +624,8 @@ export const  retrieveDataAsset = (userUID)=>{
     })
 }
 
+
+
 export const  retrieveDataLiability = (userUID)=>{
     const liabilityData = {
         short:[],
@@ -441,4 +653,123 @@ export const  retrieveDataLiability = (userUID)=>{
             return liabilityData
         }
     })
+}
+
+export const  retrieveSelectedDataIncomeAndExp = (userUID, selectedDate)=>{
+    const IncomeAndExpensestData = []
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.date == selectedDate){
+                    if(element.transactionType == 'รายได้'){
+                        IncomeAndExpensestData.push(element)
+                    }
+                    if(element.transactionType == 'ค่าใช้จ่าย'){
+                        IncomeAndExpensestData.push(element)
+                    }
+                }
+            });
+
+            return IncomeAndExpensestData
+        }
+    })
+}
+
+export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
+    const IncomeAndExpensestData = {
+        income:[],
+        expenses:[],
+    }
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.transactionType == 'รายได้'){
+                    IncomeAndExpensestData.income.push(element)
+                }
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                    IncomeAndExpensestData.expenses.push(element)
+                }
+            });
+
+            return IncomeAndExpensestData
+        }
+    })
+}
+
+export const editTransaction = (userUID, itemData, input, success)=>{
+    
+    const docRef = firestore().collection('financials').doc(userUID);
+
+    docRef.get()
+    .then((doc) => {
+        if (doc.exists) {
+            const oldData = doc.data();
+            let transactions = oldData.transactions;
+
+            // ทำการแก้ไขข้อมูลที่ต้องการ
+            // ในตัวอย่างนี้เราจะแก้ไขค่า detail และ value ของ transaction ที่มี index เท่ากับ 0
+            transactions.forEach((element)=>{
+                if(itemData.transactionId == element.transactionId){
+                    element.detail = input.detail
+                    element.value = input.value
+                }
+            });
+
+            // สร้างออบเจกต์ที่มี key เป็น transactions และ value เป็นอาร์เรย์ transactions ที่แก้ไขแล้ว
+            const updatedData = {
+                transactions: transactions
+            };
+
+            // ทำการอัปเดตข้อมูลใน Firestore
+            return docRef.update(updatedData)
+                .then(() => {
+                    success()
+                })
+                .catch((error) => {
+                    console.error("Error updating document: ", error);
+                    throw error;
+                });
+        } else {
+            console.error("No such document!");
+            throw new Error("No such document!");
+        }
+    })
+    .catch((error) => {
+        console.error("Error getting document:", error);
+        throw error;
+    });
+
+}
+
+export const RemoveTransaction = (userUID, itemData, success) => {
+    console.log(userUID)
+    console.log(itemData)
+    return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .update({
+            transactions: firestore.FieldValue.arrayRemove(itemData)
+        })
+        .then(() => {
+            console.log("RemoveTransaction successfully!");
+            success()
+        })
+        .catch((error) => {
+            console.error("Error RemoveTransaction:", error);
+            throw error;
+        });
 }

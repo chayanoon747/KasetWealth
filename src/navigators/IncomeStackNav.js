@@ -14,6 +14,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setEditStatus, setSelectedDate, setSelectedItems } from '../redux/variableSlice';
 import { setItemPhotoURL } from '../redux/variableSlice';
 import { RemoveCategoryIcon } from '../firebase/UserModel';
+import { CategoryExpensesSelectionScreen } from "../screens/main/Expenses/CategoryExpensesSelectionScreen";
+import { CategoryAssetSelectionScreen } from "../screens/main/Asset/CategoryAssetSelectionScreen";
+import { CategoryLiabilitySelectionScreen } from "../screens/main/Liability/CategoryLiabilitySelectionScreen";
+import { IncomeAndExpensesScreen } from '../screens/main/IncomeAndExpensesScreen';
+import { DetailScreen } from '../screens/main/DetailScreen';
 
 export const IncomeStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
@@ -25,6 +30,7 @@ export const IncomeStackNav = ({navigation})=>{
   const user = useSelector((state)=>state.auths);
   const userUID = user[0].uid;
 
+  const transactionTypeItem = useSelector((state)=>state.variables.transactionType)
   const selectedItems = useSelector((state)=>state.variables.selectedItems)
   const selectedDate = useSelector((state)=>state.variables.selectedDate)
   console.log(selectedDate)
@@ -114,6 +120,24 @@ export const IncomeStackNav = ({navigation})=>{
       />
 
       <Stack.Screen
+        name='CategoryExpensesSelectionScreen'
+        component={CategoryExpensesSelectionScreen}
+        options={{headerShown:false}}
+      />
+
+      <Stack.Screen
+        name='CategoryAssetSelectionScreen'
+        component={CategoryAssetSelectionScreen}
+        options={{headerShown:false}}
+      />
+
+      <Stack.Screen
+        name='CategoryLiabilitySelectionScreen'
+        component={CategoryLiabilitySelectionScreen}
+        options={{headerShown:false}}
+      />
+
+      <Stack.Screen
         name='AddCategoryScreen'
         component={AddCategoryScreen}
         options={{ 
@@ -122,7 +146,18 @@ export const IncomeStackNav = ({navigation})=>{
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
                   dispatch(setItemPhotoURL(""))
-                  navigation.navigate('CategorySelectionScreen');
+                  if (transactionTypeItem === "รายได้") {
+                    navigation.navigate('CategorySelectionScreen');
+                  }
+                  if (transactionTypeItem === "ค่าใช้จ่าย") {
+                    navigation.navigate('CategoryExpensesSelectionScreen');
+                  }
+                  if (transactionTypeItem === "สินทรัพย์") {
+                    navigation.navigate('CategoryAssetSelectionScreen');
+                  }
+                  if (transactionTypeItem === "หนี้สิน") {
+                    navigation.navigate('CategoryLiabilitySelectionScreen');
+                  }
                 }}
               >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -185,11 +220,7 @@ export const IncomeStackNav = ({navigation})=>{
               <View style={{flex:1}}>
                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:18, color:'#ffffff',textAlign:'center'}}>{selectedDate ? selectedDate : formattedDate}</Text>
               </View>
-              
-              
             </View>
-            
-            
           )
         }}
       />
@@ -202,7 +233,12 @@ export const IncomeStackNav = ({navigation})=>{
             <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
-                  navigation.navigate('AddInputScreen');
+                  if(transactionTypeItem == ""){
+                    navigation.navigate('IncomeAndExpensesScreen');
+                  }else{
+                    navigation.navigate('AddInputScreen');
+                  }
+                  
                 }}
                >
                 <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -233,6 +269,78 @@ export const IncomeStackNav = ({navigation})=>{
           )
         }}
       />
+
+      <Stack.Screen
+        name='IncomeAndExpensesScreen'
+        component={IncomeAndExpensesScreen}
+        options={{
+          header: () => (
+            <View style={{height:80, backgroundColor:'#0ABAB5'}}>
+              <View style={{flex:1}}>
+
+              </View>
+
+              <View style={{flexDirection: 'row', flex:1}}>
+                <TouchableOpacity style={{width:35, marginLeft:15}}
+                  onPress={()=>{
+                    dispatch(setSelectedDate(""))
+                    navigation.navigate('FinancialScreen');
+                  }}
+                >
+                  <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
+                </TouchableOpacity>
+                <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center'}}>รายได้-ค่าใช้จ่าย</Text>
+
+                <TouchableOpacity style={{marginRight:15}}
+                  onPress={()=>{
+                    navigation.navigate('CalendarScreen')
+                  }}
+                >
+                  <Image source={require('../assets/calendarIcon.png')} width={30} height={30} />
+                </TouchableOpacity>              
+              </View>
+
+              <View style={{flex:1}}>
+   
+              </View>
+            </View>
+          )
+        }}
+      />
+
+      <Stack.Screen
+        name='DetailScreen'
+        component={DetailScreen}
+        options={{
+          header: () => (
+            <View style={{height:80, backgroundColor:'#0ABAB5'}}>
+              <View style={{flex:1}}>
+
+              </View>
+
+              <View style={{flexDirection: 'row', flex:1}}>
+                <TouchableOpacity style={{width:35, marginLeft:15}}
+                  onPress={()=>{
+                    dispatch(setSelectedDate(""))
+                    navigation.navigate('IncomeAndExpensesScreen');
+                  }}
+                >
+                  <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
+                </TouchableOpacity>
+                <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>รายละเอียด</Text>
+
+                     
+              </View>
+
+              <View style={{flex:1}}>
+                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:18, color:'#ffffff',textAlign:'center'}}>{selectedDate ? selectedDate : formattedDate}</Text>
+              </View>
+            </View>
+          )
+        }}
+      />
+
+      
     </Stack.Navigator>
   )
 }

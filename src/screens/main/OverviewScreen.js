@@ -4,6 +4,8 @@ import { AssetLiabilityDetailScreen } from "./AssetLiabilityDetailScreen";
 import { useDispatch } from "react-redux";
 import { setItemTransactionType } from "../../redux/variableSlice";
 import { useSelector } from 'react-redux'
+import RNSpeedometer from 'react-native-speedometer';
+
 
 export const OverviewScreen = ()=>{
     const user = useSelector((state)=>state.auths);
@@ -13,19 +15,49 @@ export const OverviewScreen = ()=>{
     return(
         <SafeAreaView style={{flex:1}}>
             <ScrollView style={{flex:1, padding:10}}>
-                <View style={{height:200, borderRadius:16,borderWidth:1, borderColor:'#A9A9A9', marginBottom:10}}>
-                    <TouchableOpacity style={{height:50, borderTopLeftRadius:15, borderTopRightRadius:15, justifyContent:'center', paddingLeft:20, backgroundColor:'#B3DBD8'}}>
-                        <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:14, color:'#000000'}}>สุขภาพทางการเงิน</Text>
-                        
+                <View style={{height:295, borderRadius:16,borderWidth:1,backgroundColor:'#FFFFFA', borderColor:'#A9A9A9', marginBottom:10}}>
+                    <TouchableOpacity style={{height:65, borderTopLeftRadius:15, borderTopRightRadius:15, justifyContent:'center', paddingLeft:20, backgroundColor:'#B3DBD8'}}>
+                        <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:16, color:'#000000'}}>สุขภาพทางการเงิน</Text>  
                     </TouchableOpacity>
-                    <View style={{overflow:'hidden',height:148, backgroundColor:'#FFFFFA', borderBottomLeftRadius:15, borderBottomRightRadius:15}}>
-                        <Text>AAAAAAA</Text>
-                        <Text>AAAAAA</Text>
-                        <Text>AAAAAA</Text>
-                        <Text>AAAAAA</Text>
-                        <Text>AAAAAA</Text>
-                        <Text>AAAAAA</Text>
-                        <Text>AAAAAA</Text>
+                    <View style={{overflow:'hidden',borderColor:'#cfd0cf',marginHorizontal:10}}>
+                        <View style={{height:10}}></View>
+                        <View style={{justifyContent:'center',alignContent:'center',flexDirection:'row'}}>
+                            <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
+                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
+                                {/* GAUGE  */}
+                                <RNSpeedometer value={5.5} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                    {name:'1',labelColor:'#FFFFFA',activeBarColor:'#80011f'},
+                                    {name:'2',labelColor:'#FFFFFA',activeBarColor:'#cf1020'},
+                                    {name:'3',labelColor:'#FFFFFA',activeBarColor:'#fb0100'},
+                                    {name:'4',labelColor:'#FFFFFA',activeBarColor:'#e34928'},
+                                    {name:'5',labelColor:'#FFFFFA',activeBarColor:'#fe7e00'},
+                                    {name:'6',labelColor:'#FFFFFA',activeBarColor:'#fec30b'},
+                                    {name:'7',labelColor:'#FFFFFA',activeBarColor:'#ffe135'},
+                                    {name:'8',labelColor:'#FFFFFA',activeBarColor:'#dffe00'},
+                                    {name:'9',labelColor:'#FFFFFA',activeBarColor:'#a4c739'},
+                                    {name:'10',labelColor:'#FFFFFA',activeBarColor:'#76ab56'}]}
+                                    />
+                                <View style={{height:30}}></View>
+                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>สุขภาพการเงิน</Text>
+                            </View>
+                            <View style={{width:30}}></View>
+                            <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
+                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
+                                {/* GAUGE  */}
+                                <RNSpeedometer value={2} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                    {name:'1',labelColor:'#FFFFFA',activeBarColor:'#08f26e'},
+                                    {name:'2',labelColor:'#FFFFFA',activeBarColor:'#06c258'},
+                                    {name:'3',labelColor:'#FFFFFA',activeBarColor:'#06a94d'}]}
+                                    />
+                                <View style={{height:30}}></View>
+                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>ความน่าเชื่อถือ</Text>
+                            </View>
+                        </View>
+                        
+                        <View style={{height:20}}></View>
+                        
+                        <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
+                        <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์</Text>
                         
                     </View>
                 </View>

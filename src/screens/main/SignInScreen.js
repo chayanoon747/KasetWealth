@@ -101,7 +101,9 @@ export const SignInScreen = ({ navigation })=>{
                     </TextInput>
 
                     <TouchableOpacity style={{height:20, alignItems:'flex-end', marginBottom:'8%'}} 
-                        
+                        onPress={() => {
+                            navigation.navigate('ForgetPasswordScreen');
+                          }}
                     >
                         <Text style={{color:'#A9A9A9'}}>Forgot Password?</Text>
                     </TouchableOpacity>

@@ -40,5 +40,5 @@ const variableSlice = createSlice({
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType,setItemCategory, setItemPhotoURL, setItemData, setSelectedDate } = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType,setItemCategory, setItemPhotoURL, setItemData, setSelectedDate} = actions;
 export default reducer;

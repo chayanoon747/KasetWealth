@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { retrieveDataAsset, retrieveDataLiability } from "../../firebase/UserModel"
 import { useSelector } from "react-redux"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { addTransaction } from "../../firebase/UserModel"
 
 export const AssetLiabilityDetailScreen = ({navigation})=>{
 
@@ -18,6 +19,14 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
     const [liabilityValues, setLiabilityValues] = useState()
     const [liabilityContainerHeight, setLiabilityContainerHeight] = useState()
     const [netWealthValue, setNetWealthValue] = useState()
+    //แยกหมวดหมู่ย่อย asset
+    const [assetLiquidValue,setAssetLiquidValue] = useState();
+    const [assetInvestValue,setAssetInvestValue] = useState();
+    const [assetPersonalValue,setAssetPersonalValue] = useState();
+    // แยกหมวดหมูย่อย liability
+    const [liabilityShortValues,setLiabilityShortValues] = useState();
+    const [liabilityLongValues,setliabilityLongValues] = useState();
+    //
 
     useEffect(()=>{
         getDataAsset();
@@ -25,15 +34,17 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         setNetWealthValue(assetValues - liabilityValues)
         console.log(netWealthValue)
     },[assetValues, liabilityValues])
-
+        
     const getDataAsset = async()=>{
         try{
             const itemsDataAsset = await retrieveDataAsset(userUID);
             setAssetData(itemsDataAsset);
             let height = 240 + (itemsDataAsset.liquid.length * 45) + (itemsDataAsset.invest.length * 45) + (itemsDataAsset.personal.length * 45)
             setAssetContainerHeight(height)
-            //console.log(containerHeight)
             setAssetValues(getAssetValues(itemsDataAsset));
+            setAssetLiquidValue(getAssetLiquidValue(itemsDataAsset));
+            setAssetInvestValue(getAssetInvestValue(itemsDataAsset));
+            setAssetPersonalValue(getAssetPersonalValue(itemsDataAsset));
         } catch (error) {
             console.error('Error getDataAsset:', error);
         }
@@ -45,8 +56,9 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
             setLiabilityData(itemsDataLiability);
             let height = 240 + (itemsDataLiability.short.length * 45) + (itemsDataLiability.long.length * 45)
             setLiabilityContainerHeight(height)
-            //console.log(containerHeight)
             setLiabilityValues(getLiabilityValues(itemsDataLiability));
+            setLiabilityShortValues(getLiabilityShortValues(itemsDataLiability));
+            setliabilityLongValues(getLiabilityLongValues(itemsDataLiability));
         } catch (error) {
             console.error('Error getDataLiability:', error);
         }
@@ -66,7 +78,32 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         
         return assetValues
     }
+    const getAssetLiquidValue = (itemsDataAsset)=>{
+        let assetLiquidValue = 0;
+        itemsDataAsset.liquid.forEach(element => {
+            assetLiquidValue += parseFloat(element.value);
+        });
+        
+        return assetLiquidValue;
+    }
+    
+    const getAssetInvestValue = (itemsDataAsset)=>{
+        let assetInvestValue = 0;
+        itemsDataAsset.invest.forEach(element => {
+            assetInvestValue += parseFloat(element.value);
+        });
+        
+        return assetInvestValue;
+    }
 
+    const getAssetPersonalValue = (itemsDataAsset)=>{
+        let assetPersonalValue = 0;
+        itemsDataAsset.personal.forEach(element => {
+            assetPersonalValue += parseFloat(element.value);
+        });
+        
+        return assetPersonalValue;
+    }
     const getLiabilityValues = (itemsDataLiability)=>{
         let liabilityValues = 0;
         itemsDataLiability.short.forEach(element => {
@@ -78,18 +115,88 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         
         return liabilityValues
     }
-    const getAssetLiquidValue = (itemsDataAsset)=>{
-        let assetLiquidValue = 0;
-        itemsDataAsset.liquid.forEach(element => {
-            assetLiquidValue += parseFloat(element.value);
+    const getLiabilityShortValues = (itemsDataLiability)=>{
+        let liabilityShortValues = 0;
+        itemsDataLiability.short.forEach(element => {
+            liabilityShortValues += parseFloat(element.value);
         });
+        
+        return liabilityShortValues
     }
-    const getAssetInVestValue = (itemsDataAsset)=>{
-        let assetLiquidValue = 0;
-        itemsDataAsset.liquid.forEach(element => {
-            assetLiquidValue += parseFloat(element.value);
+    const getLiabilityLongValues = (itemsDataLiability)=>{
+        let liabilityLongValues = 0;
+        itemsDataLiability.long.forEach(element => {
+            liabilityLongValues += parseFloat(element.value);
         });
+        
+        return liabilityLongValues
     }
+
+    const percentageOfAssets = ()=>{
+        return assetValues > 0 ? '(100.00%)' : '(0%)'
+    }
+    const percentageOfLiability = ()=>{
+        if(assetValues > 0){
+            let percentageOfLiabilityValue = (liabilityValues/assetValues*100).toFixed(2)
+            return percentageOfLiabilityValue > 0 ? `(${percentageOfLiabilityValue}%)` : `(0%)`
+        }else{
+            if(liabilityValues > 0){
+                let percentageOfLiabilityValue = 100
+                return percentageOfLiabilityValue > 0 ? `(${percentageOfLiabilityValue}%)` : `(0%)`
+            }else{
+                let percentageOfLiabilityValue = 0
+                return percentageOfLiabilityValue > 0 ? `(${percentageOfLiabilityValue}%)` : `(0%)`
+            }
+            
+            
+        }   
+    }
+    const percentageOfNetWealth = ()=>{
+        let percentageOfnetWealthValue = (netWealthValue/assetValues*100).toFixed(2)
+        return percentageOfnetWealthValue > 0 ? `(${percentageOfnetWealthValue}%)` : `(0%)`
+    }
+    const percentageOfAssetLiquid = ()=>{
+        let percentageOfAssetLiquid = (assetLiquidValue/assetValues*100).toFixed(2)
+        return percentageOfAssetLiquid > 0 ? `(${percentageOfAssetLiquid}%)` : `(0%)`
+    }
+    const percentageOfAssetInvest = ()=>{
+        let percentageOfAssetInvest = (assetInvestValue/assetValues*100).toFixed(2)
+        return percentageOfAssetInvest > 0 ? `(${percentageOfAssetInvest}%)` : `(0%)`
+    }
+    const percentageOfAssetPersonal = ()=>{
+        let percentageOfAssetPersonal = (assetPersonalValue/assetValues*100).toFixed(2)
+        return percentageOfAssetPersonal > 0 ? `(${percentageOfAssetPersonal}%)` : `(0%)`
+    }
+    const percentageOfLiabilityShort = ()=>{
+        if(assetValues > 0){
+            let percentageOfLiabilityShort = (liabilityShortValues/assetValues*100).toFixed(2)
+            return percentageOfLiabilityShort > 0 ? `(${percentageOfLiabilityShort}%)` : `(0%)`
+        }else{
+            let percentageOfLiabilityShort = (liabilityShortValues/liabilityValues*100).toFixed(2)
+            return percentageOfLiabilityShort > 0 ? `(${percentageOfLiabilityShort}%)` : `(0%)`
+        }   
+    }
+    const percentageOfLiabilityLong = ()=>{
+        if(assetValues > 0){
+            let percentageOfLiabilityLong = (liabilityLongValues/assetValues*100).toFixed(2)
+            return percentageOfLiabilityLong > 0 ? `(${percentageOfLiabilityLong}%)` : `(0%)`
+        }else{
+            let percentageOfLiabilityLong = (liabilityLongValues/liabilityValues*100).toFixed(2)
+            return percentageOfLiabilityLong > 0 ? `(${percentageOfLiabilityLong}%)` : `(0%)`
+        }   
+    }
+
+    const heightOfAssetLiquid = ()=>{
+        return assetLiquidValue/liabilityValues*150
+    }
+    const heightOfAssetInvest = ()=>{
+        return assetInvestValue/liabilityValues*150
+    }
+    const heightOfAssetPersonal = ()=>{
+        return assetPersonalValue/liabilityValues*150
+    }
+    
+    
     const handleSelectedGraph = ()=>{
         setSelectedType('graph')
     }
@@ -121,7 +228,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         )
         
     }
-
+    
     const componentAsset = ()=>{
         return(
             <View style={{paddingLeft:20, marginVertical:10}}>
@@ -197,11 +304,164 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
             </View>
         )
     }
-
+   
     const componentGraph = ()=>{
+        console.log(typeof assetValues);
         return(
-            <View style={{flex:7}}>
+            <View style ={{flex:1}}>
+                <View style={{flex:1,backgroundColor:"#fffffA",marginTop:25,alignItems:'center', marginHorizontal:25}}>
+                    <View style={{flexDirection:'row'}}>
+                        <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
+                            <Text style={styles.textHeaderGraph}>สินทรัพย์</Text>
+                            <Text style={styles.textHeaderValueGraph}>{assetValues}</Text>
+                            <Text style={styles.textHeaderValueGraph}>{percentageOfAssets()}</Text>
+                        </View>
+                        <View style={{flexDirection:'column',width:65,marginHorizontal:20,marginBottom:20}}>
+                            <Text style={styles.textHeaderGraph}>หนี้สิน</Text>
+                            <Text style={styles.textHeaderValueGraph}>{liabilityValues}</Text>
+                            <Text style={styles.textHeaderValueGraph}>{percentageOfLiability()}</Text>
+                        </View>
+                        <View style={{flexDirection:'column',width:100,marginBottom:20}}>
+                            <Text style={styles.textHeaderGraph}>ความมั่งคั่งสุทธิ</Text>
+                            <Text style={styles.textHeaderValueGraph}>{netWealthValue}</Text>
+                            <Text style={styles.textHeaderValueGraph}>{percentageOfNetWealth()}</Text>
+                        </View>
+                    </View>
+                   
+                    <View style={{flexDirection: 'row',borderBottomColor:'#D2DBD6', marginLeft:(assetValues == 0) && (liabilityValues > 0) ? 130 : 0, width:'100%'}}>
+                        <View style={{flexDirection:'column-reverse',marginHorizontal:20}}>
+                            
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
+                                <View style={{ height:heightOfAssetPersonal() , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FFFF00" }}>
+                                    <Text style={styles.textValueinGraph}>{assetPersonalValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
+                                <View style={{ height:heightOfAssetInvest() , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#EEE8AA" }}>
+                                    <Text style={styles.textValueinGraph}>{assetInvestValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 &&(
+                                <View style={{ height:heightOfAssetLiquid() , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FFFACD" }}>
+                                    <Text style={styles.textValueinGraph}>{assetLiquidValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {/* กรณีที่ค่า หนี้สิน <= สินทรัพย์ ใช้สเกลเดิม */}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height: assetPersonalValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end',backgroundColor: "#FFFF00" }}>
+                                    <Text style={styles.textValueinGraph}>{assetPersonalValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height: assetInvestValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: "#EEE8AA" }}>
+                                    <Text style={styles.textValueinGraph}>{assetInvestValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height: assetLiquidValue / assetValues * 150, width: 65, flexDirection: 'column', justifyContent: 'flex-end', backgroundColor: "#FFFACD" }}>
+                                    <Text style={styles.textValueinGraph}>{assetLiquidValue.toLocaleString()}</Text>
+                                </View>
+                            )}
+                        </View>
+                        
+                        
+                        <View style={{ flexDirection: 'column-reverse', marginHorizontal: 20 }}>
+                            
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height:liabilityShortValues/assetValues*150 , width: 65,flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 <= 150 && (
+                                <View style={{ height:liabilityLongValues/assetValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
+                                <View style={{ height:liabilityShortValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
+                                <View style={{ height:liabilityLongValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
+                                </View>
+                            )}
 
+                            {assetValues == 0 && liabilityShortValues + liabilityLongValues > 0 && (
+                                <View style={{ height:liabilityShortValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF0000" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityShortValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                            {assetValues == 0 && liabilityShortValues + liabilityLongValues > 0 && (
+                                <View style={{ height:liabilityLongValues/liabilityValues*150 , width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#FF8C00" }}>
+                                    <Text style={styles.textValueinGraph}>{liabilityLongValues.toLocaleString()}</Text>
+                                </View>
+                            )}
+                        </View>
+                        
+                        
+                        {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 < 150 && (
+                            <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 17.5 }}>
+                                {netWealthValue >= 0 && (
+                                    <View style={{ height: netWealthValue/assetValues*150, width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                        <Text style={styles.textValueinGraph}>{netWealthValue}</Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                        {liabilityShortValues/assetValues*150 + liabilityLongValues/assetValues*150 > 150 && (
+                            <View style={{ flexDirection: 'column-reverse', paddingHorizontal: 50 }}>
+                                {netWealthValue >= 0 && (
+                                    <View style={{ height: netWealthValue/assetValues*150, width: 65, flexDirection: 'column',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                        <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}   
+                    </View>
+                    {/*sdsdsdsdsdsdsdsdsdsdsdsd */}
+                    {/* testsave */}
+                    <View style={{borderTopWidth:assetValues == 0 && liabilityValues == 0 ? 0 : 1, width:'100%'}}></View>
+                    {netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150 && (
+                        <View style={{ flexDirection: 'column-reverse', marginLeft: 210 }}>
+                            <View style={{ height: -netWealthValue/liabilityValues*150, width: 65,flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
+                            </View>
+                        </View>
+                    )}
+                    {netWealthValue < 0 && -netWealthValue/assetValues*150 > 150 && (
+                        <View style={{ flexDirection: 'column-reverse',paddingHorizontal:50,marginLeft: 210 }}>
+                            <View style={{ height: -netWealthValue/liabilityValues*150, width: 65, flexDirection: 'column-reverse',justifyContent:'flex-end', backgroundColor: "#B3DBD8" }}>
+                                <Text style={styles.textValueinGraph}>{netWealthValue.toLocaleString()}</Text>
+                            </View>
+                        </View>
+                    )}
+                </View>
+                <View style={{flex:0.5,marginTop:120,flexDirection:'row',justifyContent:'center'}}>
+                    <View style={{flex:0.25,flexDirection: 'column',justifyContent:'center',alignItems: 'center'}}>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFACD'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#EEE8AA'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FFFF00'}}></View>
+                    </View>
+
+                    <View style={{flexflexDirection: 'column',justifyContent:'center',marginHorizontal:8}}>
+                        <Text style={styles.textDetail}>สินทรัพย์สภาพคล่อง {percentageOfAssetLiquid()}</Text>
+                        <Text style={styles.textDetail}>สินทรัพย์ลงทุน {percentageOfAssetInvest()}</Text>
+                        <Text style={styles.textDetail}>สินทรัพยส่วนตัว {percentageOfAssetPersonal()}</Text>
+                    </View>
+                    <View style={{flex:0.25,flexDirection: 'column',justifyContent: 'center',alignItems: 'center'}}>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FF0000'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#FF8C00'}}></View>
+                        <View style={{width: 15,height: 15,borderRadius:15,marginBottom:15,backgroundColor: '#B3DBD8'}}></View>
+                    </View>
+                    <View style={{flexDirection: 'column',justifyContent:'center',marginHorizontal:8}}>
+                        <Text style={styles.textDetail}>หนี้สินระยะสั้น {percentageOfLiabilityShort()}</Text>
+                        <Text style={styles.textDetail}>หนี้สินระยะยาว {percentageOfLiabilityLong()}</Text>
+                        <Text style={styles.textDetail}>ความมั่งคั่งสุทธิ {percentageOfNetWealth()}</Text>
+                    </View>
+                </View> 
             </View>
         )
     }
@@ -229,14 +489,13 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                         <Text style={styles.subHeaderText}>{liabilityValues} THB</Text>
                     </View>
                 </View>
-                <View style={{flex:0.5}}>
-
-                </View>
+                
+                
             </View>
 
-            <View style={{height:selectedType == 'graph' ? 400 : (selectedDetail == 'asset' ? assetContainerHeight : liabilityContainerHeight), borderWidth:2, borderColor:'#a9a9a9', marginHorizontal:15, borderRadius:16, backgroundColor:'#ffffff'}}>
-                <View style={{height:50}}>
-                    <View style={{flex:1, flexDirection:'row'}}>
+            <View style={{height:selectedType == 'graph' && netWealthValue >= 0 ? 470 : (selectedType === 'graph' && netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150  ? 470+(-netWealthValue/liabilityValues*150):(selectedType === 'graph' && netWealthValue < 0 && -netWealthValue/liabilityValues*150 <=  150  ? 470+(-netWealthValue/liabilityValues*150):(selectedDetail == 'asset' ? assetContainerHeight : liabilityContainerHeight))), borderWidth:2, borderColor:'#a9a9a9', marginHorizontal:15, borderRadius:16, backgroundColor:'#ffffff'}}>
+                <View style={{height:55}}>
+                    <View style={{flex:1, flexDirection:'row',borderBottomWidth:1,borderColor:"#D2DBD6",borderBottomStartRadius:10,borderBottomEndRadius:10}}>
                         <View style={{flex:1, flexDirection:'row'}}>
                             <TouchableOpacity style={{width:35, height:35, justifyContent:'center', alignItems:'center', margin:10}}
                                 onPress={handleSelectedGraph}
@@ -262,7 +521,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                         </View>
                         
 
-                        <Text style={{flex:1, textAlignVertical:'bottom', textAlign:'right', marginRight:5}}>ข้อมูล ณ วันที่ 03-02-2024</Text>
+                        <Text style={{flex:1, textAlignVertical:'bottom', textAlign:'right', marginRight:10}}>ข้อมูล ณ วันที่ 03-02-2024</Text>
                     </View>
                     
                 </View>
@@ -299,6 +558,33 @@ const styles = StyleSheet.create({
         fontSize:13,
         color:'#0abab5',
         textAlign:'right'
+    },
+    textValueinGraph:{
+        fontFamily:'ZenOldMincho-Regular',
+        fontSize:10,
+        color:'#000000',
+        textAlign:'center',
+        marginBottom:2
+    },
+    textHeaderGraph:{
+        fontFamily:'ZenOldMincho-Regular',
+        fontSize:15,
+        color:'#000000',
+        textAlign:'center',
+        marginBottom:10
+    },
+    textHeaderValueGraph:{
+        fontFamily:'ZenOldMincho-Regular',
+        fontSize:12,
+        color:'#000000',
+        textAlign:'center',
+        marginBottom:10
+    },
+    textDetail:{
+        fontFamily:'ZenOldMincho-Regular',
+        fontSize:11,
+        color:'#000000',
+        marginBottom:15,
+        lineHeight: 15
     }
-    
 })
