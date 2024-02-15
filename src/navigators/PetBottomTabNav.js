@@ -7,14 +7,15 @@ import { PetShopScreen } from "../screens/pet/PetShopScreen";
 import { GameQuest } from '../screens/pet/GameQuest';
 import { PetQuestStackNav } from './PetQuestStackNav';
 import { BottomTabNav } from './BottomTabNav';
-
+import { EditHomeScreen } from '../screens/pet/EditHomeScreen';
+import { PetHomeStackNav } from './PetHomeStackNav';
 
 export const PetBottomTabNav = ({navigation})=>{
     const BottomTab = createBottomTabNavigator()
 
     return(
         <BottomTab.Navigator
-            initialRouteName='PetQuestStackNav'
+            initialRouteName='PetHomeStackNav'
             screenOptions={{
                 headerStyle:{
                     height:80,
@@ -31,6 +32,25 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
             }}
         >
+
+            <BottomTab.Screen name="PetHomeStackNav" component={PetHomeStackNav}
+                options={{
+                    title:'ภารกิจ',
+                    tabBarIcon:({focused, color, size})=>{
+                        const iconSource = focused ? require('../assets/petBottomTab/homeIconFocus.png') : require('../assets/petBottomTab/homeIcon.png');
+                        return(
+                            <Image source={iconSource} style={{ width: 32, height: 32, marginTop:'5%' }} />
+                        )
+                    },
+                    tabBarLabel:({focused, color, size})=>{
+                    return(
+                        <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>หน้าหลัก</Text>
+                    )
+                    },
+                    headerShown:false,
+                }}
+            />
+
             <BottomTab.Screen name="PetQuestStackNav" component={PetQuestStackNav}
             options={{
                 title:'ภารกิจ',
@@ -52,9 +72,9 @@ export const PetBottomTabNav = ({navigation})=>{
 
             <BottomTab.Screen name="PetShopScreen" component={PetShopScreen}
             options={{
-                title:'บ้านของ...',
+                title:'PetShopScreen',
                 tabBarIcon:({focused, color, size})=>{
-                    const iconSource = focused ? require('../assets/petBottomTab/questIconFocus.png') : require('../assets/petBottomTab/questIcon.png');
+                    const iconSource = focused ? require('../assets/petBottomTab/listIconFocus.png') : require('../assets/petBottomTab/listIcon.png');
                     return(
                         <Image source={iconSource} style={{ width: 32, height: 32, marginTop:'5%' }} />
                     )
@@ -64,8 +84,21 @@ export const PetBottomTabNav = ({navigation})=>{
                     <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>ร้านค้า</Text>
                   )
                 },
-                headerShown:false,
-                
+                header: () => (
+                    <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
+                       
+
+                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>ร้านค้า</Text>
+
+                        <TouchableOpacity style={{width:35, marginRight:15}}
+                            onPress={()=>{
+                            navigation.navigate('GoalNotificationScreen');
+                            }}
+                        >
+                            <Image source={require('../assets/petBottomTab/notificationIcon.png')} style={{ width: 32, height: 32, marginRight:'10%'}} />
+                        </TouchableOpacity>
+                    </View>
+                )
             }}
             />
 
