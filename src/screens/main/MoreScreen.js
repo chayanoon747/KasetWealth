@@ -4,6 +4,8 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 
 import { showCurrentEmail } from '../../firebase/AuthModel';
 import { signOut } from '../../firebase/AuthModel';
+import { useDispatch } from 'react-redux';
+import { setStatus } from '../../redux/variableSlice';
 
 const TurquoiseHeader = ({ navigation }) => {
   return (
@@ -29,6 +31,8 @@ const SecureEmail = ({ email }) => {
 
 export const MoreScreen = ({ navigation }) => {
   const [email,setEmail] = useState('');
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
     showCurrentEmail(

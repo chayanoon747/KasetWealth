@@ -4,9 +4,11 @@ import { OverviewScreen } from "../screens/main/OverviewScreen";
 import { OverviewGuideScreen } from "../screens/main/OverviewGuideScreen";
 import { View, TouchableOpacity, Image, Text } from "react-native";
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const OverviewStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
+  const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
     return(
         <Stack.Navigator
@@ -15,7 +17,6 @@ export const OverviewStackNav = ({navigation})=>{
             <Stack.Screen
                 name='OverviewScreen'
                 component={OverviewScreen}
-                
                 options={{ 
                     header: () => (
                         <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>

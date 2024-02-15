@@ -4,13 +4,19 @@ import { PetScreen } from '../screens/main/PetScreen';
 import { MoreScreen } from '../screens/main/MoreScreen';
 import { IncomeStackNav } from './IncomeStackNav';
 import { OverviewStackNav } from './OverviewStackNav';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsUpdate } from '../redux/variableSlice';
 
 
 export const BottomTabNav = ({navigation})=>{
     const BottomTab = createBottomTabNavigator()
+    const dispatch = useDispatch()
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+
     return(
         <BottomTab.Navigator
             initialRouteName='OverviewStackNav'
+            
             screenOptions={{
                 headerStyle:{
                     height:80,
@@ -27,7 +33,7 @@ export const BottomTabNav = ({navigation})=>{
                 },
             }}
         >
-            <BottomTab.Screen name="OverviewStackNav" component={OverviewStackNav} 
+            <BottomTab.Screen name="OverviewStackNav" component={OverviewStackNav}
             options={{
                 title:'Overview',
                 tabBarIcon:({focused, color, size})=>{
@@ -41,8 +47,16 @@ export const BottomTabNav = ({navigation})=>{
                     <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Overview</Text>
                   )
                 },
-                headerShown:false
+                headerShown:false,
+                
             }}
+            listeners={() => ({
+              tabPress: (e) => {
+                e.preventDefault(); // Prevent default action
+                dispatch(setIsUpdate(!isUpdate))
+                navigation.navigate('OverviewScreen') // Replace the current screen with "Pet" screen in the stack
+              },
+            })}
             />
 
             <BottomTab.Screen name="IncomeStackNav" component={IncomeStackNav} 
@@ -63,7 +77,7 @@ export const BottomTabNav = ({navigation})=>{
             }}
             />
 
-            <BottomTab.Screen name="Pet" component={PetScreen} 
+            <BottomTab.Screen name="Pet" component={PetScreen}
             options={{
                 title:'Pet',
                 tabBarIcon:({focused, color, size})=>{
@@ -87,7 +101,7 @@ export const BottomTabNav = ({navigation})=>{
               })}
             />
 
-            <BottomTab.Screen name="More" component={MoreScreen} 
+            <BottomTab.Screen name="More" component={MoreScreen}
             options={{
                 title:'More',
                 tabBarIcon:({focused, color, size})=>{

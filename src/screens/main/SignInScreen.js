@@ -7,6 +7,7 @@ import { useState } from "react";
 import { signInEmailPass } from "../../firebase/AuthModel";
 import { useDispatch } from "react-redux";
 import { clearProfile, addProfile } from "../../redux/authSlice";
+import { setStatus } from "../../redux/variableSlice";
 
 export const SignInScreen = ({ navigation })=>{
 
@@ -35,6 +36,7 @@ export const SignInScreen = ({ navigation })=>{
             uid,
             email
         };
+        dispatch(setStatus(false))
         dispatch(clearProfile());
         dispatch(addProfile(userData));
         navigation.navigate('BottomTabNav')
