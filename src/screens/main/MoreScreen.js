@@ -66,7 +66,7 @@ export const MoreScreen = ({ navigation }) => {
       {/* Profile Button */}
       <View style={ styles.button }>
         <TouchableOpacity onPress={changeProfilePics}>
-          <Image source={require('../../assets/profiledeluxe.png')} style={ styles.profileDeluxe }/>
+          <Image source={require('../../assets/profiledeluxe_non-editable.png')} style={ styles.profileDeluxe }/>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleEmailPress}>
