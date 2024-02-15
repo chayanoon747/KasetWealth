@@ -1,14 +1,15 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert} from "react-native";
 import { ScrollView } from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, ActivityIndicator } from "react-native-paper";
 import { Shadow } from "react-native-shadow-2";
-import { setItemPhotoURL } from "../../../redux/variableSlice";
+import { setIsUpdate, setItemPhotoURL } from "../../../redux/variableSlice";
 import firestore from '@react-native-firebase/firestore';
 import { addTransaction } from "../../../firebase/UserModel";
-import { useSelector} from 'react-redux'
+import { useSelector, useDispatch} from 'react-redux'
 import { useState } from "react";
 
 export const AddInputScreen = ({ navigation })=>{
+    const dispatch = useDispatch()
     //itemData มี category,subcategory,url
     const itemData = useSelector((state)=>state.variables.itemData); 
     //console.log(itemData);
@@ -21,6 +22,8 @@ export const AddInputScreen = ({ navigation })=>{
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+
     const currentDate = new Date();
     const year = currentDate.getFullYear();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
@@ -28,6 +31,8 @@ export const AddInputScreen = ({ navigation })=>{
     const formattedDate = `${year}-${month}-${day}`;
 
     const [input,setInput] = useState({detail:'',value:''})
+
+    const [isLoading, setIsLoading] = useState(false)
 
     const setDetail = (text) => {
         setInput(oldValue => ({
@@ -45,6 +50,7 @@ export const AddInputScreen = ({ navigation })=>{
 
     const handleAddTransaction = ()=>{
         //input มี 2 key คือ value กับ details
+        setIsLoading(true)
         if(input.value == ""){
             Alert.alert('กรุณาระบุจำนวนเงิน')
         }else{
@@ -52,68 +58,84 @@ export const AddInputScreen = ({ navigation })=>{
             //console.log(value)
             if(!isNaN(value)){
                 if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัย
+                    
                     addTransaction(userUID,itemData, input, formattedDate)
+                    .then(()=>{
+                        dispatch(setIsUpdate(!isUpdate))
+                        
+                        setTimeout(() => {
+                            //setIsLoading(false);
+                            navigation.navigate('FinancialScreen')
+                        }, 800);
+                    })
                 }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
-                    addTransaction(userUID ,itemData, input, selectedDate)
+                    addTransaction(userUID,itemData, input, selectedDate)
+                    .then(()=>{
+                        dispatch(setIsUpdate(!isUpdate))
+                        setIsLoading(true);
+                        setTimeout(() => {
+                            setIsLoading(false);
+                            navigation.navigate('FinancialScreen')
+                        }, 800);
+                    })
                 }
-                
-                navigation.navigate('FinancialScreen')
             }else{
                 Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
             }
         }
-
-       
-        
     }
 
     
     
     return(
         <ScrollView style={{ backgroundColor:'#fffffa', paddingHorizontal:20}}>
-            <View style={{height:50}}></View>
-            <View style={{flex:1, alignItems:'center'}}>
-{/* รูป & ชื่อรายการ */}
-                <View style={{justifyContent:'center', alignItems:'center'}}>
-                    <Image source={require('../../../assets/backgroundIcon.png')} style={{width: 100, height:100}} />
-                    <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute', alignItems:'center', justifyContent:'center'}}/>
-                    {/* รับรูปไอค่อน */}
+            {isLoading ? (<ActivityIndicator size='large' color="#0ABAB5" style={{marginVertical:'60%'}}></ActivityIndicator>) : (
+            <View style={{flex:1}}>
+                <View style={{height:50}}></View>
+                <View style={{flex:1, alignItems:'center'}}>
+    {/* รูป & ชื่อรายการ */}
+                    <View style={{justifyContent:'center', alignItems:'center'}}>
+                        <Image source={require('../../../assets/backgroundIcon.png')} style={{width: 100, height:100}} />
+                        <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute', alignItems:'center', justifyContent:'center'}}/>
+                        {/* รับรูปไอค่อน */}
+                    </View>
+                    <TextInput style={{flex:1, width:'100%', backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:22, justifyContent:'center', alignItems:'center'}}
+                        placeholder={itemData.subCategory} underlineColor='#000000' activeUnderlineColor="#000000" placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false}
+                        >
+                            {/* เปลี่ยนชื่อไอค่อนยังไง   */}
+                    </TextInput>
                 </View>
-                <TextInput style={{flex:1, width:'100%', backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:22, justifyContent:'center', alignItems:'center'}}
-                    placeholder={itemData.subCategory} underlineColor='#000000' activeUnderlineColor="#000000" placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false}
-                    >
-                        {/* เปลี่ยนชื่อไอค่อนยังไง   */}
-                </TextInput>
+                <View style={{height:20}}></View>
+    {/* กล่องจำนวนเงิน */}
+                <View style={styles.TextInputBox}>
+                    <TextInput style={{flex:1,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:22, justifyContent:'center', alignItems:'center'}}
+                        placeholder='ระบุจำนวนเงิน' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
+                        value={input.value} onChangeText={(text)=>{setValue(text)}} keyboardType="number-pad"
+                        >
+                    </TextInput>
+                </View>
+                <View style={{height:20}}></View>
+    {/* กล่องรายละเอียด */}
+                <View style={styles.DetailInputBox}>
+                    <TextInput style={{flex:3,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:18, justifyContent:'start', alignItems:'start'}}
+                        placeholder='รายละเอียดเพิ่มเติม' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
+                        value={input.detail} onChangeText={(text)=>{setDetail(text)}}
+                    >  
+                    </TextInput>
+                </View>
+                <View style={{height:10}}></View>
+    {/* ปุ่มบันทึก */}
+                <View style={{height:100, justifyContent:'center', paddingHorizontal:3}}>
+                    <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
+                        <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
+                            onPress={handleAddTransaction}
+                        >
+                            <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
+                        </TouchableOpacity>
+                    </Shadow>
+                </View>
             </View>
-            <View style={{height:20}}></View>
-{/* กล่องจำนวนเงิน */}
-            <View style={styles.TextInputBox}>
-                <TextInput style={{flex:1,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:22, justifyContent:'center', alignItems:'center'}}
-                    placeholder='ระบุจำนวนเงิน' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
-                    value={input.value} onChangeText={(text)=>{setValue(text)}} keyboardType="number-pad"
-                    >
-                </TextInput>
-            </View>
-            <View style={{height:20}}></View>
-{/* กล่องรายละเอียด */}
-            <View style={styles.DetailInputBox}>
-                <TextInput style={{flex:3,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:18, justifyContent:'start', alignItems:'start'}}
-                    placeholder='รายละเอียดเพิ่มเติม' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
-                    value={input.detail} onChangeText={(text)=>{setDetail(text)}}
-                >  
-                </TextInput>
-            </View>
-            <View style={{height:10}}></View>
-{/* ปุ่มบันทึก */}
-            <View style={{height:100, justifyContent:'center', paddingHorizontal:3}}>
-                <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
-                    <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
-                        onPress={handleAddTransaction}
-                    >
-                        <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
-                    </TouchableOpacity>
-                </Shadow>
-            </View>
+           )}
         </ScrollView>
     )
 }

@@ -16,6 +16,8 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+
     let selectedDate = useSelector((state)=>state.variables.selectedDate);
     console.log(selectedDate)
 
@@ -33,7 +35,7 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
 
     useEffect(() => {
         getDataIncomeAndExpenses();
-    }, [selectedDate]);
+    }, [selectedDate, isUpdate]);
 
     const getDataIncomeAndExpenses = async()=>{
         try{

@@ -19,6 +19,8 @@ import { CategoryAssetSelectionScreen } from "../screens/main/Asset/CategoryAsse
 import { CategoryLiabilitySelectionScreen } from "../screens/main/Liability/CategoryLiabilitySelectionScreen";
 import { IncomeAndExpensesScreen } from '../screens/main/IncomeAndExpensesScreen';
 import { DetailScreen } from '../screens/main/DetailScreen';
+import { OverviewGuideScreen } from '../screens/main/OverviewGuideScreen';
+import { setIsUpdate } from '../redux/variableSlice';
 
 export const IncomeStackNav = ({navigation})=>{
   const Stack = createNativeStackNavigator()
@@ -29,6 +31,8 @@ export const IncomeStackNav = ({navigation})=>{
 
   const user = useSelector((state)=>state.auths);
   const userUID = user[0].uid;
+
+  const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
   const transactionTypeItem = useSelector((state)=>state.variables.transactionType)
   const selectedItems = useSelector((state)=>state.variables.selectedItems)
@@ -64,59 +68,19 @@ export const IncomeStackNav = ({navigation})=>{
               </View>
             )
         }}
+        listeners={() => ({
+          tabPress: (e) => {
+            e.preventDefault(); // Prevent default action
+            dispatch(setIsUpdate(!isUpdate))
+            navigation.navigate('financialScreen') 
+          },
+        })}
       />
 
       <Stack.Screen
         name='CategorySelectionScreen'
         component={CategorySelectionScreen}
         options={{headerShown:false}}
-        /*options={{ 
-          header: () => (
-            <View style={{flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center', justifyContent:'space-between'}}>
-              
-              <TouchableOpacity style={{marginLeft:15}}
-                onPress={()=>{
-                  if(isEdit){
-                    dispatch(setSelectedItems([]));
-                    dispatch(setEditStatus(false));
-                    setIsEdit(false)
-                  }else{
-                    navigation.navigate('FinancialScreen');
-                  }
-                  
-                }}
-              >
-                {isEdit ? (
-                  <Image source={require('../assets/cancelIcon.png')} width={30} height={30} color="#ffffff"/>
-                ) : (
-                  <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
-                )}
-                
-              </TouchableOpacity>
-
-              <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff'}}>รายได้</Text>
-              
-              <TouchableOpacity style={{marginRight:15}}
-                onPress={()=>{
-                  if(!isEdit){
-                    dispatch(setEditStatus(true));
-                    setIsEdit(true);
-                  }else{
-                    console.log(selectedItems);
-                    RemoveCategoryIcon(userUID, selectedItems)
-                  }
-                }}
-              >
-                {isEdit ? (
-                  <Image source={require('../assets/trashIcon.png')} width={30} height={30} color="#ffffff"/>
-                ) : (
-                  <IconFeather name="edit" size={30} color="#ffffff" />
-                )}
-              </TouchableOpacity>
-
-            </View>
-          )
-        }}*/
       />
 
       <Stack.Screen
@@ -201,7 +165,19 @@ export const IncomeStackNav = ({navigation})=>{
                 <TouchableOpacity style={{width:35, marginLeft:15}}
                   onPress={()=>{
                     dispatch(setSelectedDate(""))
-                    navigation.navigate('CategorySelectionScreen');
+                    if (transactionTypeItem === "รายได้") {
+                      navigation.navigate('CategorySelectionScreen');
+                    }
+                    if (transactionTypeItem === "ค่าใช้จ่าย") {
+                      navigation.navigate('CategoryExpensesSelectionScreen');
+                    }
+                    if (transactionTypeItem === "สินทรัพย์") {
+                      navigation.navigate('CategoryAssetSelectionScreen');
+                    }
+                    if (transactionTypeItem === "หนี้สิน") {
+                      navigation.navigate('CategoryLiabilitySelectionScreen');
+                    }
+                    
                   }}
                 >
                   <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
@@ -284,6 +260,7 @@ export const IncomeStackNav = ({navigation})=>{
                 <TouchableOpacity style={{width:35, marginLeft:15}}
                   onPress={()=>{
                     dispatch(setSelectedDate(""))
+                    dispatch(setIsUpdate(!isUpdate))
                     navigation.navigate('FinancialScreen');
                   }}
                 >
@@ -339,6 +316,9 @@ export const IncomeStackNav = ({navigation})=>{
           )
         }}
       />
+
+      
+
 
       
     </Stack.Navigator>

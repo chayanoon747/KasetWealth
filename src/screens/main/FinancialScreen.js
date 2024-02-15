@@ -1,11 +1,112 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AssetLiabilityDetailScreen } from "./AssetLiabilityDetailScreen";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import { setItemTransactionType } from "../../redux/variableSlice";
+import { retrieveAllDataIncomeAndExpenses, retrieveDataLiability, retrieveDataAsset } from "../../firebase/RetrieveData";
 
 export const FinancialScreen = ({navigation})=>{
     const dispatch = useDispatch();
+
+    const user = useSelector((state)=>state.auths);
+    const userUID = user[0].uid;
+
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+
+    const [incomeValuesAll, setIncomeValuesAll] = useState()
+    const [expensesValuesAll, setExpensesValuesAll] = useState()
+    const [assetValuesAll, setAssetValuesAll] = useState()
+    const [liabilityValuesAll, setLiabilityValuesAll] = useState()
+
+    useEffect(() => {
+        getDataIncomeAndExpenses();
+        getDataAsset();
+        getDataLiability();
+    }, [incomeValuesAll, expensesValuesAll, assetValuesAll, liabilityValuesAll, isUpdate]);
+
+    const getIncomeValues = (itemData)=>{
+        let incomeValues = 0;
+        itemData.forEach(element => {
+            if(element.transactionType == 'รายได้'){
+                incomeValues += parseFloat(element.value);
+            }
+        });
+        
+        return incomeValues
+    }
+
+    const getExpensesValues = (itemData)=>{
+        let expensesValues = 0;
+        itemData.forEach(element => {
+            if(element.transactionType == 'ค่าใช้จ่าย'){
+                expensesValues += parseFloat(element.value);
+            }
+        });
+        
+        return expensesValues
+    }
+
+    const getDataIncomeAndExpenses = async()=>{
+        try{
+            const itemAllDataIncomeAndExpenses = await retrieveAllDataIncomeAndExpenses(userUID)
+        
+            setIncomeValuesAll(getIncomeValues(itemAllDataIncomeAndExpenses.income))
+            setExpensesValuesAll(getExpensesValues(itemAllDataIncomeAndExpenses.expenses))
+            
+        }catch (error) {
+            console.error('Error getDataIncomeAndExpenses:', error);
+        }  
+    }
+
+    const getAssetValues = (itemsDataAsset)=>{
+        let assetValues = 0;
+        itemsDataAsset.liquid.forEach(element => {
+            assetValues += parseFloat(element.value);
+        });
+        itemsDataAsset.invest.forEach(element => {
+            assetValues += parseFloat(element.value);
+        });
+        itemsDataAsset.personal.forEach(element => {
+            assetValues += parseFloat(element.value);
+        });
+        
+        return assetValues
+    }
+
+    const getDataAsset = async()=>{
+        try{
+            const itemsDataAsset = await retrieveDataAsset(userUID);
+            setAssetValuesAll(getAssetValues(itemsDataAsset))
+        } catch (error){
+            console.error('Error getDataAsset:', error);
+        }
+    }
+    
+    const getLiabilityValues = (itemsDataLiability)=>{
+        let liabilityValues = 0;
+        itemsDataLiability.short.forEach(element => {
+            liabilityValues += parseFloat(element.value);
+        });
+        itemsDataLiability.long.forEach(element => {
+            liabilityValues += parseFloat(element.value);
+        });
+        
+        return liabilityValues
+    }
+
+    const getDataLiability = async()=>{
+        try{
+            const itemsDataAsset = await retrieveDataLiability(userUID);
+            setLiabilityValuesAll(getLiabilityValues(itemsDataAsset))
+        } catch (error){
+            console.error('Error getDataLiability:', error);
+        }
+    }
+
+    
+
+
     return(
         <SafeAreaView style={{flex:1, padding:30, backgroundColor:'#fffffa'}}>
             {/* ยอดเงินคงเหลือ */}
@@ -16,18 +117,18 @@ export const FinancialScreen = ({navigation})=>{
                 </View>
 
                 <View style={{flex:1, paddingLeft:10, paddingTop:5}}>
-                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>53,000 THB</Text>
+                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>{incomeValuesAll-expensesValuesAll} THB</Text>
                 </View>
 
                 <View style={{flex:1.5, flexDirection:'row', paddingHorizontal:10}}>
                     <View style={{flex:1, flexDirection:'column'}}>
                         <Text style={styles.subHeaderText}>รายได้</Text>
-                        <Text style={styles.subHeaderText}>90,000 THB</Text>
+                        <Text style={styles.subHeaderText}>{incomeValuesAll} THB</Text>
                     </View>
 
                     <View style={{flex:1, flexDirection:'column', paddingLeft:10, borderLeftWidth:1, borderColor:'#D2DBD6'}}>
                         <Text style={styles.subHeaderText}>รายจ่าย</Text>
-                        <Text style={styles.subHeaderText}>37,000 THB</Text>
+                        <Text style={styles.subHeaderText}>{expensesValuesAll} THB</Text>
                     </View>
                 </View>
 
@@ -52,18 +153,18 @@ export const FinancialScreen = ({navigation})=>{
                 </View>
 
                 <View style={{flex:1, paddingLeft:10, paddingTop:5}}>
-                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>1,532,000 THB</Text>
+                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>{assetValuesAll-liabilityValuesAll} THB</Text>
                 </View>
 
                 <View style={{flex:1.5, flexDirection:'row', paddingHorizontal:10}}>
                     <View style={{flex:1, flexDirection:'column'}}>
                         <Text style={styles.subHeaderText}>สินทรัพย์รวม</Text>
-                        <Text style={styles.subHeaderText}>2,000,000 THB</Text>
+                        <Text style={styles.subHeaderText}>{assetValuesAll} THB</Text>
                     </View>
 
                     <View style={{flex:1, flexDirection:'column', paddingLeft:10, borderLeftWidth:1, borderColor:'#D2DBD6'}}>
                         <Text style={styles.subHeaderText}>หนี้สินรวม</Text>
-                        <Text style={styles.subHeaderText}>448,00 THB</Text>
+                        <Text style={styles.subHeaderText}>{liabilityValuesAll} THB</Text>
                     </View>
                 </View>
 

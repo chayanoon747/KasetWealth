@@ -5,9 +5,13 @@ import { Shadow } from "react-native-shadow-2";
 import { addTransaction, editTransaction, RemoveTransaction } from "../../firebase/UserModel";
 import { useSelector, useDispatch} from 'react-redux'
 import { useState, useEffect } from "react";
+import { setIsUpdate } from "../../redux/variableSlice";
 
 export const DetailScreen = ({navigation})=>{
 
+    const dispatch = useDispatch()
+
+    const isUpdate = useSelector((state)=>state.variables.isUpdate); 
      //itemData มี category,subcategory,url
      const itemData = useSelector((state)=>state.variables.itemData); 
      //console.log(itemData);
@@ -42,7 +46,7 @@ export const DetailScreen = ({navigation})=>{
      }
 
      const success = ()=>{
-        navigation.navigate('FinancialScreen')
+        navigation.navigate('IncomeAndExpensesScreen')
      }
  
      const handleEditTransaction = ()=>{
@@ -61,6 +65,7 @@ export const DetailScreen = ({navigation})=>{
      }
      const handleRemoveTransaction = ()=>{
         RemoveTransaction(userUID,itemData, success)
+        dispatch(setIsUpdate(!isUpdate));
      }
      
      

@@ -7,7 +7,9 @@ const INIT_VARIABLES = {
     category: "",
     photoURL: "",
     itemData: {},
-    selectedDate: ""
+    selectedDate: "",
+    isUpdate: false,
+    status: false
 }
 
 const variableSlice = createSlice({
@@ -36,9 +38,15 @@ const variableSlice = createSlice({
       setSelectedDate(state, action) {
         state.selectedDate = action.payload;
       },
+      setIsUpdate(state, action) {
+        state.isUpdate = action.payload;
+      },
+      setStatus(state, action) {
+        state.status = action.payload;
+      },
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType,setItemCategory, setItemPhotoURL, setItemData, setSelectedDate} = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType,setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus} = actions;
 export default reducer;

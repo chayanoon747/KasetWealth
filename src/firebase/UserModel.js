@@ -577,6 +577,7 @@ export const addTransaction = (userUID, itemData, input, selectedDate) => {
             })
             .then(() => {
                 console.log("Transactions added successfully!");
+
             })
             // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
             .catch((error) => {
