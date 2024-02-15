@@ -1,9 +1,10 @@
 import React from "react";
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
-import {EnterPetScreen} from '../screens/pet/EnterPetScreen'
+import { EnterPetScreen } from '../screens/pet/EnterPetScreen'
 import { EnterNameScreen } from "../screens/pet/EnterNameScreen";
 import { ExpainingScreen } from "../screens/pet/ExpainingScreen";
 import { TaptoStartScreen } from "../screens/pet/TaptoStartScreen";
+import { PetBottomTabNav } from "./PetBottomTabNav";
 
 export const PetStackNav = ()=>{
   const Stack = createNativeStackNavigator()
@@ -35,6 +36,14 @@ export const PetStackNav = ()=>{
         component={TaptoStartScreen}
         options={{ headerShown: false }}
       />
+
+      <Stack.Screen
+        name='PetBottomTabNav'
+        component={PetBottomTabNav}
+        options={{ headerShown: false }}
+      />
+
+
 
 
 

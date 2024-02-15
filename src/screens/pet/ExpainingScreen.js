@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Dimensions, TouchableHighlight} from 'react-native';
+import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
 
 
 export const ExpainingScreen = ({navigation})=>{
@@ -8,14 +9,7 @@ export const ExpainingScreen = ({navigation})=>{
         <SafeAreaView style={{flex:1, backgroundColor:'#0ABAB5'}}>
              <View style={{flex:1,alignItems:'flex-end', padding:'2%'}}>
  
-                 <TouchableOpacity style={{flex:1}} 
-                     onPress={()=>{
-                         navigation.navigate('EnterPetScreen');
-                         console.log('Enter')
-                     }}
-                 >
-                     <Image source={require('../../assets/exitIcon.png')}></Image>
-                 </TouchableOpacity>
+                 
              </View>
  
              <View  style={{flex: 5,justifyContent:'center',alignContent:'center',flexDirection:'row'}} >
@@ -47,7 +41,7 @@ export const ExpainingScreen = ({navigation})=>{
              <View  style={{flex: 5,justifyContent:'center',alignContent:'center',flexDirection:'row', borderWidth:1, borderColor:'#000000',backgroundColor:'#2C6264'}} >
                 <TouchableOpacity style={{flex:1}} 
                     onPress={()=>{
-                    navigation.navigate('TaptoStartScreen');
+                    navigation.navigate('PetBottomTabNav');
                     }}
                     >
                     <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:15, marginVertical:12,marginHorizontal : 5, backgroundColor:'#ffffff'}}>

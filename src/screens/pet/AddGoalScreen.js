@@ -91,7 +91,7 @@ export const AddGoalScreen = ({navigation})=>{
               <View style={{height:70}}></View>
             </View>
 
-            <View style={{height:50}}></View>
+           
 
             <View style={styles.SaveContainer}>
                 <Shadow  style={styles.shadow} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
@@ -113,22 +113,21 @@ const styles = StyleSheet.create({
       backgroundColor: '#B3DBD8',
     },
     secondContainer: {
-        flex:0,
-        alignSelf:'center',
+        flex:3,
+        marginHorizontal:'5%',
         justifyContent:'center',
-        width:350,
-        height:436,
         backgroundColor:'#2C6264',
         marginTop:'7.5%',
-        paddingHorizontal:20,
         borderRadius:12,
-        borderWidth:1
+        borderWidth:1,
+        paddingHorizontal:'8%',
     },
     IconContainer:{
         flex:1, 
         alignItems:'center',
         justifyContent:'center',
-        marginTop:'10%'
+        marginTop:'10%',
+        
     },
     questionMarkIcon: {
         justifyContent:'center', 
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
     CategoryText: {
         flex:1, 
         width:'100%',
-        marginBottom:'20%', 
+        marginBottom:'20%',
         backgroundColor:'transparent', 
         fontFamily:'ZenOldMincho-Bold', 
         fontSize:26, 
@@ -158,10 +157,10 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignContent:'center',
         height:'15%',
+        
         borderRadius:8,
         borderWidth:1,
         borderColor:'#000000',
-        paddingHorizontal:3,
         backgroundColor:'white'
       },
     NumberPadText: {
@@ -178,7 +177,7 @@ const styles = StyleSheet.create({
         width:'100%', height:50
     },
     SaveContainer:{
-        height:'20%', 
+        flex:1,
         justifyContent:'center', 
         paddingHorizontal:'10%'
     },

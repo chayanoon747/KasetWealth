@@ -8,27 +8,23 @@ import { setItemCategory } from "../../redux/variableSlice";
 export const CategoryGoal = ({navigation})=>{
     const dispatch = useDispatch();
 
-    const firstRenderItemEditCategoryIconScreen = ({ item }) => (
-    
-                <View style={styles.thirdContainer}>
-                    <TouchableOpacity style={styles.checkTouchableOpacityContainer}
-                      onPress={() => handleItemPress(item)}
-                    >
-                      <View style={styles.imageContainer}>
-                          <Image source={require('../../assets/game_backgroundIcon.png')} style={styles.gameBackgroundIcon} />
-                          <Image source={{uri: item.photoURL}} style={styles.gameIcons} />
-                      </View>
-                      <Text style={styles.BigText}>{item.category}</Text>
-                        <Text style={styles.smallText}>{item.subCategory}</Text>
-
-                    </TouchableOpacity>
-
-                    <View style={{width:'25%'}}></View>
-
-
-                     
-                </View>
-    );
+    const firstRenderItemEditCategoryIconScreen = ({ item }) => {
+        return(
+            <View style={styles.thirdContainer}>
+                <TouchableOpacity style={styles.checkTouchableOpacityContainer}
+                    onPress={() => handleItemPress(item)}
+                >
+                    <View style={styles.imageContainer}>
+                        <Image source={require('../../assets/game_backgroundIcon.png')} style={styles.gameBackgroundIcon} />
+                        <Image source={{uri: item.photoURL}} style={styles.gameIcons} />
+                    </View>
+                    <Text style={styles.BigText}>{item.category}</Text>
+                    <Text style={styles.smallText}>{item.subCategory}</Text>
+                    
+                </TouchableOpacity>
+            </View>
+        )         
+    }
     
     const handleItemPress = (item) => {
         // ทำการนำข้อมูลไปยังหน้าถัดไป
@@ -40,14 +36,14 @@ export const CategoryGoal = ({navigation})=>{
     return(
        <SafeAreaView style={styles.container}>
             <View style={styles.secondContainer}>
-                <FlatList
+                <FlatList 
                     data={firstCategoryFinancial}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={firstRenderItemEditCategoryIconScreen}
                     numColumns={2}
+                    scrollEnabled={false}
                 />
             </View>
-            <View style={{height:180}}></View>
        </SafeAreaView>
     )
 }
@@ -56,30 +52,44 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#B3DBD8',
+      
     },
     secondContainer: {
         flex:1,
-        alignSelf:'center',
+        alignItems:'center',
         justifyContent:'center',
-        width:350,
-        height:436,
+        marginHorizontal:'5%',
+        marginVertical:'8%',
         backgroundColor:'#2C6264',
-        marginTop:'7.5%',
-        paddingHorizontal:15,
-        borderRadius:12
+        borderRadius:12,
+        borderWidth:1,
+        
+        
     },
     thirdContainer: {
-        flex:1,
+        width:'50%',
+        height:'100%',
         flexDirection:'row',
-        marginTop:'10%',
-        marginHorizontal:'10%'
+       
+        justifyContent:'center',
+        alignItems:'center',
+       
     },
     checkTouchableOpacityContainer: {
-        backgroundColor:'transparent'
+        flex:1,
+        backgroundColor:'transparent',
+        justifyContent:'center', 
+        alignItems:'center',
+        
+        
+        
     },
     imageContainer: {
+        flex:1,
         justifyContent:'center', 
-        alignItems:'center'
+        alignItems:'center',
+        marginTop:'35%'
+        
     },
     gameBackgroundIcon: {
         width: 100, 
@@ -88,7 +98,8 @@ const styles = StyleSheet.create({
     gameIcons: {
         width: 90, 
         height: 90, 
-        position: 'absolute' 
+        position: 'absolute',
+        borderWidth:2
     },
     BigText: {
         flex:1,
@@ -103,9 +114,8 @@ const styles = StyleSheet.create({
         flex:1,
         color:'white',
         fontFamily:'ZenOldMincho-Regular', 
-        marginBottom:'60%', 
         fontSize:12,
-        textAlign:'center'
+        textAlign:'center',  
     }
     
   });
