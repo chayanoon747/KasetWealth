@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { Dimensions, TouchableHighlight} from 'react-native';
 
 
-export const EnterPetScreen = ({navigation})=>{
+export const TaptoStartScreen = ({navigation})=>{
     return(
        <SafeAreaView style={{flex:1, backgroundColor:'#0ABAB5'}}>
             <View style={{flex:1, alignItems:'flex-end', padding:'2%'}}>
@@ -46,10 +46,11 @@ export const EnterPetScreen = ({navigation})=>{
                 <View  style={{flex: 1,justifyContent:'center',alignContent:'center',flexDirection:'row'}} >
                     <TouchableOpacity style={{flex:1}} 
                         onPress={()=>{
-                            navigation.navigate('EnterNameScreen');
+                            /* navigation.navigate('HomePet'); */
+                            console.log('Home')
                         }}
                      >
-                          <Text style={{fontFamily:'ZenOldMincho-Black', fontSize:24, color:'#000000',textAlign:'center', paddingTop:20}}>Tap to hatching...</Text> 
+                          <Text style={{fontFamily:'ZenOldMincho-Black', fontSize:24, color:'#000000',textAlign:'center', paddingTop:20}}>Tap to Start</Text> 
                     </TouchableOpacity>
                     
                 </View>
