@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from "react-native"
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from "react-native"
 import { TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useState } from "react";
@@ -37,6 +37,7 @@ export const AddGoalScreen = ({navigation})=>{
 
             navigation.goBack();
             */
+            navigation.navigate('GameQuest')
             console.log(`จำนวนเงิน: ${value}`);
         }else{
             Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
@@ -49,7 +50,7 @@ export const AddGoalScreen = ({navigation})=>{
   };
 
     return(
-       <SafeAreaView style={styles.container}>
+       <ScrollView style={styles.container}>
             <View style={styles.secondContainer}>
               <View style={styles.IconContainer}>
                   <TouchableOpacity
@@ -88,7 +89,7 @@ export const AddGoalScreen = ({navigation})=>{
                         >
                     </TextInput>
               </View>
-              <View style={{height:70}}></View>
+              <View style={{height:90}}></View>
             </View>
 
            
@@ -103,7 +104,7 @@ export const AddGoalScreen = ({navigation})=>{
                 </Shadow>
                 
             </View>
-       </SafeAreaView>
+       </ScrollView>
     )
 }
 
@@ -121,6 +122,7 @@ const styles = StyleSheet.create({
         borderRadius:12,
         borderWidth:1,
         paddingHorizontal:'8%',
+        marginBottom:'10%'
     },
     IconContainer:{
         flex:1, 
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
         width:'100%', height:50
     },
     SaveContainer:{
-        flex:1,
+        height:65,
         justifyContent:'center', 
         paddingHorizontal:'10%'
     },
