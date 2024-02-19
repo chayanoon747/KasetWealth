@@ -1,12 +1,68 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AssetLiabilityDetailScreen } from "../main/AssetLiabilityDetailScreen";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch} from 'react-redux';
 import { setItemTransactionType } from "../../redux/variableSlice";
 import { AddGoalScreen } from "./AddGoalScreen";
+import { retrieveAllDataQuest } from "../../firebase/UserModel";
+import { setItemCategory } from "../../redux/variableSlice";
 
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
+
+    dispatch(setItemCategory(''))
+
+    const user = useSelector((state)=>state.auths);
+    const userUID = user[0].uid;
+
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+
+    const [incomeAndExpensesDataSelected, setIncomeAndExpensesDataSelected] = useState({})
+
+    useEffect(() => {
+      getQuestData();
+    }, [isUpdate]);
+
+  const getQuestData = async()=>{
+      try{
+          const itemAllDataIncomeAndExpenses = await retrieveAllDataQuest(userUID)
+          setIncomeAndExpensesDataSelected(itemAllDataIncomeAndExpenses)
+
+          
+      }catch (error) {
+          console.error('Error getQuestData:', error);
+      }  
+  }
+
+    const renderItem = ({ item })=>{
+      return(
+        <View style={{flex:1, backgroundColor:'#B3DBD8',alignContent:'center',justifyContent:'center'}}>
+                
+          <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, 
+          marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
+
+            <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
+              <Image source={{uri:item.questPic}} style={{ width: 40, height: 40,alignSelf: 'center',justifyContent:'center' }}/>
+            </View>
+
+            <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
+              <Text style={styles.headerText}>    {item.questType} {item.value} บาท</Text>
+              <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Personal Goal</Text>
+            </View>
+            
+            <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+            backgroundColor: '#0ABAB5',alignSelf: 'center',transform: [{translateY: -5}] }}>
+              <Image source={require('../../assets/plus.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+            </TouchableOpacity>
+
+        </View>
+     
+    </View>
+
+      ) 
+  }
+
     return(
         <ScrollView style={{flex:1, padding:30, backgroundColor:'#B3DBD8'}}>
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff',height: 300}}>
@@ -48,7 +104,7 @@ export const GameQuest = ({navigation})=>{
                 
             </View>
             {/* Weekly Quest */}
-            <View style={{flex:1, backgroundColor:'#B3DBD8'}}>
+            <View style={{flex:1, backgroundColor:'#B3DBD8',transform: [{translateY: 10}]}}>
                 
                 <Text style={[styles.department, styles.boldText, {color: '#2C6264'},{transform: [{ translateY: -10 }]}]}>Weekly Quest : ภารกิจรายสัปดาห์</Text>
 
@@ -95,11 +151,19 @@ export const GameQuest = ({navigation})=>{
                 
             </View>
             {/* Personal Goal */}
-            <View style={{flex:1, backgroundColor:'#B3DBD8'}}>
+            <View style={{flex:1, backgroundColor:'#B3DBD8',justifyContent:'center',alignContent:'center'}}>
                 
-                <Text style={[styles.department, styles.boldText, {color: '#2C6264'},{transform: [{ translateY: -20 }]}]}>Personal Goal : เป้าหมายส่วนตัว</Text>
+                <Text style={[styles.department, styles.boldText, {color: '#2C6264'}]}>Personal Goal : เป้าหมายส่วนตัว</Text>
 
-                <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60,transform: [{ translateY: -20 }]}}>
+                <FlatList 
+                    data={incomeAndExpensesDataSelected}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    scrollEnabled={false}
+                />
+
+                <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, 
+                marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
                   <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
                     <Image source={require('../../assets/desktop.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
                   </View>
@@ -107,7 +171,8 @@ export const GameQuest = ({navigation})=>{
                     <Text style={styles.headerText}>    ---</Text>
                     <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Personal Goal</Text>
                   </View>
-                  <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, backgroundColor: '#0ABAB5',alignSelf: 'center',transform: [{translateY: -5}] }}
+                  <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, backgroundColor: '#0ABAB5',
+                  alignSelf: 'center',transform: [{translateY: -5}] }}
                     onPress={()=>{
                       navigation.navigate('AddGoalScreen')
                     }}
@@ -121,7 +186,8 @@ export const GameQuest = ({navigation})=>{
                 
              
             </View>
-            <View style = {{height:20}}>
+            <View style = {{height:50}}>
+
 
             </View>
             

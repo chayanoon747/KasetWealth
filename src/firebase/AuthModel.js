@@ -1,5 +1,5 @@
 import auth from '@react-native-firebase/auth';
-import {addUser, addFinancials} from './UserModel';
+import {addUser, addFinancials, addPetsQuest} from './UserModel';
 //
 
 export const signUpEmailPass = (profile, success, unsuccess)=>{
@@ -10,6 +10,7 @@ export const signUpEmailPass = (profile, success, unsuccess)=>{
       console.log(`User: in signUpEmailPass: ${user}`)
       addUser(user, profile, success, unsuccess)
       addFinancials(user)
+      addPetsQuest(user)
     })
     .catch((error)=>{
       const msg = (`signUpEmailPass error: ${error}`)
