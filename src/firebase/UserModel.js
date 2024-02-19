@@ -442,6 +442,23 @@ export const addFinancials = (user)=>{
         throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
     });
 }
+
+export const addPetsQuest = (user)=>{
+    const Quest = []
+    firestore()
+    .collection('pets')
+    .doc(user.uid)
+    .set({
+        quest: Quest
+    })
+    .then(()=>{
+        console.log("addPetsQuest success")
+    })
+    .catch((error) => {
+        console.error("Error addPetsQuest:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
 //ดึงหัวข้อ Icon
 export const retrieveCategory = (userUID) => {
     return firestore()
@@ -591,6 +608,43 @@ export const addTransaction = (userUID, itemData, input, selectedDate) => {
         throw new Error("Value must not be 0!");
     }
 };
+
+export const addPersonalGoal = (userUID, itemData, input) => {
+    const transactionId = uuid.v4();;
+    if (input.value !== 0) {
+        const personalGoal = {
+            transactionId: transactionId,
+            detail: input.detail,
+            questPic: itemData.photoURL,
+            questState: false,
+            transactionType: itemData.category,
+            rewardStatus: false,
+            questType: itemData.subCategory,
+            value: input.value
+        };
+
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                quest: firestore.FieldValue.arrayUnion(personalGoal)
+            })
+            .then(() => {
+                console.log("quest added successfully!");
+
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error adding quest:", error);
+                throw error;
+            });
+    } else {
+        // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
 //ดึง value ทั้งหมด
 export const  retrieveDataAsset = (userUID)=>{
     const assetData = {
@@ -707,6 +761,41 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
             });
 
             return IncomeAndExpensestData
+        }
+    })
+}
+
+export const  retrieveAllDataQuest = (userUID)=>{
+    const QuestData = []
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.category != ''){
+                    QuestData.push(element)
+                }
+                /*
+                if(element.category == 'รายได้'){
+                    QuestData.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่าย'){
+                    QuestData.push(element)
+                }
+                if(element.category == 'สินทรัพย์'){
+                    QuestData.push(element)
+                }
+                if(element.category == 'หนี้สิน'){
+                    QuestData.push(element)
+                }
+                */
+            });
+
+            return QuestData
         }
     })
 }

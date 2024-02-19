@@ -2,52 +2,57 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } fr
 import { TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useState } from "react";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch} from 'react-redux';
 import { Shadow } from "react-native-shadow-2";
+import { addPersonalGoal } from "../../firebase/UserModel";
+import { setIsUpdate } from "../../redux/variableSlice";
 
 export const AddGoalScreen = ({navigation})=>{
-  const [input,setInput] = useState({value:''})
+    const dispatch = useDispatch()
+    const [input,setInput] = useState({detail:'',value:''})
 
-  const photoURLItem = useSelector((state)=>state.variables.photoURL)
-  //console.log(photoURLItem);
+    const itemData = useSelector((state)=>state.variables.itemData); 
+    //console.log(itemData);
 
-  const categoryItem = useSelector((state)=>state.variables.category)
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
-  const setValue = (text) => {
-    setInput(oldValue => ({
-        ...oldValue,
-        value:text
-    }))
-  }
+    const user = useSelector((state)=>state.auths);
+    const userUID = user[0].uid;
 
-  const handleAddTransaction = () => {
-    //input มี 2 key คือ value กับ details
-    if(input.value == ""){
-        Alert.alert('กรุณาระบุจำนวนเงิน')
-    }else{
-        const value = parseFloat(input.value)
-        //console.log(value)
-        if(!isNaN(value)){
-            /*
-            if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัย
-                addTransaction(userUID,itemData, input, formattedDate)
-            }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
-                addTransaction(userUID ,itemData, input, selectedDate)
-            }
-
-            navigation.goBack();
-            */
-            navigation.navigate('GameQuest')
-            console.log(`จำนวนเงิน: ${value}`);
-        }else{
-            Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
-        }
+    const setValue = (text) => {
+        setInput(oldValue => ({
+            ...oldValue,
+            value:text
+        }))
     }
-  };
 
-  const CategoryGoalScreen = () => {
-    navigation.navigate('CategoryGoal');
-  };
+    const handleAddPersonalGoal = () => {
+        //input มี 2 key คือ value กับ details
+        if(input.value == ""){
+            Alert.alert('กรุณาระบุจำนวนเงิน')
+        }else{
+            const value = parseFloat(input.value)
+            //console.log(value)
+            if(!isNaN(value)){
+                addPersonalGoal(userUID, itemData, input)
+                .then(()=>{
+                    dispatch(setIsUpdate(!isUpdate))
+                    
+                    setTimeout(() => {
+                        //setIsLoading(false);
+                        navigation.navigate('GameQuest')
+                        console.log(`จำนวนเงิน: ${value}`);
+                    }, 700);
+                })
+            }else{
+                Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
+            }
+        }
+    };
+
+    const CategoryGoalScreen = () => {
+        navigation.navigate('CategoryGoal');
+    };
 
     return(
        <ScrollView style={styles.container}>
@@ -58,13 +63,13 @@ export const AddGoalScreen = ({navigation})=>{
                   >
                       <View style={styles.questionMarkIcon}>
                           <Image source={require('../../assets/game_backgroundIcon.png')} style={styles.game_backgroundIcon} />
-                          <Image source={{uri:photoURLItem ? photoURLItem : "https://cdn.discordapp.com/attachments/951838870272606259/1207602408197193788/game_questionMark.png?ex=65e03e62&is=65cdc962&hm=3525e699ba934a6d818cf3fea970a856cf3c28c561c30bff6619b9f56f2e3cdc&"}} style={styles.game_questionMark} />
+                          <Image source={{uri:itemData.photoURL ? itemData.photoURL : "https://cdn.discordapp.com/attachments/951838870272606259/1207602408197193788/game_questionMark.png?ex=65e03e62&is=65cdc962&hm=3525e699ba934a6d818cf3fea970a856cf3c28c561c30bff6619b9f56f2e3cdc&"}} style={styles.game_questionMark} />
                       </View>
                       
                   </TouchableOpacity>
                   
                   <TextInput style={styles.CategoryText}
-                      placeholder= {categoryItem ? categoryItem : "เลือกหมวดหมู่"}
+                      placeholder= {itemData.category ? itemData.category : "เลือกหมวดหมู่"}
                       editable={false} 
                       underlineColor='#0ABAB5' 
                       activeUnderlineColor="#0ABAB5" 
@@ -97,7 +102,7 @@ export const AddGoalScreen = ({navigation})=>{
             <View style={styles.SaveContainer}>
                 <Shadow  style={styles.shadow} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
                     <TouchableOpacity style={styles.SaveButton}
-                        onPress={handleAddTransaction}
+                        onPress={handleAddPersonalGoal}
                     >
                         <Text style={styles.SaveText}>บันทึกรายการ</Text>
                     </TouchableOpacity>
