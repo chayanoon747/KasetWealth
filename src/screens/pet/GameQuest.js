@@ -40,7 +40,7 @@ export const GameQuest = ({navigation})=>{
         <View style={{flex:1, backgroundColor:'#B3DBD8',alignContent:'center',justifyContent:'center'}}>
                 
           <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, 
-          marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
+          marginVertical:5,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
 
             <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
               <Image source={{uri:item.questPic}} style={{ width: 40, height: 40,alignSelf: 'center',justifyContent:'center' }}/>
@@ -153,7 +153,7 @@ export const GameQuest = ({navigation})=>{
             {/* Personal Goal */}
             <View style={{flex:1, backgroundColor:'#B3DBD8',justifyContent:'center',alignContent:'center'}}>
                 
-                <Text style={[styles.department, styles.boldText, {color: '#2C6264'}]}>Personal Goal : เป้าหมายส่วนตัว</Text>
+                <Text style={[styles.departmentPersonalGoal, styles.boldText, {color: '#2C6264'}]}>Personal Goal : เป้าหมายส่วนตัว</Text>
 
                 <FlatList 
                     data={incomeAndExpensesDataSelected}
@@ -218,5 +218,11 @@ const styles = StyleSheet.create({
       fontFamily:'ZenOldMincho-Bold',
       fontSize:18,
       color:'#000000'
+    },
+    departmentPersonalGoal: {
+      fontFamily:'ZenOldMincho-Bold',
+      fontSize:18,
+      color:'#000000',
+      marginBottom:20
     }
 })
