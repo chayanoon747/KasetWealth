@@ -14,6 +14,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { ActivityIndicator} from "react-native-paper";
+import { retrieveAllData } from "../../firebase/RetrieveData";
 
 
 export const OverviewScreen = ({navigation})=>{
@@ -32,6 +33,7 @@ export const OverviewScreen = ({navigation})=>{
     const [incomeValuesAll, setIncomeValuesAll] = useState()
     const [incomeWorkValue, setIncomeWorkValue] = useState()
     const [incomeAssetValue, setIncomeAssetValue] = useState()
+    const [incomeInvestAssetValue, setIncomeInvestAssetValue] = useState()
     const [incomeOtherValue, setIncomeOtherValue] = useState()
 
     const [expensesValuesAll, setExpensesValuesAll] = useState()
@@ -78,24 +80,26 @@ export const OverviewScreen = ({navigation})=>{
 
     useEffect(() => {
         setIsLoading(true)
-        getDataIncome();
+        getAllData();
+        //getDataIncome();
         console.log("income All: "+incomeValuesAll);
         console.log("income Work: "+incomeWorkValue);
         console.log("income Asset: "+incomeAssetValue);
+        console.log("income Invest Asset: "+incomeInvestAssetValue);
         console.log("income Other: "+incomeOtherValue);
-        getDataExpenses();
-        getDataExpensesSavings();
+        //getDataExpenses();
+        //getDataExpensesSavings();
         console.log("expenses All: "+expensesValuesAll);
         console.log("expenses Variable: "+expensesVariableValue);
         console.log("expenses Fixed: "+expensesFixedValue);
         console.log("expenses Saving And Investment: "+expensesSavingsAndInvestmentValue);
         console.log("expenses Saving: "+expensesSavingsValue)
-        getDataAsset();
+        //getDataAsset();
         console.log("asset All: "+assetValues);
         console.log("asset Liquid: "+assetLiquidValue);
         console.log("asset Invest: "+assetInvestValue);
         console.log("asset Personal: "+assetPersonalValue);
-        getDataLiability();
+        //getDataLiability();
         console.log("liability All: "+liabilityValues);
         console.log("liability Short: "+liabilityShortValues);
         console.log("liability Long: "+liabilityLongValues);
@@ -116,74 +120,40 @@ export const OverviewScreen = ({navigation})=>{
         if (status) {
             setTimeout(() => {
                 setIsLoading(false);
-            }, 2000);
+            }, 1000);
         } else {
             setTimeout(() => {
                 setIsLoading(false);
                 dispatch(setStatus(true));
-            }, 15000);
+            }, 4000);
         }
 
     }, [incomeValuesAll,expensesValuesAll,assetValues,liabilityValues, netWealthValue,netCashFlow,survivalRatio,ratioMeasureShortLiability,basicLiquidityRatio,liabilityToAssetRatio,debtRepaymentRatioFromIncome,savingsRatio,investmentAssetRatio,incomeFromInvestmentAssetRatio,financialFreedomRatio, isUpdate]);
     
-    
-    
-    
-    const getDataIncome = async()=>{
-        try{
-            const itemsDataIncome = await retrieveDataIncome(userUID);
-            setIncomeWorkValue(getIncomeWorkValue(itemsDataIncome));
-            setIncomeAssetValue(getIncomeAssetValue(itemsDataIncome));
-            setIncomeOtherValue(getIncomeOtherValue(itemsDataIncome));
-            setIncomeValuesAll(incomeWorkValue+incomeAssetValue+incomeOtherValue);
-        } catch (error) {
-            console.error('Error getDataIncome:', error);
-        }
-    }
+    const getAllData = async()=>{
+        const itemsdata = await retrieveAllData(userUID);
+        setIncomeWorkValue(getIncomeWorkValue(itemsdata.incomeWork));
+        setIncomeAssetValue(getIncomeAssetValue(itemsdata.incomeAsset));
+        setIncomeInvestAssetValue(getIncomeInvestAssetValue(itemsdata.incomeInvestAsset));
+        setIncomeOtherValue(getIncomeOtherValue(itemsdata.incomeOther));
+        setIncomeValuesAll(incomeWorkValue+incomeAssetValue+incomeOtherValue);
 
-    const getDataExpenses = async()=>{
-        try{
-            const itemsDataExpenses = await retrieveDataExpenses(userUID);
-            setExpensesVariableValue(getExpensesVaribleValues(itemsDataExpenses));
-            setExpensesFixedValue(getExpensesFixedValues(itemsDataExpenses));
-            setExpensesSavingsAndInvestmentValue(getExpensesSavingAndInvestmentValues(itemsDataExpenses));
-            setExpensesValuesAll(expensesVariableValue+expensesFixedValue+expensesSavingsAndInvestmentValue);
-        } catch (error) {
-            console.error('Error getDataExpenses:', error);
-        }
-    }
-    // ค่าใช้จ่ายจากการออม
-    const getDataExpensesSavings = async()=>{
-        try{
-            const itemsDataExpensesSavings = await retrieveDataExpensesSavings(userUID);
-            setExpensesSavingsValue(getExpensesSavingsValue(itemsDataExpensesSavings));
-        } catch (error) {
-            console.error('Error get Data Expenses Savings:', error);
-        }
-    }
-    //
-    const getDataAsset = async()=>{
-        try{
-            const itemsDataAsset = await retrieveDataAsset(userUID);
-            setAssetLiquidValue(getAssetLiquidValue(itemsDataAsset));
-            setAssetInvestValue(getAssetInvestValue(itemsDataAsset));
-            setAssetPersonalValue(getAssetPersonalValue(itemsDataAsset));
-            setAssetValues(assetLiquidValue+assetInvestValue+assetPersonalValue);
-        } catch (error){
-            console.error('Error getDataAsset:', error);
-        }
-    }
+        setExpensesVariableValue(getExpensesVaribleValues(itemsdata.expensesVariable));
+        setExpensesFixedValue(getExpensesFixedValues(itemsdata.expensesFixed));
+        setExpensesSavingsAndInvestmentValue(getExpensesSavingAndInvestmentValues(itemsdata.expenseSavings, itemsdata.expenseInvest));
+        setExpensesSavingsValue(getExpensesSavingsValue(itemsdata.expenseSavings))
+        setExpensesValuesAll(expensesVariableValue+expensesFixedValue+expensesSavingsAndInvestmentValue);
 
-    const getDataLiability = async()=>{
-        try{
-            const itemsDataLiability = await retrieveDataLiability(userUID);
-            setLiabilityShortValues(getLiabilityShortValue(itemsDataLiability));
-            setLiabilityLongValues(getLiabilityLongValue(itemsDataLiability));
-            setLiabilityValues(liabilityShortValues+liabilityLongValues);
-        } catch (error){
-            console.error('Error getDataLiability:', error);
-        }
+        setAssetLiquidValue(getAssetLiquidValue(itemsdata.assetLiquid));
+        setAssetInvestValue(getAssetInvestValue(itemsdata.assetInvest));
+        setAssetPersonalValue(getAssetPersonalValue(itemsdata.assetPersonal));
+        setAssetValues(assetLiquidValue+assetInvestValue+assetPersonalValue);
+
+        setLiabilityShortValues(getLiabilityShortValue(itemsdata.liabilityShort));
+        setLiabilityLongValues(getLiabilityLongValue(itemsdata.liabilityLong));
+        setLiabilityValues(liabilityShortValues+liabilityLongValues);
     }
+    
     const getAllCalculationFormular = async()=>{
         try{
             setNetWealthValue(getNetWealth(assetValues,liabilityValues));
@@ -194,106 +164,118 @@ export const OverviewScreen = ({navigation})=>{
             setLiabilityToAssetRatio(getLiabilityToAssetRatio(liabilityValues,assetValues));
             //การชำระเงินคืนหนี้สินยังเป็น hardcode ต้องไปทำตรงนี้ก่อน
             setDebtRepaymentRatioFromIncome(getDebtRepaymentRatioFromIncome(1000,incomeValuesAll));
-            //การออมมีการเปลี่ยนค่อยทำทีหลัง
             setSavingsRatio(getSavingsRatio(expensesSavingsValue,incomeValuesAll));
             setInvestmentAssetRatio(getInvestmentAssetRatio(assetInvestValue,assetValues));
-            setIncomeFromInvestmentAssetRatio(getIncomeFromInvestmentAssetRatio(incomeAssetValue,incomeValuesAll));
-            setFinancialFreedomRatio(getFinancialFreedomRatio(incomeAssetValue,expensesValuesAll));
+            setIncomeFromInvestmentAssetRatio(getIncomeFromInvestmentAssetRatio(incomeInvestAssetValue,incomeValuesAll));
+            setFinancialFreedomRatio(getFinancialFreedomRatio(incomeInvestAssetValue,expensesValuesAll));
         } catch (error){
             console.error('Error getAllCalculationFormular:', error);
         }
     }
     //รับค่ารายได้
-    const getIncomeWorkValue = (itemsDataIncome)=>{
+    const getIncomeWorkValue = (data)=>{
         let incomeWorkValue = 0;
-        itemsDataIncome.work.forEach(element => {
+        data.forEach(element => {
             incomeWorkValue += parseFloat(element.value);
         });
         
         return incomeWorkValue;
     }
-    const getIncomeAssetValue = (itemsDataIncome)=>{
+    const getIncomeAssetValue = (data)=>{
         let incomeAssetValue = 0;
-        itemsDataIncome.asset.forEach(element => {
+        data.forEach(element => {
             incomeAssetValue += parseFloat(element.value);
         });
         
         return incomeAssetValue;
     }
-    const getIncomeOtherValue = (itemsDataIncome)=>{
+    const getIncomeInvestAssetValue = (data)=>{
+        let incomeInvestAssetValue = 0;
+        data.forEach(element => {
+            incomeInvestAssetValue += parseFloat(element.value);
+        });
+        
+        return incomeInvestAssetValue;
+    }
+    const getIncomeOtherValue = (data)=>{
         let incomeOtherValue = 0;
-        itemsDataIncome.other.forEach(element => {
+        data.forEach(element => {
             incomeOtherValue += parseFloat(element.value);
         });
         return incomeOtherValue;
     }
 
     //รับค่าใช้จ่าย
-    const getExpensesVaribleValues = (itemsDataExpenses)=>{
+    const getExpensesVaribleValues = (data)=>{
         let expensesVariableValue = 0;
-        itemsDataExpenses.variable.forEach(element => {
+        data.forEach(element => {
             expensesVariableValue += parseFloat(element.value);
         });
         
         return expensesVariableValue;
     }
-    const getExpensesFixedValues = (itemsDataExpenses)=>{
+    const getExpensesFixedValues = (data)=>{
         let expensesFixedValue = 0;
-        itemsDataExpenses.fixed.forEach(element => {
+        data.forEach(element => {
             expensesFixedValue += parseFloat(element.value);
         });
         
         return expensesFixedValue;
     }
-    const getExpensesSavingAndInvestmentValues = (itemsDataExpenses)=>{
+    //เงินออม + ลงทุน
+    const getExpensesSavingAndInvestmentValues = (dataSaving, dataInvest)=>{
         let expensesSavingAndInvestmentValue = 0;
-        itemsDataExpenses.savingsAndinvestment.forEach(element => {
+        dataSaving.forEach(element => {
+            expensesSavingAndInvestmentValue += parseFloat(element.value);
+        });
+        dataInvest.forEach(element => {
             expensesSavingAndInvestmentValue += parseFloat(element.value);
         });
         return expensesSavingAndInvestmentValue;
     }
-    const getExpensesSavingsValue = (itemsDataExpensesSavings)=>{
+    //เงินออม
+    const getExpensesSavingsValue = (data)=>{
         let expensesSavingValue = 0;
-        itemsDataExpensesSavings.savings.forEach(element => {
+        data.forEach(element => {
             expensesSavingValue += parseFloat(element.value);
         });
         return expensesSavingValue;
     }
 
     //รับค่าสินทรัพย์ 3 ประเภท
-    const getAssetLiquidValue = (itemsDataAsset)=>{
+    const getAssetLiquidValue = (data)=>{
         let assetLiquidValue = 0;
-        itemsDataAsset.liquid.forEach(element => {
+        data.forEach(element => {
             assetLiquidValue += parseFloat(element.value);
         });
         return assetLiquidValue;
     }
-    const getAssetInvestValue = (itemsDataAsset)=>{
+    const getAssetInvestValue = (data)=>{
         let assetInvestValue = 0;
-        itemsDataAsset.invest.forEach(element => {
+        data.forEach(element => {
             assetInvestValue += parseFloat(element.value);
         });
         return assetInvestValue;
     }
-    const getAssetPersonalValue = (itemsDataAsset)=>{
+    const getAssetPersonalValue = (data)=>{
         let assetPersonalValue = 0;
-        itemsDataAsset.personal.forEach(element => {
+        data.forEach(element => {
             assetPersonalValue += parseFloat(element.value);
         });
         return assetPersonalValue;
     }
 
     //รับค่าหนี้สิน ทั้ง 2 ประเภท
-    const getLiabilityShortValue = (itemsDataLiability)=>{
+    const getLiabilityShortValue = (data)=>{
         let liabilityShortValue = 0;
-        itemsDataLiability.short.forEach(element =>{
+        data.forEach(element =>{
             liabilityShortValue += parseFloat(element.value);
         });
         return liabilityShortValue;
     }
-    const getLiabilityLongValue = (itemsDataLiability)=>{
+    const getLiabilityLongValue = (data)=>{
         let liabilityLongValue = 0;
-        itemsDataLiability.long.forEach(element =>{
+        data.forEach(element =>{
             liabilityLongValue += parseFloat(element.value);
         });
         return liabilityLongValue;
@@ -503,7 +485,7 @@ export const OverviewScreen = ({navigation})=>{
                                 <Image source={require('../../assets/manAndDEBT.png')} style={{width: 100, height:100}} />
                             </View>
                             <View style={{flex:2}}>
-                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3, textAlign:'right'}}>0.15 เท่า</Text>
+                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3, textAlign:'right'}}>{debtRepaymentRatioFromIncome} เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>จากเกณฑ์มาตรฐาน ควร มีค่าน้อยกว่า 0.35 เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>ของรายได้รวมต่อเดือน</Text>
                             </View>
@@ -521,7 +503,7 @@ export const OverviewScreen = ({navigation})=>{
                         <View style={{flex:1.8, flexDirection:'column', alignItems:'flex-start', paddingHorizontal:30, paddingTop:20}}>
                             <Text style={styles.subHeaderText}> อัตราส่วนการออม </Text>
                             <Text style={[styles.descibeText,{paddingHorizontal:5,paddingTop:3}]}>(เงินออมต่อเดือน/รายได้รวมต่อเดือน)</Text>
-                            <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>0.24 เท่า</Text>
+                            <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{savingsRatio} เท่า</Text>
                             <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์มาตรฐาน ควร มากกว่า 10 %</Text>
                             <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>ของรายได้รวมต่อเดือน</Text>
                         </View>
@@ -566,7 +548,7 @@ export const OverviewScreen = ({navigation})=>{
                                 <Image source={require('../../assets/percenFinancial.png')} style={{width: 100, height:100}} />
                             </View>
                             <View style={{flex:2, alignItems:'flex-end'}}>
-                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>0.32 เท่า</Text>
+                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{incomeFromInvestmentAssetRatio} เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์ ควรมีค่ามากกว่า 0</Text>
                             </View>
                         </View>    
@@ -579,7 +561,7 @@ export const OverviewScreen = ({navigation})=>{
                          </View>
                         <View style={{flex:5, flexDirection:'row', paddingHorizontal:30, paddingTop:10, borderColor:'#D2DBD6'}}>
                             <View style={{flex:2, justifyContent:'flex-start'}}>
-                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>5.87 เท่า</Text>
+                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{financialFreedomRatio} เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์ ควรมีค่ามากกว่า 0</Text>
                             </View>
                             <View style={{flex:1}}>

@@ -49,14 +49,26 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
                 if (item.category == "ค่าใช้จ่ายผันแปร") {
                     items1.push(item);
                 }
+                if (item.category == "ค่าใช้จ่ายผันแปร(ชำระหนี้)") {
+                    items1.push(item);
+                }
             }
 
             for (const item of categoryData) {
                 if (item.category == "ค่าใช้จ่ายคงที่") {
                     items2.push(item);
                 }
+                if (item.category == "ค่าใช้จ่ายคงที่(ชำระหนี้)") {
+                    items2.push(item);
+                }
             }
             for (const item of categoryData) {
+                if (item.category == "ค่าใช้จ่ายออมและลงทุน(ออม)") {
+                    items3.push(item);
+                }
+                if (item.category == "ค่าใช้จ่ายออมและลงทุน(ลงทุน)") {
+                    items3.push(item);
+                }
                 if (item.category == "ค่าใช้จ่ายออมและลงทุน") {
                     items3.push(item);
                 }

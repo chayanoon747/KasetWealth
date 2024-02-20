@@ -133,8 +133,8 @@ export const retrieveDataExpensesSavings = (userUID)=>{
             const allData = data.data().transactions;
             //console.log(allData);
             allData.forEach(element => {
-                if(element.category == 'ค่าใช้จ่ายออมและลงทุน' && element.subCategory == 'เงินออม'){
-                    ExpensesSavingsData.savings.push(element) 
+                if(element.category == 'ค่าใช้จ่ายออมและลงทุน(ออม)' && element.subCategory == 'ค่าใช้จ่ายออมและลงทุน(ลงทุน)'){
+                    ExpensesSavingsData.savings.push(element)
                 }
             });
             
@@ -203,6 +203,80 @@ export const  retrieveDataLiability = (userUID)=>{
 
             //console.log(liabilityData)
             return liabilityData
+        }
+    })
+}
+
+export const retrieveAllData = (userUID)=>{
+    const dataFinancial ={
+        incomeWork:[], //รายได้จากการทำงาน
+        incomeAsset:[], //รายได้จากสินทรัพย์
+        incomeInvestAsset:[], //รายได้จากสินทรัพย์(ลงทุน)
+        incomeOther:[],  //รายได้อื่นๆ
+        expensesVariable:[], //ค่าใช้จ่ายผันแปร
+        expensesFixed:[],  //ค่าใช้จ่ายคงที่
+        expenseSavings:[],  //ค่าใช้จ่ายออม
+        expenseInvest:[],  //ค่าใช้จ่ายลงทุน
+        assetLiquid:[],
+        assetInvest:[],
+        assetPersonal:[],
+        liabilityShort:[],
+        liabilityLong:[],
+    }
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.category == 'รายได้จากการทำงาน'){
+                    dataFinancial.incomeWork.push(element)
+                }
+                if(element.category == 'รายได้จากสินทรัพย์'){
+                    dataFinancial.incomeAsset.push(element)
+                }
+                if(element.category == 'รายได้จากสินทรัพย์(ลงทุน)'){
+                    dataFinancial.incomeInvestAsset.push(element)
+                }
+                if(element.category == 'รายได้อื่นๆ'){
+                    dataFinancial.incomeOther.push(element)
+                }
+
+                if(element.category == 'ค่าใช้จ่ายผันแปร'){
+                    dataFinancial.expensesVariable.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่ายคงที่'){
+                    dataFinancial.expensesFixed.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่ายออมและลงทุน(ออม)'){
+                    dataFinancial.expenseSavings.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่ายออมและลงทุน(ลงทุน)'){
+                    dataFinancial.expenseInvest.push(element)
+                }
+
+                if(element.category == 'สินทรัพย์สภาพคล่อง'){
+                    dataFinancial.assetLiquid.push(element)
+                }
+                if(element.category == 'สินทรัพย์ลงทุน'){
+                    dataFinancial.assetInvest.push(element)
+                }
+                if(element.category == 'สินทรัพย์ส่วนตัว'){
+                    dataFinancial.assetPersonal.push(element)
+                }
+
+                if(element.category == 'หนี้สินระยะสั้น'){
+                    dataFinancial.liabilityShort.push(element)
+                }
+                if(element.category == 'หนี้สินระยะยาว'){
+                    dataFinancial.liabilityLong.push(element)
+                }
+            });
+            
+            return dataFinancial
         }
     })
 }
