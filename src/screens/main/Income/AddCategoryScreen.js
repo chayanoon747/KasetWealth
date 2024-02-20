@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Alert} from "react-native";
-import { TextInput } from "react-native-paper";
+import { TextInput, Checkbox } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Shadow } from "react-native-shadow-2";
 import { useState } from "react";
@@ -24,6 +24,11 @@ export const AddCategoryScreen = ({route, navigation})=>{
     const photoURLItem = useSelector((state)=>state.variables.photoURL)
     //console.log(photoURLItem);
 
+    const [checkBoxSavings, setCheckBoxSavings] = useState(false);
+    const [checkBoxInvest, setCheckBoxInvest] = useState(false);
+
+    const [checkBoxIncomeInvestAsset, setCheckBoxIncomeInvestAsset] = useState(false)
+
     const [newCategory, setNewCategory] = useState({
         transactionType: transactionTypeItem,
         category: categoryItem,
@@ -32,35 +37,129 @@ export const AddCategoryScreen = ({route, navigation})=>{
     });
 
     const addDataItem = ()=>{
-        if(photoURLItem){
-            if(newCategory.subCategory != 'empty'){
-                addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem);
-                handleSubmitItem();
-            }else{
-                Alert.alert("กรุณาระบุชื่อ")
+        let validatePhotoURL = true;
+        let validatesubCategory = true;
+        if(!photoURLItem){
+            validatePhotoURL = false;
+            Alert.alert('กรุณาเลือกรูปภาพ')
+        }
+        if(newCategory.subCategory == 'empty'){
+            validatesubCategory = false;
+            Alert.alert('กรุณาระบุชื่อ')
+        }
+
+        if(validatePhotoURL && validatesubCategory){
+            if(categoryItem == 'ค่าใช้จ่ายออมและลงทุน'){
+                if(checkBoxSavings || checkBoxInvest){
+                    if(checkBoxSavings){
+                        let option = '(ออม)'
+                        addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem, option);
+                        handleSubmitItem();
+                    }else{
+                        let option = '(ลงทุน)'
+                        addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem, option);
+                        handleSubmitItem();
+                    }
+                }else{
+                    Alert.alert(`กรุณาเลือกหมวดหมู่ระหว่าง เงินออม หรือ เงินลงทุน`)
+                }
+            
+
             }
-        }else{
-            Alert.alert("กรุณาเลือกรูปภาพ")
+            else if(categoryItem == 'รายได้จากสินทรัพย์'){
+                if(checkBoxIncomeInvestAsset){
+                    let option = '(ลงทุน)';
+                    addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem, option);
+                    handleSubmitItem();
+                }else{
+                    let option = ''
+                    addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem, option);
+                    handleSubmitItem();
+
+                }
+            }
+            else{
+                let option = ''
+                addCategories(userUID, newCategory.transactionType,newCategory.category, newCategory.subCategory, photoURLItem, option);
+                handleSubmitItem();
+            }
         }
     }
 
     const handleSubmitItem = () => {
-        // ทำการนำข้อมูลไปยังหน้าถัดไปเมื่อกดปุ่ม บันทึกข้อมูล
         dispatch(setItemPhotoURL(""))
-        /*if (transactionTypeItem === "รายได้") {
-            navigation.navigate('CategorySelectionScreen');
-        }
-        if (transactionTypeItem === "ค่าใช้จ่าย") {
-            navigation.navigate('CategoryExpensesSelectionScreen');
-        }
-        if (transactionTypeItem === "สินทรัพย์") {
-            navigation.navigate('CategoryAssetSelectionScreen');
-        }
-        if (transactionTypeItem === "หนี้สิน") {
-            navigation.navigate('CategoryLiabilitySelectionScreen');
-        }*/
         navigation.navigate('FinancialScreen');
     };
+
+    const checkboxSavingsAndInvest = ()=>{
+        return(
+            <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                    <View style={{flex:1}}></View>
+
+                    <View style={{flex:2, flexDirection:'row'}}>
+                        <Checkbox style={{flex:1}}
+                            status={checkBoxSavings ? 'checked' : 'unchecked'}
+                            onPress={()=>{
+                                setCheckBoxSavings(!checkBoxSavings);
+                                
+                                if(setCheckBoxInvest){
+                                    setCheckBoxInvest(false)
+                                }
+                            }}
+                                
+                            color="#0ABAB5"
+                        />
+                        <Text style={{flex:1, textAlignVertical:'center'}}>เงินออม</Text>
+                    </View>
+
+                    <View style={{flex:1}}></View>
+                </View>
+
+                <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                    <View style={{flex:1}}></View>
+
+                    <View style={{flex:3, flexDirection:'row'}}>
+                        <Checkbox style={{flex:1}}
+                            status={checkBoxInvest ? 'checked' : 'unchecked'}
+                            onPress={()=>{
+                                setCheckBoxInvest(!checkBoxInvest);
+                                if(checkBoxSavings){
+                                    setCheckBoxSavings(false)
+                                }
+                            }}
+                            color="#0ABAB5"
+                        />
+                        <Text style={{flex:1, textAlignVertical:'center'}}>เงินลงทุน</Text>
+                    </View>
+
+                    <View style={{flex:1}}></View>
+                </View> 
+            </View>
+        )
+    }
+
+    const componentCheckBoxIncomeInvestAsset = ()=>{
+        return(
+            <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1}}></View>
+
+                <View style={{flex:3, flexDirection:'row'}}>
+                    <Checkbox style={{flex:1}}
+                        status={checkBoxIncomeInvestAsset ? 'checked' : 'unchecked'}
+                        onPress={()=>{
+                            setCheckBoxIncomeInvestAsset(!checkBoxIncomeInvestAsset);    
+                        }}
+                                
+                        color="#0ABAB5"
+                    />
+                    <Text style={{flex:1, textAlignVertical:'center'}}>รายได้จากสินทรัพย์ลงทุน</Text>
+                </View>
+
+                <View style={{flex:1}}></View>
+            </View>
+        )
+    }
 
     return(
         <ScrollView style={{flex:1, backgroundColor:'#fffffa', paddingHorizontal:20}}>
@@ -83,7 +182,9 @@ export const AddCategoryScreen = ({route, navigation})=>{
                     onChangeText={(text) => setNewCategory({ ...newCategory, transactionType:transactionTypeItem,subCategory: text })}>  
                 </TextInput>
             </View>
-            <View style={{height:100}}></View>
+            <View style={{height:50}}></View>
+            {categoryItem == 'ค่าใช้จ่ายออมและลงทุน' ? checkboxSavingsAndInvest() : (<View></View>)}
+            {categoryItem == 'รายได้จากสินทรัพย์' ? componentCheckBoxIncomeInvestAsset() : (<View></View>)}
             <View style={{height:150, justifyContent:'center', paddingHorizontal:3}}>
                 <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
                     <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
