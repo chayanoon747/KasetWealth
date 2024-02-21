@@ -5,8 +5,7 @@ import { useDispatch } from "react-redux";
 import { setItemTransactionType, setIsUpdate, setStatus } from "../../redux/variableSlice";
 import { useSelector } from 'react-redux'
 import RNSpeedometer from 'react-native-speedometer';
-import { useEffect, useState } from "react";
-import { retrieveDataIncome, retrieveDataExpenses, retrieveDataExpensesSavings, retrieveDataAsset, retrieveDataLiability } from "../../firebase/RetrieveData"; 
+import { useEffect, useState } from "react"; 
 import { getNetWealth, getNetCashFlow, getSurvivalRatio, getRatioMeasureShortLiability } from '../../Calculate/Calculate'
 import { getBasicLiquidityRatio, getLiabilityToAssetRatio, getDebtRepaymentRatioFromIncome} from "../../Calculate/Calculate"
 import { getSavingsRatio, getInvestmentAssetRatio, getIncomeFromInvestmentAssetRatio, getFinancialFreedomRatio} from "../../Calculate/Calculate"
@@ -14,7 +13,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { ActivityIndicator} from "react-native-paper";
-import { retrieveAllData } from "../../firebase/RetrieveData";
+import { retrieveAllData, retrieveDataLiabilityRemaining } from "../../firebase/RetrieveData";
 
 
 export const OverviewScreen = ({navigation})=>{
@@ -81,6 +80,7 @@ export const OverviewScreen = ({navigation})=>{
     useEffect(() => {
         setIsLoading(true)
         getAllData();
+        getDataLiabilityRemaining();
         //getDataIncome();
         console.log("income All: "+incomeValuesAll);
         console.log("income Work: "+incomeWorkValue);
@@ -149,9 +149,18 @@ export const OverviewScreen = ({navigation})=>{
         setAssetPersonalValue(getAssetPersonalValue(itemsdata.assetPersonal));
         setAssetValues(assetLiquidValue+assetInvestValue+assetPersonalValue);
 
-        setLiabilityShortValues(getLiabilityShortValue(itemsdata.liabilityShort));
-        setLiabilityLongValues(getLiabilityLongValue(itemsdata.liabilityLong));
-        setLiabilityValues(liabilityShortValues+liabilityLongValues);
+        
+    }
+
+    const getDataLiabilityRemaining = async()=>{
+        try{
+            const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
+            setLiabilityShortValues(getLiabilityShortValue(itemsDataLiabilityRemaining.short));
+            setLiabilityLongValues(getLiabilityLongValue(itemsDataLiabilityRemaining.long));
+            setLiabilityValues(liabilityShortValues+liabilityLongValues);
+        }catch (error) {
+            console.error('Error getLiabilityRemaining:', error);
+        }
     }
     
     const getAllCalculationFormular = async()=>{

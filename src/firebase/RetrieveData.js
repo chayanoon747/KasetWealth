@@ -220,8 +220,8 @@ export const retrieveAllData = (userUID)=>{
         assetLiquid:[],
         assetInvest:[],
         assetPersonal:[],
-        liabilityShort:[],
-        liabilityLong:[],
+        //liabilityShort:[],
+        //liabilityLong:[],
     }
     return firestore()
     .collection('financials')
@@ -268,15 +268,95 @@ export const retrieveAllData = (userUID)=>{
                     dataFinancial.assetPersonal.push(element)
                 }
 
-                if(element.category == 'หนี้สินระยะสั้น'){
+                /*if(element.category == 'หนี้สินระยะสั้น'){
                     dataFinancial.liabilityShort.push(element)
                 }
                 if(element.category == 'หนี้สินระยะยาว'){
                     dataFinancial.liabilityLong.push(element)
-                }
+                }*/
             });
             
             return dataFinancial
+        }
+    })
+}
+
+export const retrieveDataLiabilityRemaining = async(userUID) => {
+    const liabilityRemaining = {
+        short: [],
+        long: []
+    };
+    const liabilityData = await retrieveDataLiability(userUID);
+    const repayDebtData = await retrieveRepayDebt(userUID);
+    //console.log(`Liability.long.length: ${liabilityData.long.length}`)
+    //console.log(`Liability.short.length: ${liabilityData.short.length}`)
+    //console.log(`RepayDebtData.length: ${repayDebtData.length}`)
+
+    // เช็คว่า transactionId ของ liabilityData ตรงกับรายการใดใน repayDebtData
+    liabilityData.short.forEach(liability => {
+        const matchingDebts = repayDebtData.filter(debt => debt.transactionId === liability.transactionId);
+        //console.log(matchingDebts)
+        
+        const totalValue = matchingDebts.reduce((accumulator, debt) => accumulator + parseFloat(debt.value), 0);
+        //console.log(totalValue)
+        if (matchingDebts) {
+            // แก้ไขค่า value ของ liabilityData โดยลบค่า value ของรายการที่ตรงกันใน repayDebtData
+            if(liability.value - totalValue >= 0){
+                liability.value -= totalValue; 
+            }
+            
+        }
+        if(liability.value > 0){
+            // เพิ่มข้อมูลใหม่เข้าไปใน liabilityRemaining
+            liabilityRemaining.short.push(liability);
+        } 
+    });
+
+    liabilityData.long.forEach(liability => {
+        const matchingDebts = repayDebtData.filter(debt => debt.transactionId === liability.transactionId);
+        //console.log(matchingDebts)
+        
+        const totalValue = matchingDebts.reduce((accumulator, debt) => accumulator + parseFloat(debt.value), 0);
+        //console.log(totalValue)
+        if (matchingDebts) {
+            // แก้ไขค่า value ของ liabilityData โดยลบค่า value ของรายการที่ตรงกันใน repayDebtData
+            if(liability.value - totalValue >= 0){
+                liability.value -= totalValue; 
+            }
+            
+        }
+        if(liability.value > 0){
+            // เพิ่มข้อมูลใหม่เข้าไปใน liabilityRemaining
+            liabilityRemaining.long.push(liability);
+        } 
+    });
+    //console.log(liabilityRemaining)
+    //console.log(`LiabilityRemaining.long.length: ${liabilityRemaining.long.length}`)
+    //console.log(`LiabilityRemaining.short.length: ${liabilityRemaining.short.length}`)
+    return liabilityRemaining;
+};
+
+export const retrieveRepayDebt = (userUID)=>{
+    const repayDebt = []
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            
+            allData.forEach(element => {
+                if(element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)'){
+                    repayDebt.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)'){
+                    repayDebt.push(element)
+                }
+            });
+
+            return repayDebt
         }
     })
 }

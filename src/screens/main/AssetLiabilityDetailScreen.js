@@ -1,9 +1,11 @@
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, Image, FlatList } from "react-native"
 import { useState, useEffect } from "react"
-import { retrieveDataAsset, retrieveDataLiability } from "../../firebase/UserModel"
+import { retrieveDataAsset, retrieveDataLiability} from "../../firebase/UserModel"
+import { retrieveDataLiabilityRemaining } from "../../firebase/RetrieveData"
 import { useSelector } from "react-redux"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { addTransaction } from "../../firebase/UserModel"
+
 
 export const AssetLiabilityDetailScreen = ({navigation})=>{
 
@@ -12,12 +14,18 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
 
     const [selectedType,setSelectedType] = useState('graph')
     const [selectedDetail,setSelectedDetail] = useState('asset')
+    const [selectedDetailLiability,setSelectedDetailLiability] = useState('All')
+    
+
+
     const [assetData, setAssetData] = useState({})
     const [assetValues, setAssetValues] = useState()
     const [assetContainerHeight, setAssetContainerHeight] = useState()
     const [liabilityData, setLiabilityData] = useState({})
+    const [liabilityRemainingData, setLiabilityRemainingData] = useState({})
     const [liabilityValues, setLiabilityValues] = useState()
     const [liabilityContainerHeight, setLiabilityContainerHeight] = useState()
+    const [liabilityRemainingContainerHeight, setLiabilityRemainingContainerHeight] = useState()
     const [netWealthValue, setNetWealthValue] = useState()
     //แยกหมวดหมู่ย่อย asset
     const [assetLiquidValue,setAssetLiquidValue] = useState();
@@ -32,14 +40,15 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         getDataAsset();
         getDataLiability();
         setNetWealthValue(assetValues - liabilityValues)
-        console.log(netWealthValue)
+        getDataLiabilityRemaining();
+        //console.log(netWealthValue)
     },[assetValues, liabilityValues])
         
     const getDataAsset = async()=>{
         try{
             const itemsDataAsset = await retrieveDataAsset(userUID);
             setAssetData(itemsDataAsset);
-            let height = 240 + (itemsDataAsset.liquid.length * 45) + (itemsDataAsset.invest.length * 45) + (itemsDataAsset.personal.length * 45)
+            let height = 240 + (itemsDataAsset.liquid.length * 50) + (itemsDataAsset.invest.length * 62) + (itemsDataAsset.personal.length * 62)
             setAssetContainerHeight(height)
             setAssetValues(getAssetValues(itemsDataAsset));
             setAssetLiquidValue(getAssetLiquidValue(itemsDataAsset));
@@ -53,14 +62,32 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
     const getDataLiability = async()=>{
         try{
             const itemsDataLiability = await retrieveDataLiability(userUID);
+            //console.log(itemsDataLiability)
             setLiabilityData(itemsDataLiability);
-            let height = 240 + (itemsDataLiability.short.length * 45) + (itemsDataLiability.long.length * 45)
+            let height = 240 + (itemsDataLiability.short.length * 50) + (itemsDataLiability.long.length * 50)
             setLiabilityContainerHeight(height)
-            setLiabilityValues(getLiabilityValues(itemsDataLiability));
-            setLiabilityShortValues(getLiabilityShortValues(itemsDataLiability));
-            setliabilityLongValues(getLiabilityLongValues(itemsDataLiability));
+           
         } catch (error) {
             console.error('Error getDataLiability:', error);
+        }
+    }
+
+    const getDataLiabilityRemaining = async()=>{
+        try{
+            const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
+            //console.log(itemsDataLiabilityRemaining)
+            setLiabilityRemainingData(itemsDataLiabilityRemaining)
+            
+            let lengthOfShortLiabilityRemaining = itemsDataLiabilityRemaining.short.length;
+            let lengthOfLongLiabilityRemaining = itemsDataLiabilityRemaining.long.length; 
+            let height = 240 + (lengthOfShortLiabilityRemaining * 48) + (lengthOfLongLiabilityRemaining * 48)
+            setLiabilityRemainingContainerHeight(height)
+
+            setLiabilityValues(getLiabilityValues(itemsDataLiabilityRemaining));
+            setLiabilityShortValues(getLiabilityShortValues(itemsDataLiabilityRemaining));
+            setliabilityLongValues(getLiabilityLongValues(itemsDataLiabilityRemaining));
+        }catch (error) {
+            console.error('Error getLiabilityRemaining:', error);
         }
     }
 
@@ -131,6 +158,8 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         
         return liabilityLongValues
     }
+
+    
 
     const percentageOfAssets = ()=>{
         return assetValues > 0 ? '(100.00%)' : '(0%)'
@@ -260,6 +289,19 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         )
     }
 
+    const handleComponentLiability = ()=>{
+        if(selectedDetailLiability == 'All'){
+            return(
+                componentLiability()
+            )
+        }
+        if(selectedDetailLiability == 'Remaining'){
+            return(
+                componentLiabilityRemaining()
+            )
+        }
+    }
+
     const componentLiability = ()=>{
         return(
             <View style={{paddingLeft:20, marginVertical:10}}>
@@ -283,6 +325,54 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         )
     }
 
+    const componentLiabilityRemaining = ()=>{
+        return(
+            <View style={{paddingLeft:20, marginVertical:10}}>
+                <Text style={{marginVertical:5}}>หนี้ระยะสั้น</Text>
+                <FlatList style={{borderBottomWidth:1}}
+                    data={liabilityRemainingData.short}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    scrollEnabled={false}
+                />
+
+                <Text style={{marginVertical:5}}>หนี้ระยะยาว</Text>
+                <FlatList style={{borderBottomWidth:1}}
+                    data={liabilityRemainingData.long}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    scrollEnabled={false}
+                />
+            </View>
+            
+        )
+    }
+
+    const TextLiabilityRemaining = ()=>{
+        return(
+            <View style={{flex:2, flexDirection:'row'}}>
+                <View style={{flex:0.5}}></View>
+                <TouchableOpacity style={{flex:1, backgroundColor:selectedDetailLiability == 'All' ? '#b3d8d8' : '#d9d9d9', borderWidth:1, borderColor:'#ffffff'}}
+                    onPress={()=>{
+                        setSelectedDetailLiability('All')
+                    }}
+                >
+                    <Text style={{flex:1, color:'#000000', textAlign:'center', textAlignVertical:'center'}}>ทั้งหมด</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={{flex:1, backgroundColor:selectedDetailLiability == 'Remaining' ? '#b3d8d8' : '#d9d9d9', borderTopRightRadius:14, borderWidth:1, borderColor:'#ffffff'}}
+                    onPress={()=>{
+                        setSelectedDetailLiability('Remaining')
+                    }}
+                >
+                    <Text style={{flex:1, color:'#000000', textAlign:'center', textAlignVertical:'center'}}>คงเหลือ</Text>
+                </TouchableOpacity>
+            </View>
+            
+            
+        )
+    }
+
     const componentMenuBar = ()=>{
         return(
             <View style={{height:'100%'}}>
@@ -299,14 +389,14 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                         <Text style={{fontWeight:'bold'}}>หนี้สิน</Text>
                     </TouchableOpacity>
                 </View>
-                {selectedDetail == 'asset' ? componentAsset() : componentLiability()}
+                {selectedDetail == 'asset' ? componentAsset() : handleComponentLiability()}
 
             </View>
         )
     }
    
     const componentGraph = ()=>{
-        console.log(typeof assetValues);
+        //console.log(typeof assetValues);
         return(
             <View style ={{flex:1}}>
                 <View style={{flex:1,backgroundColor:"#fffffA",marginTop:25,alignItems:'center', marginHorizontal:25}}>
@@ -493,7 +583,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                 
             </View>
 
-            <View style={{height:selectedType == 'graph' && netWealthValue >= 0 ? 470 : (selectedType === 'graph' && netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150  ? 470+(-netWealthValue/liabilityValues*150):(selectedType === 'graph' && netWealthValue < 0 && -netWealthValue/liabilityValues*150 <=  150  ? 470+(-netWealthValue/liabilityValues*150):(selectedDetail == 'asset' ? assetContainerHeight : liabilityContainerHeight))), borderWidth:2, borderColor:'#a9a9a9', marginHorizontal:15, borderRadius:16, backgroundColor:'#ffffff'}}>
+            <View style={{height:selectedType == 'graph' && netWealthValue >= 0 ? 470 : (selectedType === 'graph' && netWealthValue < 0 && -netWealthValue/assetValues*150 <= 150  ? 470+(-netWealthValue/liabilityValues*150):(selectedType === 'graph' && netWealthValue < 0 && -netWealthValue/liabilityValues*150 <=  150  ? 470+(-netWealthValue/liabilityValues*150):(selectedDetail == 'asset' ? assetContainerHeight : (selectedDetailLiability == 'All' ? liabilityContainerHeight : liabilityRemainingContainerHeight)))), borderWidth:2, borderColor:'#a9a9a9', marginHorizontal:15, borderRadius:16, backgroundColor:'#ffffff'}}>
                 <View style={{height:55}}>
                     <View style={{flex:1, flexDirection:'row',borderBottomWidth:1,borderColor:"#D2DBD6",borderBottomStartRadius:10,borderBottomEndRadius:10}}>
                         <View style={{flex:1, flexDirection:'row'}}>
@@ -519,9 +609,10 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                                 <Image source={require('../../assets/menuBarIcon.png')} width={30} height={30} style={{position:'absolute'}} />
                             </TouchableOpacity>
                         </View>
-                        
-
-                        <Text style={{flex:1, textAlignVertical:'bottom', textAlign:'right', marginRight:10}}>ข้อมูล ณ วันที่ 03-02-2024</Text>
+                        <View style={{flex:1, flexDirection:'column'}}>
+                            { selectedType == 'menuBar' && selectedDetail == 'liability'  ? TextLiabilityRemaining() : <View></View>}
+                            <Text style={{flex:1, textAlignVertical:'bottom', textAlign:'right', marginRight:10}}>ข้อมูล ณ วันที่ 03-02-2024</Text>
+                        </View>
                     </View>
                     
                 </View>

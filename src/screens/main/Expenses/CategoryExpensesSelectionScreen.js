@@ -32,11 +32,16 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
     const [category2, setCategory2] = useState([]);
     const [category3, setCategory3] = useState([]);
     const [isDelete, setIsDelete] = useState(false);
-    
 
     useEffect(() => {
         retrieveData();
     }, [isDelete]);
+
+    const success = ()=>{
+        setIsDelete(!isDelete)
+        setIsEdit(false)
+        dispatch(setEditStatus(false));
+    }
 
     const retrieveData = async () => {
         try {
@@ -122,7 +127,6 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
                 dispatch(setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item)));
             } else {
                 dispatch(setSelectedItems([...selectedItems, item]));
-                //console.log(selectedItems);
             }
         }
     };
@@ -160,11 +164,7 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
                         dispatch(setEditStatus(true));
                         setIsEdit(true);
                     }else{
-                        //console.log(selectedItems);
-                        RemoveCategoryIcon(userUID, selectedItems)
-                        setIsDelete(!isDelete)
-                        setIsEdit(false)
-                        dispatch(setEditStatus(false));
+                        RemoveCategoryIcon(userUID, selectedItems, success)
                     }
                     }}
                 >

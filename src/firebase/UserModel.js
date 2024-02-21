@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
-import { StyleSheet } from 'react-native';
+import { retrieveDataLiabilityRemaining, retrieveDataExpenses } from './RetrieveData';
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -496,11 +496,18 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
                 })
             if (doc.exists) {
                 const existingCategories = doc.data().categories;
-
+                let isDuplicate = false;
                 // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
+                if(transactionType == 'หนี้สิน'){
+                    isDuplicate = existingCategories.some(category => 
+                        category.subCategory === newCategory.subCategory
+                    );
+                }else{
+                    isDuplicate = existingCategories.some(category => 
+                        category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
+                    );
+                }
+                
                     
                 if (!isDuplicate) {
                     // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
@@ -545,7 +552,8 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         });
 };
 
-export const RemoveCategoryIcon = (userUID, selectedItems) => {
+/*export const RemoveCategoryIcon = (userUID, selectedItems) => {
+    console.log(selectedItems)
     return firestore()
         .collection('users')
         .doc(userUID)
@@ -559,6 +567,50 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
             console.error("Error removing categories:", error);
             throw error;
         });
+}*/
+
+export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
+    console.log(selectedItems)
+    let isLiabilityRemaining = false;
+    const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
+    //console.log(itemsDataLiabilityRemaining)
+    
+    for (const item of selectedItems) {
+        if (item.transactionType == 'ค่าใช้จ่าย') {
+            let matchingShort = itemsDataLiabilityRemaining.short.find(data => data.transactionId === item.transactionId);
+            if (matchingShort) {
+                isLiabilityRemaining = true;
+                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ1")
+                return;
+            }
+
+            let matchingLong = itemsDataLiabilityRemaining.long.find(data => data.transactionId === item.transactionId);
+            //console.log(matchingLong)
+            if (matchingLong) {
+                isLiabilityRemaining = true;
+                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ2")
+                return;
+            }
+        }
+    }
+    
+    if(isLiabilityRemaining == false){
+        return firestore()
+        .collection('users')
+        .doc(userUID)
+        .update({
+            categories: firestore.FieldValue.arrayRemove(...selectedItems)
+        })
+        .then(() => {
+            success()
+            console.log("Categories removed successfully!");
+        })
+        .catch((error) => {
+            console.error("Error removing categories:", error);
+            throw error;
+        });
+    }
+    
 }
 
 export const addTransaction = (userUID, itemData, input, selectedDate) => {
@@ -598,34 +650,55 @@ export const addTransaction = (userUID, itemData, input, selectedDate) => {
     }
 };
 
-export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses) => {
+export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon, categoryExpenses, subCategoryExpenses) => {
     const transactionId = uuid.v4();
     if (input.value !== 0) {
-        const newTransaction = {
-            transactionId: transactionId,
-            transactionType: itemData.transactionType,
-            category: itemData.category,
-            subCategory: itemData.subCategory,
-            photoURL: itemData.photoURL,
-            date: selectedDate,
-            detail: input.detail,
-            value: input.value
-        };
-
-        return firestore()
-            .collection('financials')
-            .doc(userUID)
-            .update({
-                transactions: firestore.FieldValue.arrayUnion(newTransaction)
+        // เชื่อมต่อ firestore
+        const firestoreRef = firestore();
+        // ค้นหาธุรกรรมทั้งหมดของผู้ใช้
+        return firestoreRef.collection('financials').doc(userUID).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    const transactions = userData.transactions || [];
+                    // ตรวจสอบว่ามีชื่อธุรกรรมซ้ำหรือไม่
+                    const isDuplicate = transactions.some(transaction => transaction.subCategory === itemData.subCategory);
+                    if (!isDuplicate) {
+                        const newTransaction = {
+                            transactionId: transactionId,
+                            transactionType: itemData.transactionType,
+                            category: itemData.category,
+                            subCategory: itemData.subCategory,
+                            photoURL: itemData.photoURL,
+                            date: selectedDate,
+                            detail: input.detail,
+                            value: input.value
+                        };
+                        // เพิ่มธุรกรรมใหม่เข้าไปในรายการ
+                        return firestoreRef.collection('financials').doc(userUID)
+                            .update({
+                                transactions: firestore.FieldValue.arrayUnion(newTransaction)
+                            })
+                            .then(() => {
+                                addCategoriesExpenses(userUID, 'ค่าใช้จ่าย', categoryPlusIcon, categoryExpenses, subCategoryExpenses, itemData.photoURL, transactionId, newTransaction)
+                                console.log("Transactions added successfully!");
+                            })
+                            .catch((error) => {
+                                console.error("Error adding transactions:", error);
+                                throw error;
+                            });
+                    } else {
+                        // ถ้าชื่อธุรกรรมซ้ำกัน
+                        Alert.alert("ไม่สามารถสร้างได้เนื่องจากชื่อซ้ำ");
+                        
+                    }
+                } else {
+                    // หากไม่มีเอกสารสำหรับผู้ใช้นี้ใน firestore
+                    Alert.alert("User data not found!");
+                }
             })
-            .then(() => {
-                addCategoriesExpenses(userUID, 'ค่าใช้จ่าย', categoryPlusIcon, categoryExpenses, subCategoryExpenses, itemData.photoURL, transactionId, newTransaction)
-                console.log("Transactions added successfully!");
-
-            })
-            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
             .catch((error) => {
-                console.error("Error adding transactions:", error);
+                console.log("Error fetching user data:", error);
                 throw error;
             });
     } else {
@@ -635,6 +708,7 @@ export const addTransactionLiability = (userUID, itemData, input, selectedDate, 
         throw new Error("Value must not be 0!");
     }
 };
+
 
 export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon, category, subCategory, photoURL, transactionId, newTransaction) => {
     const categoryId = uuid.v4();
@@ -708,14 +782,6 @@ export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon,
                             .update({
                                 categories: firestore.FieldValue.arrayUnion(plusIcon)
                             })
-                            .then(()=>{
-                                firestore()
-                                .collection('financials')
-                                .doc(userUID)
-                                .update({
-                                    transactions: firestore.FieldValue.arrayRemove(newTransaction)
-                                })
-                            })
                 }
             } else {
                 console.log("No such document!");
@@ -732,6 +798,59 @@ export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon,
             throw error;
         });
 };
+
+export const addTransactionExpenses = async(userUID, itemData, input, selectedDate)=>{
+    const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
+    let matchingDebts = itemsDataLiabilityRemaining.long.find(data => data.transactionId === itemData.transactionId);
+    if(!matchingDebts){
+        matchingDebts = itemsDataLiabilityRemaining.short.find(data => data.transactionId === itemData.transactionId);
+    }
+    if(matchingDebts){
+        if(matchingDebts.value - input.value >= 0){
+            if (input.value !== 0) {
+                const newTransaction = {
+                    transactionId: itemData.transactionId,
+                    transactionType: itemData.transactionType,
+                    category: itemData.category,
+                    subCategory: itemData.subCategory,
+                    photoURL: itemData.photoURL,
+                    date: selectedDate,
+                    detail: input.detail,
+                    value: input.value
+                };
+        
+                return firestore()
+                    .collection('financials')
+                    .doc(userUID)
+                    .update({
+                        transactions: firestore.FieldValue.arrayUnion(newTransaction)
+                    })
+                    .then(() => {
+                        console.log("Transactions added successfully!");
+        
+                    })
+                    // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+                    .catch((error) => {
+                        console.error("Error adding transactions:", error);
+                        throw error;
+                    });
+            } else {
+                // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+                Alert.alert("Value must not be 0!")
+                console.error("Value must not be 0!");
+                throw new Error("Value must not be 0!");
+            }
+        }
+        else{
+            Alert.alert("ไม่สามารถชำระหนี้รายการนี้ได้เนื่องจากคุณชำระหนี้รายการเกินจำนวน โปรดชำระหนี้ให้พอดี")
+        }
+    }else{
+        Alert.alert("ไม่สามารถชำระหนี้ก้อนนี้ได้เนื่องจากหนี้ก้อนนี้ไม้มีอยู่จริง")
+    }
+
+    
+}
+
 //ดึง value ทั้งหมด
 export const  retrieveDataAsset = (userUID)=>{
     const assetData = {
@@ -791,7 +910,7 @@ export const  retrieveDataLiability = (userUID)=>{
                 }
             });
 
-            console.log(liabilityData)
+            //console.log(liabilityData)
             return liabilityData
         }
     })
@@ -897,7 +1016,7 @@ export const editTransaction = (userUID, itemData, input, success)=>{
 
 }
 
-export const RemoveTransaction = (userUID, itemData, success) => {
+/*export const RemoveTransaction = (userUID, itemData, success) => {
     console.log(userUID)
     console.log(itemData)
     return firestore()
@@ -914,4 +1033,59 @@ export const RemoveTransaction = (userUID, itemData, success) => {
             console.error("Error RemoveTransaction:", error);
             throw error;
         });
+}*/
+
+export const RemoveTransaction = async(userUID, itemData, success) => {
+    if(itemData.transactionType == 'หนี้สิน'){
+        const itemsDataExpenses = await retrieveDataExpenses();
+        itemsDataExpenses.variable.forEach(expenses =>{
+            if(expenses.transactionId == itemData.transactionId){
+                return firestore()
+                .collection('financials')
+                .doc(userUID)
+                .update({
+                    transactions: firestore.FieldValue.arrayRemove(expenses)
+                })
+                .then(() => {
+                    console.log("RemoveTransaction Expense successfully!");
+                    
+                })
+                .catch((error) => {
+                    console.error("Error RemoveTransaction:", error);
+                    throw error;
+                });
+                    }
+        })
+        return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .update({
+            transactions: firestore.FieldValue.arrayRemove(itemData)
+        })
+        .then(() => {
+            console.log("RemoveTransaction Liability successfully!");
+            success()
+        })
+        .catch((error) => {
+            console.error("Error RemoveTransaction:", error);
+            throw error;
+        });
+    }
+    else{
+        return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .update({
+            transactions: firestore.FieldValue.arrayRemove(itemData)
+        })
+        .then(() => {
+            console.log("RemoveTransaction successfully!");
+            success()
+        })
+        .catch((error) => {
+            console.error("Error RemoveTransaction:", error);
+            throw error;
+        });
+    }
+    
 }
