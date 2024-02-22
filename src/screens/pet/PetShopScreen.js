@@ -1,36 +1,85 @@
 import { View,TouchableOpacity,Image,Text, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 
 export const PetShopScreen = ({navigation}) => {
-    let userCoin = 20000;
-    let userGem = 200;
+
+    /*--------------------------Driver--------------------------------r*/
+    const [coinBalance, setCoinBalance] = useState(20000);//แทนด้วยเงินทั้งหมด user
+    const [rubyBalance, setRubyBalance] = useState(2000);//แทนด้วยเพชรทั้งหมด user
+    const [keyBalance, setKeyBalance] = useState(10);//แทนด้วยกุญแจทั้งหมด user
+    const [mysteryBoxGuarantee, setMysteryBoxGuarantee] = useState(8);
+    /*-----------------------------------------------------------------*/
 
     const reportBuyItem = (item) => {
-        // ตรวจสอบประเภทของสินค้า
-        if (item.itemCurrencyType === 'coin') {
-            // ถ้าเป็นเงินเกม
-            if (userCoin >= item.price) {
-                // ลดเงินของผู้ใช้
-                userCoin -= item.price;
-                // ทำอย่างอื่นๆ ที่ต้องการทำ เช่น ส่งคำสั่งไปยังเซิร์ฟเวอร์
-                console.log('Bought item ' + item.subCategory);
-            } else {
-                console.log('Not enough coins!');
-            }
-        } else if (item.itemCurrencyType === 'gem') {
-            // ถ้าเป็นเจม
-            if (userGem >= item.price) {
-                // ลดเจมของผู้ใช้
-                userGem -= item.price;
-                // ทำอย่างอื่นๆ ที่ต้องการทำ เช่น ส่งคำสั่งไปยังเซิร์ฟเวอร์
-                console.log('Bought item ' + item.subCategory);
-            } else {
-                console.log('Not enough gems!');
+    if (item.category === 'กล่องสุ่ม') {
+        if (mysteryBoxGuarantee === 1) {
+            setMysteryBoxGuarantee(item.guarantee);
+            alert('Congratulations! You have received many decorative items');
+            console.log(`Item purchased: ${item.subCategory}`);
+        }else {
+            if (item.itemCurrencyType === 'coin') {
+                if (coinBalance >= item.price) {
+                    setCoinBalance(coinBalance - item.price);
+                    setMysteryBoxGuarantee(mysteryBoxGuarantee - 1);
+                    console.log(`Item purchased: ${item.subCategory}`);
+                    alert('Purchased Complete!');
+                } else {
+                    console.log('Insufficient coins to buy this item');
+                    alert('Purchased Incomplete!\nbecause Insufficient coins to buy this item');
+                }
+            } else if (item.itemCurrencyType === 'ruby') {
+                if (rubyBalance >= item.price) {
+                    setRubyBalance(rubyBalance - item.price);
+                    setMysteryBoxGuarantee(mysteryBoxGuarantee - 1);
+                    console.log(`Item purchased: ${item.subCategory}`);
+                    alert('Purchased Complete!');
+                } else {
+                    console.log('Insufficient rubies to buy this item');
+                    alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+                }
             }
         }
-        // อัปเดตสถานะของ userCoin และ userGem
-        // คำสั่ง setState หรือการอัปเดต state ของ Redux หรือวิธีการจัดการสถานะของแอปอื่น ๆ ของคุณ
+    } else {
+        if (item.itemCurrencyType === 'coin') {
+            if (coinBalance >= item.price) {
+                setCoinBalance(coinBalance - item.price);
+                console.log(`Item purchased: ${item.subCategory}`);
+                alert('Purchased Complete!');
+            } else {
+                console.log('Insufficient coins to buy this item');
+                alert('Purchased Incomplete!\nbecause Insufficient coins to buy this item');
+            }
+        } else if (item.itemCurrencyType === 'ruby') {
+            if (rubyBalance >= item.price) {
+                setRubyBalance(rubyBalance - item.price);
+                console.log(`Item purchased: ${item.subCategory}`);
+                alert('Purchased Complete!');
+            } else {
+                console.log('Insufficient rubies to buy this item');
+                alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+            }
+        }
+    }
+    
     };
+
+    const reportBuyItemWithKey = (item) => {
+        if (mysteryBoxGuarantee === 1) {
+            setMysteryBoxGuarantee(item.guarantee);
+            alert('Congratulations! You have received many decorative items');
+            console.log(`Item purchased: ${item.guarantee}`);
+        }else{
+            if (item.useKeyItem && keyBalance > 0) {
+                setKeyBalance(keyBalance - 1);
+                setMysteryBoxGuarantee(mysteryBoxGuarantee - 1);
+                console.log(`Item purchased with key: ${item.subCategory}`);
+            }else{
+                console.log('Insufficient key to buy this item');
+                alert('Purchased Incomplete !\nbecause Insufficient key to buy this item');
+            }
+        }
+    }
 
     const renderItem = ({ item }) => {
         let renderStyle;
@@ -49,7 +98,7 @@ export const PetShopScreen = ({navigation}) => {
                             />
                         </View>
                         <View style={mysteryStyles.viewGuarantee}>
-                            <Text style={mysteryStyles.textGuaranteeDetaill}>เปิดอีก {item.guarantee} กล่องเพื่อรับตำนาน</Text>
+                            <Text style={mysteryStyles.textGuaranteeDetaill}>เปิดอีก {mysteryBoxGuarantee} กล่องเพื่อรับตำนาน</Text>
                         </View>
                     </View>
                     <View style={mysteryStyles.view164}>
@@ -62,9 +111,9 @@ export const PetShopScreen = ({navigation}) => {
                         <View style={mysteryStyles.viewTouchableOpacity}>
                             <View style={mysteryStyles.viewKeySecurity}>                        
                                 <TouchableOpacity
-                                    style={mysteryStyles.touchableMysteryItemBox}
+                                    style={mysteryStyles.touchableMysteryKeyItemBox}
                                     onPress={() => {
-                                        reportBuyItem(item)
+                                        reportBuyItemWithKey(item)
                                     }}
                                 >
                                     <Image
@@ -74,10 +123,8 @@ export const PetShopScreen = ({navigation}) => {
                                     />
                                 </TouchableOpacity>
                                 <View style={mysteryStyles.viewCountKeySecurity}>
-                                    <Text style={mysteryStyles.textDetaillMysteryStyle}>มีอยู่: 0</Text>
+                                    <Text style={mysteryStyles.textDetaillMysteryStyle}>มีอยู่: {keyBalance}</Text>
                                 </View>
-                                
-                                
                             </View>
                             <View style={mysteryStyles.viewPriceButton}>
                                 <TouchableOpacity
@@ -214,7 +261,7 @@ export const PetShopScreen = ({navigation}) => {
                                         width={22}
                                         height={22}
                                     />
-                                    <Text style={styles.CurrencyText}>{userCoin}</Text>
+                                    <Text style={styles.CurrencyText}>{coinBalance}</Text>
                                 </View>
                             </View>
                             <View style={{flex:0.2}}>
@@ -224,7 +271,7 @@ export const PetShopScreen = ({navigation}) => {
                                         width={22}
                                         height={22}
                                     />
-                                    <Text styl={styles.CurrencyText}>{userGem}</Text>
+                                    <Text styl={styles.CurrencyText}>{rubyBalance}</Text>
                                 </View>
                             </View>
                         </View>
@@ -233,15 +280,7 @@ export const PetShopScreen = ({navigation}) => {
                 </View>
                 <View style={{flex:3, marginVertical:5}}>
                 <View style={styles.box}>
-                        <View style={{flex:3/*,backgroundColor:'red',flexDirection:'row'*/}}>
-                            {/* <View style={{flex:1.36,backgroundColor:'green',flexDirection:'column'}}>
-                                <View style={{flex:4,backgroundColor:'blue'}}></View>
-                                <View style={{flex:1,backgroundColor:'yellow'}}></View>
-                            </View>
-                            <View style={{flex:1.64,backgroundColor:'blue',flexDirection:'column'}}>
-                                <View style={{flex:1,backgroundColor:'yellow'}}></View>
-                                <View style={{flex:1,backgroundColor:'pink'}}></View>
-                            </View> */}
+                        <View style={{flex:3}}>
                             <FlatList
                                 data={itemsMysteryBox}
                                 keyExtractor={(item, index) => index.toString()}
@@ -271,7 +310,7 @@ export const PetShopScreen = ({navigation}) => {
                         <View style={styles.boxhead}>
                             <Text style={styles.headerText}>ของตกแต่ง</Text>
                         </View>
-                        <View style={{flex:3}}>
+                        <View style={{flex:8}}>
                             <FlatList
                                 data={ItemsFurniture}
                                 keyExtractor={(item, index) => index.toString()}
@@ -433,6 +472,19 @@ const mysteryStyles = {
         justifyContent:'center',
         alignItems:'center'
     },
+    touchableMysteryKeyItemBox:{
+        flex:1,
+        width:'100%',
+        height:'25%',
+        borderRadius:12,
+        borderWidth:1, 
+        borderheight:12,
+        borderColor:'#000000',
+        marginHorizontal:5,
+        marginVertical:50,
+        justifyContent:'center',
+        alignItems:'center'
+    },
     viewCountKeySecurity:{
         justifyContent:'center',
         alignItems:'center'
@@ -465,26 +517,29 @@ const mysteryStyles = {
 const itemsMysteryBox = [
     {
         category: "กล่องสุ่ม",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "CardBoard",
-        price:'20',
-        guarantee:'8',
+        price:20,
+        guarantee:8,
+        useKeyItem: true,
         photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1206324628419649566/image_7_box.png?ex=65db985b&is=65c9235b&hm=9be1bf2dd2ce56b8eb47d27a176c2a2b159ba320b64ed52f2c1ff1351237f4a4&"
     },
     {
         category: "กล่องสุ่ม",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "PrimiticBox",
-        price:'200',
-        guarantee:'20',
+        price:200,
+        guarantee:20,
+        useKeyItem: true,
         photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1206324629501775972/disco.png?ex=65db985c&is=65c9235c&hm=e180cb14e572d7f06aa07fdc6ac248f09766b7c0fa52fbba5576271ceb91eaf9&"
     },
     {
         category: "กล่องสุ่ม",
         itemCurrencyType: 'coin',
         subCategory: "item1",
-        price:'100',
-        guarantee:'10',
+        price:100,
+        guarantee:10,
+        useKeyItem: true,
         photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     }
 ]
@@ -501,35 +556,35 @@ const ItemsHealthy = [
         category: "อาหารและยา",
         itemCurrencyType: 'coin',
         subCategory: "เนื้อย่าง",
-        price:'20',
+        price:20,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206324628101009518/image_6.png?ex=65db985b&is=65c9235b&hm=7be66bf7cb801e1ef6fe8f8b88b61d656231e3c743631b111fdbb93b382e9370&"
     },
     {
         category: "อาหารและยา",
         itemCurrencyType: 'coin',
         subCategory: "ยารักษาโรค",
-        price:'20',
+        price:20,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206324627689701426/image_8.png?ex=65db985b&is=65c9235b&hm=a340996c31feba10dc7472225d4a01ae70508549ee5034991353f240e7f4cf67&"
     },
     {
         category: "อาหารและยา",
         itemCurrencyType: 'coin',
         subCategory: "item4",
-        price:'40',
+        price:40,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     },
     {
         category: "อาหารและยา",
         itemCurrencyType: 'coin',
         subCategory: "item5",
-        price:'40',
+        price:40,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     },
     {
         category: "อาหารและยา",
         itemCurrencyType: 'coin',
         subCategory: "item6",
-        price:'40',
+        price:40,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     }
 ]
@@ -537,37 +592,37 @@ const ItemsHealthy = [
 const ItemsFurniture = [
     {
         category: "ของตกแต่ง",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "ถาดอาหาร",
-        price:'20',
+        price:20,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206324628738281612/image_4.png?ex=65db985b&is=65c9235b&hm=4ac7aca6abe32643ae4bad667b91ad24cfe0b9606894f8e07ef0d7445f1c972b&"
     },
     {
         category: "ของตกแต่ง",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "ตุ๊กตา",
-        price:'20',
+        price:20,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206324627442245712/image_7.png?ex=65db985b&is=65c9235b&hm=56e75cfd84bdb8f87558692181e24b33f978a8dc0efe24ebbbc4cf5e53ca54c6&"
     },
     {
         category: "ของตกแต่ง",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "item3",
-        price:'40',
+        price:40,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     },
     {
         category: "ของตกแต่ง",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "item4",
-        price:'40',
+        price:40,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     },
     {
         category: "ของตกแต่ง",
-        itemCurrencyType: 'gem',
+        itemCurrencyType: 'ruby',
         subCategory: "item5",
-        price:'80',
+        price:80,
         photoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206478806697644073/mdi_question-mark-box.png?ex=65dc27f2&is=65c9b2f2&hm=3d2d6d159ad2baddce1ff22fac67a825e39342b292178493cc1b28eee62190eb&"
     }
 ]
