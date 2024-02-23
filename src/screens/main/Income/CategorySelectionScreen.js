@@ -37,6 +37,12 @@ export const CategorySelectionScreen = ({navigation})=>{
         retrieveData();
     }, [isDelete]);
 
+    const success = ()=>{
+        setIsDelete(!isDelete)
+        setIsEdit(false)
+        dispatch(setEditStatus(false));
+    }
+
     const retrieveData = async () => {
         try {
             const items1 = [];
@@ -144,16 +150,13 @@ export const CategorySelectionScreen = ({navigation})=>{
                 
                 <TouchableOpacity style={{marginRight:15}}
                     onPress={()=>{
-                    if(!isEdit){
-                        dispatch(setEditStatus(true));
-                        setIsEdit(true);
-                    }else{
-                        //console.log(selectedItems);
-                        RemoveCategoryIcon(userUID, selectedItems)
-                        setIsDelete(!isDelete)
-                        setIsEdit(false)
-                        dispatch(setEditStatus(false));
-                    }
+                        if(!isEdit){
+                            dispatch(setEditStatus(true));
+                            setIsEdit(true);
+                        }else{
+                            //console.log(selectedItems);
+                            RemoveCategoryIcon(userUID, selectedItems, success)
+                        }
                     }}
                 >
                     {isEdit ? (

@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
-import { StyleSheet } from 'react-native';
+import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt } from './RetrieveData';
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -521,11 +521,18 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
                 })
             if (doc.exists) {
                 const existingCategories = doc.data().categories;
-
+                let isDuplicate = false;
                 // เช็คว่า transactionTpe และ category และ subCategory ที่จะเพิ่มเข้าไปมีอยู่แล้วหรือไม่
-                const isDuplicate = existingCategories.some(category => 
-                    category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
-                );
+                if(transactionType == 'หนี้สิน'){
+                    isDuplicate = existingCategories.some(category => 
+                        category.subCategory === newCategory.subCategory
+                    );
+                }else{
+                    isDuplicate = existingCategories.some(category => 
+                        category.transactionType === newCategory.transactionType && category.category === newCategory.category && category.subCategory === newCategory.subCategory
+                    );
+                }
+                
                     
                 if (!isDuplicate) {
                     // ถ้าไม่มี object ที่มีชื่อซ้ำกันใน array ให้ทำการเพิ่ม
@@ -570,7 +577,8 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         });
 };
 
-export const RemoveCategoryIcon = (userUID, selectedItems) => {
+/*export const RemoveCategoryIcon = (userUID, selectedItems) => {
+    console.log(selectedItems)
     return firestore()
         .collection('users')
         .doc(userUID)
@@ -584,6 +592,50 @@ export const RemoveCategoryIcon = (userUID, selectedItems) => {
             console.error("Error removing categories:", error);
             throw error;
         });
+}*/
+
+export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
+    console.log(selectedItems)
+    let isLiabilityRemaining = false;
+    const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
+    //console.log(itemsDataLiabilityRemaining)
+    
+    for (const item of selectedItems) {
+        if (item.transactionType == 'ค่าใช้จ่าย') {
+            let matchingShort = itemsDataLiabilityRemaining.short.find(data => data.transactionId === item.transactionId);
+            if (matchingShort) {
+                isLiabilityRemaining = true;
+                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ1")
+                return;
+            }
+
+            let matchingLong = itemsDataLiabilityRemaining.long.find(data => data.transactionId === item.transactionId);
+            //console.log(matchingLong)
+            if (matchingLong) {
+                isLiabilityRemaining = true;
+                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ2")
+                return;
+            }
+        }
+    }
+    
+    if(isLiabilityRemaining == false){
+        return firestore()
+        .collection('users')
+        .doc(userUID)
+        .update({
+            categories: firestore.FieldValue.arrayRemove(...selectedItems)
+        })
+        .then(() => {
+            success()
+            console.log("Categories removed successfully!");
+        })
+        .catch((error) => {
+            console.error("Error removing categories:", error);
+            throw error;
+        });
+    }
+    
 }
 
 export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTransaction) => {
@@ -669,6 +721,7 @@ export const addPersonalGoal = (userUID, itemData, input) => {
         throw new Error("Value must not be 0!");
     }
 };
+
 export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
     const currentDate = new Date();
 
@@ -677,37 +730,57 @@ export const addTransactionLiability = (userUID, itemData, input, selectedDate, 
     const day = String(currentDate.getDate()).padStart(2, '0');
     //ทำไว้เพื่อดูว่า transaction ที่ทำมาวันอะไร โดยยึดวันจริงไม่ใช่วันที่ user เลือก
     const nowDate = `${year}-${month}-${day}`;
-
     const transactionId = uuid.v4();
     if (input.value !== 0) {
-        const newTransaction = {
-            transactionId: transactionId,
-            transactionType: itemData.transactionType,
-            category: itemData.category,
-            subCategory: itemData.subCategory,
-            photoURL: itemData.photoURL,
-            date: selectedDate,
-            detail: input.detail,
-            value: input.value
-        };
-
-        return firestore()
-            .collection('financials')
-            .doc(userUID)
-            .update({
-                transactions: firestore.FieldValue.arrayUnion(newTransaction),
-                CurrentDate: nowDate,
-                // อัพเดต IsFirstTransaction เป็น false หาก isFirstTransaction เป็น true
-                IsFirstTransaction: isFirstTransaction ? false : false
+        // เชื่อมต่อ firestore
+        const firestoreRef = firestore();
+        // ค้นหาธุรกรรมทั้งหมดของผู้ใช้
+        return firestoreRef.collection('financials').doc(userUID).get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    const transactions = userData.transactions || [];
+                    // ตรวจสอบว่ามีชื่อธุรกรรมซ้ำหรือไม่
+                    const isDuplicate = transactions.some(transaction => transaction.subCategory === itemData.subCategory);
+                    if (!isDuplicate) {
+                        const newTransaction = {
+                            transactionId: transactionId,
+                            transactionType: itemData.transactionType,
+                            category: itemData.category,
+                            subCategory: itemData.subCategory,
+                            photoURL: itemData.photoURL,
+                            date: selectedDate,
+                            detail: input.detail,
+                            value: input.value
+                        };
+                        // เพิ่มธุรกรรมใหม่เข้าไปในรายการ
+                        return firestoreRef.collection('financials').doc(userUID)
+                            .update({
+                                transactions: firestore.FieldValue.arrayUnion(newTransaction),
+                                CurrentDate: nowDate,
+                                // อัพเดต IsFirstTransaction เป็น false หาก isFirstTransaction เป็น true
+                                IsFirstTransaction: isFirstTransaction ? false : false
+                            })
+                            .then(() => {
+                                addCategoriesExpenses(userUID, 'ค่าใช้จ่าย', categoryPlusIcon, categoryExpenses, subCategoryExpenses, itemData.photoURL, transactionId, newTransaction)
+                                console.log("Transactions added successfully!");
+                            })
+                            .catch((error) => {
+                                console.error("Error adding transactions:", error);
+                                throw error;
+                            });
+                    } else {
+                        // ถ้าชื่อธุรกรรมซ้ำกัน
+                        Alert.alert("ไม่สามารถสร้างได้เนื่องจากชื่อซ้ำ");
+                        
+                    }
+                } else {
+                    // หากไม่มีเอกสารสำหรับผู้ใช้นี้ใน firestore
+                    Alert.alert("User data not found!");
+                }
             })
-            .then(() => {
-                addCategoriesExpenses(userUID, 'ค่าใช้จ่าย', categoryPlusIcon, categoryExpenses, subCategoryExpenses, itemData.photoURL, transactionId, newTransaction)
-                console.log("Transactions added successfully!");
-
-            })
-            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
             .catch((error) => {
-                console.error("Error adding transactions:", error);
+                console.log("Error fetching user data:", error);
                 throw error;
             });
     } else {
@@ -717,6 +790,7 @@ export const addTransactionLiability = (userUID, itemData, input, selectedDate, 
         throw new Error("Value must not be 0!");
     }
 };
+
 
 export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon, category, subCategory, photoURL, transactionId, newTransaction) => {
     const categoryId = uuid.v4();
@@ -772,7 +846,7 @@ export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon,
                                   {text: 'OK', onPress: () => console.log('OK Pressed')}
                                 ],
                                 {cancelable: false}
-                              );
+                            );
                             return   firestore()
                                     .collection('users')
                                     .doc(userUID)
@@ -790,14 +864,6 @@ export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon,
                             .update({
                                 categories: firestore.FieldValue.arrayUnion(plusIcon)
                             })
-                            .then(()=>{
-                                firestore()
-                                .collection('financials')
-                                .doc(userUID)
-                                .update({
-                                    transactions: firestore.FieldValue.arrayRemove(newTransaction)
-                                })
-                            })
                 }
             } else {
                 console.log("No such document!");
@@ -814,6 +880,73 @@ export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon,
             throw error;
         });
 };
+
+export const addTransactionExpenses = async(userUID, itemData, input, selectedDate)=>{
+    const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
+    let matchingDebts = itemsDataLiabilityRemaining.long.find(data => data.transactionId === itemData.transactionId);
+    if(!matchingDebts){
+        matchingDebts = itemsDataLiabilityRemaining.short.find(data => data.transactionId === itemData.transactionId);
+    }
+    if(matchingDebts){
+        if(matchingDebts.value - input.value >= 0){
+            if (input.value !== 0) {
+                const newTransaction = {
+                    transactionId: itemData.transactionId,
+                    transactionType: itemData.transactionType,
+                    category: itemData.category,
+                    subCategory: itemData.subCategory,
+                    photoURL: itemData.photoURL,
+                    date: selectedDate,
+                    detail: input.detail,
+                    value: input.value
+                };
+        
+                return firestore()
+                    .collection('financials')
+                    .doc(userUID)
+                    .update({
+                        transactions: firestore.FieldValue.arrayUnion(newTransaction)
+                    })
+                    .then(() => {
+                        console.log("Transactions added successfully!");
+        
+                    })
+                    // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+                    .catch((error) => {
+                        console.error("Error adding transactions:", error);
+                        throw error;
+                    });
+            } else {
+                // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+                Alert.alert("Value must not be 0!")
+                console.error("Value must not be 0!");
+                throw new Error("Value must not be 0!");
+            }
+        }
+        else{
+            Alert.alert(
+                'แจ้งเตือน!',
+                'ไม่สามารถชำระหนี้รายการนี้ได้เนื่องจากคุณชำระหนี้รายการเกินจำนวน โปรดชำระหนี้ให้พอดี',
+                [
+                  {text: 'OK', onPress: () => console.log('OK Pressed')}
+                ],
+                {cancelable: false}
+            );
+        }
+    }else{
+        Alert.alert(
+            'แจ้งเตือน!',
+            'ไม่สามารถชำระหนี้ก้อนนี้ได้เนื่องจากหนี้ก้อนนี้ไม้มีอยู่จริง',
+            [
+              {text: 'OK', onPress: () => console.log('OK Pressed')}
+            ],
+            {cancelable: false}
+        );
+    }
+
+    
+}
+
 //ดึง value ทั้งหมด
 export const  retrieveDataAsset = (userUID)=>{
     const assetData = {
@@ -842,7 +975,6 @@ export const  retrieveDataAsset = (userUID)=>{
                 }
             });
 
-            //console.log(assetData)
             return assetData
         }
     })
@@ -873,7 +1005,7 @@ export const  retrieveDataLiability = (userUID)=>{
                 }
             });
 
-            console.log(liabilityData)
+            //console.log(liabilityData)
             return liabilityData
         }
     })
@@ -943,25 +1075,10 @@ export const  retrieveAllDataQuest = (userUID)=>{
     .then((data)=>{
         if(data.exists){
             const allData = data.data().quest;
-            //console.log(allData);
             allData.forEach(element => {
                 if(element.category != ''){
                     QuestData.push(element)
                 }
-                /*
-                if(element.category == 'รายได้'){
-                    QuestData.push(element)
-                }
-                if(element.category == 'ค่าใช้จ่าย'){
-                    QuestData.push(element)
-                }
-                if(element.category == 'สินทรัพย์'){
-                    QuestData.push(element)
-                }
-                if(element.category == 'หนี้สิน'){
-                    QuestData.push(element)
-                }
-                */
             });
 
             return QuestData
@@ -969,55 +1086,182 @@ export const  retrieveAllDataQuest = (userUID)=>{
     })
 }
 
-export const editTransaction = (userUID, itemData, input, success)=>{
-    
-    const docRef = firestore().collection('financials').doc(userUID);
-
-    docRef.get()
-    .then((doc) => {
-        if (doc.exists) {
-            const oldData = doc.data();
-            let transactions = oldData.transactions;
-
-            // ทำการแก้ไขข้อมูลที่ต้องการ
-            // ในตัวอย่างนี้เราจะแก้ไขค่า detail และ value ของ transaction ที่มี index เท่ากับ 0
-            transactions.forEach((element)=>{
-                if(itemData.transactionId == element.transactionId){
-                    element.detail = input.detail
-                    element.value = input.value
-                }
+export const editTransaction = async(userUID, itemData, input, success)=>{
+    let resultRepayDebt = 0;
+    let isCanEdit = false;
+    if(itemData.transactionType == 'หนี้สิน'){
+        const itemsDataRepayDebt = await retrieveRepayDebt(userUID)
+        let matchingDebts = itemsDataRepayDebt.filter(data => data.transactionId === itemData.transactionId);
+        console.log(matchingDebts)
+        if(matchingDebts.length > 0){
+            matchingDebts.forEach(element => {
+                resultRepayDebt+=parseFloat(element.value);
             });
-
-            // สร้างออบเจกต์ที่มี key เป็น transactions และ value เป็นอาร์เรย์ transactions ที่แก้ไขแล้ว
-            const updatedData = {
-                transactions: transactions
-            };
-
-            // ทำการอัปเดตข้อมูลใน Firestore
-            return docRef.update(updatedData)
-                .then(() => {
-                    success()
-                })
-                .catch((error) => {
-                    console.error("Error updating document: ", error);
-                    throw error;
-                });
-        } else {
-            console.error("No such document!");
-            throw new Error("No such document!");
+            console.log(`input.value: ${input.value}`)
+            console.log(`resultRepayDebt: ${resultRepayDebt}`)
+            if(input.value >= resultRepayDebt){
+                isCanEdit = true;
+            }else{
+                Alert.alert(
+                    'แจ้งเตือน!',
+                    'ไม่สามารถแก้ไขได้เนื่องจากจำนวนหนี้ไม่สามารถน้อยกว่าจำนวนชำระหนี้ได้',
+                    [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')}
+                    ],
+                    {cancelable: false}
+                );
+            }
+        }else{
+            isCanEdit = true;
         }
-    })
-    .catch((error) => {
-        console.error("Error getting document:", error);
-        throw error;
-    });
+    }else{
+        isCanEdit = true;
+    }
+
+    if(isCanEdit){
+        const docRef = firestore().collection('financials').doc(userUID);
+
+        docRef.get()
+        .then((doc) => {
+            if (doc.exists) {
+                const oldData = doc.data();
+                let transactions = oldData.transactions;
+
+                // ทำการแก้ไขข้อมูลที่ต้องการ
+                // ในตัวอย่างนี้เราจะแก้ไขค่า detail และ value ของ transaction ที่มี index เท่ากับ 0
+                transactions.forEach((element)=>{
+                    if(itemData.transactionId == element.transactionId && itemData.transactionType == element.transactionType){
+                        element.detail = input.detail
+                        element.value = input.value
+                    }
+                });
+
+                // สร้างออบเจกต์ที่มี key เป็น transactions และ value เป็นอาร์เรย์ transactions ที่แก้ไขแล้ว
+                const updatedData = {
+                    transactions: transactions
+                };
+
+                // ทำการอัปเดตข้อมูลใน Firestore
+                return docRef.update(updatedData)
+                    .then(() => {
+                        success()
+                    })
+                    .catch((error) => {
+                        console.error("Error updating document: ", error);
+                        throw error;
+                    });
+            } else {
+                console.error("No such document!");
+                throw new Error("No such document!");
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting document:", error);
+            throw error;
+        });
+    }
+    
 
 }
 
-export const RemoveTransaction = (userUID, itemData, success) => {
-    console.log(userUID)
-    console.log(itemData)
-    return firestore()
+export const RemoveTransaction = async(userUID, itemData, success) => {
+    if(itemData.transactionType == 'หนี้สิน'){
+        const itemsDataRepayDebt = await retrieveRepayDebt(userUID);
+        console.log(`itemsDataRepayDebt: ${itemsDataRepayDebt}`)
+        if(itemsDataRepayDebt.length > 0){
+            itemsDataRepayDebt.forEach(repayDebt =>{
+                if(repayDebt.transactionId == itemData.transactionId){
+                    firestore()
+                    .collection('financials')
+                    .doc(userUID)
+                    .update({
+                        transactions: firestore.FieldValue.arrayRemove(repayDebt)
+                    })
+                    .then(() => {
+                        console.log("RemoveTransaction Expense successfully!");
+                        
+                    })
+                    .catch((error) => {
+                        console.error("Error RemoveTransaction:", error);
+                        throw error;
+                    });
+                        }
+            })
+            firestore()
+            .collection('financials')
+            .doc(userUID)
+            .update({
+                transactions: firestore.FieldValue.arrayRemove(itemData)
+            })
+            .then(() => {
+                console.log("RemoveTransaction Liability successfully!");
+            })
+            .catch((error) => {
+                console.error("Error RemoveTransaction:", error);
+                throw error;
+            });
+
+            const category = await retrieveCategory(userUID);
+            console.log(`category.length: ${category.length}`)
+            category.forEach((element)=>{
+                if(element.transactionId == itemData.transactionId){
+                    return firestore()
+                        .collection('users')
+                        .doc(userUID)
+                        .update({
+                            categories: firestore.FieldValue.arrayRemove(element)
+                        })
+                        .then(() => {
+                            success()
+                            console.log("Categories removed successfully!");
+                        })
+                        .catch((error) => {
+                            console.error("Error removing categories:", error);
+                            throw error;
+                        });
+                }
+            }) 
+        }
+        else{
+            firestore()
+            .collection('financials')
+            .doc(userUID)
+            .update({
+                transactions: firestore.FieldValue.arrayRemove(itemData)
+            })
+            .then(() => {
+                console.log("RemoveTransaction successfully!");
+                
+                success()
+            })
+            .catch((error) => {
+                console.error("Error RemoveTransaction:", error);
+                throw error;
+            });
+
+            const category = await retrieveCategory(userUID);
+            category.forEach((element)=>{
+                if(element.transactionId == itemData.transactionId){
+                    return firestore()
+                        .collection('users')
+                        .doc(userUID)
+                        .update({
+                            categories: firestore.FieldValue.arrayRemove(element)
+                        })
+                        .then(() => {
+                            success()
+                            console.log("Categories removed successfully!");
+                        })
+                        .catch((error) => {
+                            console.error("Error removing categories:", error);
+                            throw error;
+                        });
+                }
+            }) 
+        }
+    }
+    else{
+        return firestore()
         .collection('financials')
         .doc(userUID)
         .update({
@@ -1031,7 +1275,10 @@ export const RemoveTransaction = (userUID, itemData, success) => {
             console.error("Error RemoveTransaction:", error);
             throw error;
         });
+    }
+    
 }
+
 export const updateLastedDate = (userUID,dateinput,isFirstTransaction) =>{
     if (isFirstTransaction === false && dateinput !== undefined) {
         return firestore()
@@ -1054,6 +1301,7 @@ export const updateLastedDate = (userUID,dateinput,isFirstTransaction) =>{
         throw new Error("Value must not be 0!");
     }
 }
+
 export const updateGuageRiability = (userUID,newGuageRiability) =>{
     if (newGuageRiability !== undefined) {
         return firestore()
@@ -1076,20 +1324,3 @@ export const updateGuageRiability = (userUID,newGuageRiability) =>{
         throw new Error("Value must not be undefined");
     }
 }
-// ฟังก์ชันสำหรับอัปเดตค่า CurrentDate ใน Firestore
-// const updateCurrentDateInFirestore = (userUID) => {
-//     const currentDate = new Date();
-//     const year = currentDate.getFullYear();
-//     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-//     const day = String(currentDate.getDate()).padStart(2, '0');
-//     const nowDate = `${year}-${month}-${day}`;
-  
-//     firestore().collection('financials').doc(userUID)
-//         .update({ CurrentDate: nowDate })
-//         .then(() => {
-//             console.log("CurrentDate updated successfully in Firestore.");
-//         })
-//         .catch((error) => {
-//             console.error("Error updating CurrentDate in Firestore:", error);
-//         });
-//   }

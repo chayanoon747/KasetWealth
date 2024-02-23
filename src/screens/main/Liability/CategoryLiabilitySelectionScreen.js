@@ -37,6 +37,12 @@ export const CategoryLiabilitySelectionScreen = ({navigation})=>{
         retrieveData();
     }, [isDelete]);
 
+    const success = ()=>{
+        setIsDelete(!isDelete)
+        setIsEdit(false)
+        dispatch(setEditStatus(false));
+    }
+
     const retrieveData = async () => {
         try {
             const items1 = [];
@@ -135,10 +141,7 @@ export const CategoryLiabilitySelectionScreen = ({navigation})=>{
                                 setIsEdit(true);
                             }else{
                                 //console.log(selectedItems);
-                                RemoveCategoryIcon(userUID, selectedItems)
-                                setIsDelete(!isDelete)
-                                setIsEdit(false)
-                                dispatch(setEditStatus(false));
+                                RemoveCategoryIcon(userUID, selectedItems, success)
                             }
                         }}>
                             {isEdit ? (

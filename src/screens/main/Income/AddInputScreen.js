@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import { TextInput, ActivityIndicator, Checkbox } from "react-native-paper";
 import { Shadow } from "react-native-shadow-2";
 import { setIsUpdate, setItemPhotoURL } from "../../../redux/variableSlice";
-import { addCategories, addTransaction, addTransactionLiability } from "../../../firebase/UserModel";
+import { addCategories, addTransaction, addTransactionLiability, addTransactionExpenses } from "../../../firebase/UserModel";
 import { useSelector, useDispatch} from 'react-redux'
 import { useEffect, useState } from "react";
 import { retrieveAllData } from "../../../firebase/RetrieveData";
@@ -61,6 +61,18 @@ export const AddInputScreen = ({ navigation })=>{
             ...oldValue,
             value:text
         }))
+    }
+
+    const handleTypeTransaction = ()=>{
+        if(transactionType == 'หนี้สิน'){
+            handleAddTransactionLiability()
+        }
+        else if(transactionType == 'ค่าใช้จ่าย'){
+            handleAddTransactionExpenses()
+        }
+        else{
+            handleAddTransaction()
+        }
     }
 
     const handleAddTransaction = ()=>{
@@ -130,7 +142,15 @@ export const AddInputScreen = ({ navigation })=>{
         }
         if(!checkBoxVariableExpenses && !checkBoxFixedExpenses){
             validateCheckboxExpenses = false
-            Alert.alert('กรุณาเลือกหัวข้อสำหรับการสร้างหัวการชำระหนี้สินว่าเป็นค่าใช้จ่ายประเภทใด')
+            Alert.alert(
+                'แจ้งเตือน!',
+                'กรุณาเลือกหัวข้อสำหรับการสร้างหัวการชำระหนี้สินว่าเป็นค่าใช้จ่ายประเภทใด',
+                [
+                  {text: 'OK', onPress: () => console.log('OK Pressed')}
+                ],
+                {cancelable: false}
+            );
+            
             setIsLoading(false)
             return;
         }
@@ -178,6 +198,49 @@ export const AddInputScreen = ({ navigation })=>{
                         }, 800);
                     })
                 }
+            }
+        }
+    }
+
+    const handleAddTransactionExpenses = ()=>{
+        setIsLoading(true)
+
+        let validateInput = true;
+        let validateTypeInput = true;
+
+        if(input.value == ""){
+            validateInput = false
+            Alert.alert('กรุณาระบุจำนวนเงิน')
+            setIsLoading(false)
+            return;
+        }
+        
+        if(isNaN(input.value)){
+            validateTypeInput = false
+            Alert.alert('กรุณากรอกเป็นตัวเลข')
+            setIsLoading(false)
+            return;
+        }
+
+        if(validateInput && validateTypeInput){
+            if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
+                addTransactionExpenses(userUID,itemData, input, formattedDate)
+                .then(()=>{
+                    dispatch(setIsUpdate(!isUpdate))
+
+                    setTimeout(() => {
+                        navigation.navigate('FinancialScreen')
+                    }, 800);
+                }) 
+            }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
+                addTransactionExpenses(userUID,itemData, input, selectedDate)
+                .then(()=>{
+                    dispatch(setIsUpdate(!isUpdate))
+
+                    setTimeout(() => {
+                        navigation.navigate('FinancialScreen')
+                    }, 800);
+                })
             }
         }
     }
@@ -268,7 +331,7 @@ export const AddInputScreen = ({ navigation })=>{
                     <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
                         <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
                             onPress={()=>{
-                                transactionType == 'หนี้สิน' ? handleAddTransactionLiability() : handleAddTransaction()
+                                handleTypeTransaction()
                             }}
                         >
                             <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
