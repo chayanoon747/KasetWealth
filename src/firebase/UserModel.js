@@ -633,7 +633,42 @@ export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTra
         throw new Error("Value must not be 0!");
     }
 };
+export const addPersonalGoal = (userUID, itemData, input) => {
+    const transactionId = uuid.v4();;
+    if (input.value !== 0) {
+        const personalGoal = {
+            transactionId: transactionId,
+            detail: input.detail,
+            questPic: itemData.photoURL,
+            questState: false,
+            transactionType: itemData.category,
+            rewardStatus: false,
+            questType: itemData.subCategory,
+            value: input.value
+        };
 
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                quest: firestore.FieldValue.arrayUnion(personalGoal)
+            })
+            .then(() => {
+                console.log("quest added successfully!");
+
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error adding quest:", error);
+                throw error;
+            });
+    } else {
+        // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
 export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
     const currentDate = new Date();
 
