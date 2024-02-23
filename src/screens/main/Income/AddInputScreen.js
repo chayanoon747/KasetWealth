@@ -5,7 +5,8 @@ import { Shadow } from "react-native-shadow-2";
 import { setIsUpdate, setItemPhotoURL } from "../../../redux/variableSlice";
 import { addCategories, addTransaction, addTransactionLiability } from "../../../firebase/UserModel";
 import { useSelector, useDispatch} from 'react-redux'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { retrieveAllData } from "../../../firebase/RetrieveData";
 
 export const AddInputScreen = ({ navigation })=>{
     const dispatch = useDispatch()
@@ -35,6 +36,18 @@ export const AddInputScreen = ({ navigation })=>{
 
     const [checkBoxVariableExpenses, setCheckBoxVariableExpenses] = useState(false)
     const [checkBoxFixedExpenses, setCheckBoxFixedExpenses] = useState(false)
+
+    ///ทำเพิ่ม by sam เพื่อไว้เช็ค isFirstTransaction ไว้เช็คในการทำคะแนนความน่าเชื่อถือ
+    const [isFirstTransaction,setIsFirstTransaction] = useState();
+    
+    useEffect(()=>{
+        getIsFirstTransactionData()
+    },[isFirstTransaction])
+    const getIsFirstTransactionData = async()=>{
+        const itemsdata = await retrieveAllData(userUID);
+        setIsFirstTransaction(itemsdata.isFirstTransaction)
+        console.log("don't first transaction: "+isFirstTransaction)
+    }
 
     const setDetail = (text) => {
         setInput(oldValue => ({
@@ -73,7 +86,7 @@ export const AddInputScreen = ({ navigation })=>{
 
         if(validateInput && validateTypeInput){
             if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
-                addTransaction(userUID,itemData, input, formattedDate)
+                addTransaction(userUID,itemData, input, formattedDate,isFirstTransaction)
                 .then(()=>{
                     dispatch(setIsUpdate(!isUpdate))
 
@@ -82,7 +95,7 @@ export const AddInputScreen = ({ navigation })=>{
                     }, 800);
                 }) 
             }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
-                addTransaction(userUID,itemData, input, selectedDate)
+                addTransaction(userUID,itemData, input, selectedDate,isFirstTransaction)
                 .then(()=>{
                     dispatch(setIsUpdate(!isUpdate))
 
@@ -125,7 +138,7 @@ export const AddInputScreen = ({ navigation })=>{
         if(validateInput && validateTypeInput && validateCheckboxExpenses){
             if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
                 if(checkBoxVariableExpenses){
-                    addTransactionLiability(userUID,itemData, input, formattedDate, 'ค่าใช้จ่ายผันแปร','ค่าใช้จ่ายผันแปร(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`)
+                    addTransactionLiability(userUID,itemData, input, formattedDate, 'ค่าใช้จ่ายผันแปร','ค่าใช้จ่ายผันแปร(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
                     .then(()=>{
                         dispatch(setIsUpdate(!isUpdate))
                             
@@ -134,7 +147,7 @@ export const AddInputScreen = ({ navigation })=>{
                         }, 800);
                     })
                 }else{
-                    addTransactionLiability(userUID,itemData, input, formattedDate, 'ค่าใช้จ่ายคงที่','ค่าใช้จ่ายคงที่(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`)
+                    addTransactionLiability(userUID,itemData, input, formattedDate, 'ค่าใช้จ่ายคงที่','ค่าใช้จ่ายคงที่(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
                     .then(()=>{
                         dispatch(setIsUpdate(!isUpdate))
                             
@@ -145,7 +158,7 @@ export const AddInputScreen = ({ navigation })=>{
                 }
             }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
                 if(checkBoxVariableExpenses){
-                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายผันแปร', `ชำระหนี้${itemData.subCategory}`)
+                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายผันแปร', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
                     .then(()=>{
                         
                         dispatch(setIsUpdate(!isUpdate))
@@ -155,7 +168,7 @@ export const AddInputScreen = ({ navigation })=>{
                         }, 800);
                     })
                 }else{
-                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายคงที่', `ชำระหนี้${itemData.subCategory}`)
+                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายคงที่', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
                     .then(()=>{
                         
                         dispatch(setIsUpdate(!isUpdate))

@@ -1,15 +1,23 @@
 import auth from '@react-native-firebase/auth';
 import {addUser, addFinancials} from './UserModel';
-//
+
 
 export const signUpEmailPass = (profile, success, unsuccess)=>{
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // เพิ่ม 1 เพราะเดือนใน JavaScript เริ่มนับที่ 0
+    const day = String(currentDate.getDate()).padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
+
     console.log(`email: ${profile.email}`)
     auth().createUserWithEmailAndPassword(profile.email, profile.password)
     .then((userCredential)=>{
       const user = userCredential.user
       console.log(`User: in signUpEmailPass: ${user}`)
       addUser(user, profile, success, unsuccess)
-      addFinancials(user)
+      addFinancials(user,formattedDate)
     })
     .catch((error)=>{
       const msg = (`signUpEmailPass error: ${error}`)

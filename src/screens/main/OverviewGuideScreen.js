@@ -4,7 +4,7 @@ import RNSpeedometer from 'react-native-speedometer';
 
 export const OverviewGuideScreen = ({navigation, route})=>{
     const {netWealthValue, netCashFlow, survivalRatio, ratioMeasureShortLiability, basicLiquidityRatio, liabilityToAssetRatio,
-    debtRepaymentRatioFromIncome, savingsRatio, investmentAssetRatio, incomeFromInvestmentAssetRatio, financialFreedomRatio} = route.params;
+    debtRepaymentRatioFromIncome, savingsRatio, investmentAssetRatio, incomeFromInvestmentAssetRatio, financialFreedomRatio , guageWealth,guageRiability} = route.params;
     
     const textNetWealthValue = (value)=>{
         if(value > 0){
@@ -336,9 +336,6 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                 {/* สุขภาพทางการเงิน */}
                 <View style={{height:295, borderRadius:16,borderWidth:1,backgroundColor:'#FFFFFA', borderColor:'#A9A9A9', marginBottom:10}}>
                     <TouchableOpacity style={{height:65, borderTopLeftRadius:15, borderTopRightRadius:15, justifyContent:'center', paddingLeft:20, backgroundColor:'#B3DBD8'}}
-                        onPress={()=>{
-                            navigation.navigate('OverviewGuideScreen')
-                        }}
                     >
                         <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:16, color:'#000000'}}>สุขภาพทางการเงิน</Text>  
                     </TouchableOpacity>
@@ -348,7 +345,7 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={5.5} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageWealth} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#80011f'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#cf1020'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#fb0100'},
@@ -367,7 +364,7 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={2} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageRiability} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#08f26e'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#06c258'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#06a94d'}]}

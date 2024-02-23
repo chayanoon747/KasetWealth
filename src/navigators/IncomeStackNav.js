@@ -288,7 +288,7 @@ export const IncomeStackNav = ({navigation})=>{
       <Stack.Screen
         name='DetailScreen'
         component={DetailScreen}
-        options={{
+        options={({ route }) => {
           header: () => (
             <View style={{height:80, backgroundColor:'#0ABAB5'}}>
               <View style={{flex:1}}>
