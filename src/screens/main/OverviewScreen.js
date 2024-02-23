@@ -154,8 +154,6 @@ export const OverviewScreen = ({navigation})=>{
         setIsFirstTransaction(itemsdata.isFirstTransaction)
         setGuageRiability(itemsdata.guageRiability)
         setGuageRiability(getRiabilityGuage(lastedDate,currentDate,isFirstTransaction,allItemTransaction,itemsdata.guageRiability))
-        // console.log("guage riability: "+guageRiability)
-        //console.log(allItemTransaction)
         
         setIncomeWorkValue(getIncomeWorkValue(itemsdata.incomeWork))
         setIncomeAssetValue(getIncomeAssetValue(itemsdata.incomeAsset));
@@ -374,6 +372,7 @@ export const OverviewScreen = ({navigation})=>{
             return differenceDays; 
         }
     }
+    
     //ฟังก์ชันในการเพิ่มจำนวนวัน
     function addDaysToDate(dateString, daysToAdd) {
         if(dateString !== undefined){
@@ -532,7 +531,7 @@ export const OverviewScreen = ({navigation})=>{
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={guageRiability} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageRiability ? guageRiability : 0} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#08f26e'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#06c258'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#06a94d'}]}
