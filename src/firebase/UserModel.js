@@ -451,6 +451,23 @@ export const addFinancials = (user,datecurrent)=>{
         throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
     });
 }
+
+export const addPetsQuest = (user)=>{
+    const Quest = []
+    firestore()
+    .collection('pets')
+    .doc(user.uid)
+    .set({
+        quest: Quest
+    })
+    .then(()=>{
+        console.log("addPetsQuest success")
+    })
+    .catch((error) => {
+        console.error("Error addPetsQuest:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
 //ดึงหัวข้อ Icon
 export const retrieveCategory = (userUID) => {
     return firestore()
@@ -878,6 +895,41 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
             });
 
             return IncomeAndExpensestData
+        }
+    })
+}
+
+export const  retrieveAllDataQuest = (userUID)=>{
+    const QuestData = []
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.category != ''){
+                    QuestData.push(element)
+                }
+                /*
+                if(element.category == 'รายได้'){
+                    QuestData.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่าย'){
+                    QuestData.push(element)
+                }
+                if(element.category == 'สินทรัพย์'){
+                    QuestData.push(element)
+                }
+                if(element.category == 'หนี้สิน'){
+                    QuestData.push(element)
+                }
+                */
+            });
+
+            return QuestData
         }
     })
 }
