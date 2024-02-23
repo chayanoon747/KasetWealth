@@ -427,19 +427,44 @@ export const addUser = (user, profile, success, unsuccess)=>{
     })
 }
 
-export const addFinancials = (user)=>{
+export const addFinancials = (user,datecurrent)=>{
     const Transactions = []
+    const currentDate = datecurrent
+    const lastedDate = datecurrent
+    const isFirstTransaction = true
+    const guageRiability = 0;
     firestore()
     .collection('financials')
     .doc(user.uid)
     .set({
-        transactions: Transactions
+        transactions: Transactions,
+        CurrentDate: currentDate,
+        LastedDate: lastedDate,
+        IsFirstTransaction: isFirstTransaction,
+        GuageRiability: guageRiability
     })
     .then(()=>{
         console.log("addFinancials success")
     })
     .catch((error) => {
         console.error("Error addFinancials:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
+
+export const addPetsQuest = (user)=>{
+    const Quest = []
+    firestore()
+    .collection('pets')
+    .doc(user.uid)
+    .set({
+        quest: Quest
+    })
+    .then(()=>{
+        console.log("addPetsQuest success")
+    })
+    .catch((error) => {
+        console.error("Error addPetsQuest:", error);
         throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
     });
 }
@@ -455,7 +480,7 @@ export const retrieveCategory = (userUID) => {
                 return category;
             } else {
                 // กรณีไม่พบเอกสาร
-                console.log("No such document!");
+                console.log("No such document555");
                 return null;
             }
         })
@@ -613,7 +638,15 @@ export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
     
 }
 
-export const addTransaction = (userUID, itemData, input, selectedDate) => {
+export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTransaction) => {
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // เพิ่ม 1 เพราะเดือนใน JavaScript เริ่มนับที่ 0
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    //ทำไว้เพื่อดูว่า transaction ที่ทำมาวันอะไร โดยยึดวันจริงไม่ใช่วันที่ user เลือก
+    const nowDate = `${year}-${month}-${day}`;
+
     const transactionId = uuid.v4();
     if (input.value !== 0) {
         const newTransaction = {
@@ -631,7 +664,10 @@ export const addTransaction = (userUID, itemData, input, selectedDate) => {
             .collection('financials')
             .doc(userUID)
             .update({
-                transactions: firestore.FieldValue.arrayUnion(newTransaction)
+                transactions: firestore.FieldValue.arrayUnion(newTransaction),
+                CurrentDate: nowDate,
+                //ให้เขียนเพิ่มว่าถ้า isFirstTransaction == true ให้ทำการ update ค่า IsFirstTransaction เป็น false ใน firebase
+                IsFirstTransaction: isFirstTransaction ? false : false
             })
             .then(() => {
                 console.log("Transactions added successfully!");
@@ -649,8 +685,51 @@ export const addTransaction = (userUID, itemData, input, selectedDate) => {
         throw new Error("Value must not be 0!");
     }
 };
+export const addPersonalGoal = (userUID, itemData, input) => {
+    const transactionId = uuid.v4();;
+    if (input.value !== 0) {
+        const personalGoal = {
+            transactionId: transactionId,
+            detail: input.detail,
+            questPic: itemData.photoURL,
+            questState: false,
+            transactionType: itemData.category,
+            rewardStatus: false,
+            questType: itemData.subCategory,
+            value: input.value
+        };
 
-export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon, categoryExpenses, subCategoryExpenses) => {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                quest: firestore.FieldValue.arrayUnion(personalGoal)
+            })
+            .then(() => {
+                console.log("quest added successfully!");
+
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error adding quest:", error);
+                throw error;
+            });
+    } else {
+        // ถ้าค่า value เป็น 0 ให้แสดงข้อความแจ้งเตือน
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // เพิ่ม 1 เพราะเดือนใน JavaScript เริ่มนับที่ 0
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    //ทำไว้เพื่อดูว่า transaction ที่ทำมาวันอะไร โดยยึดวันจริงไม่ใช่วันที่ user เลือก
+    const nowDate = `${year}-${month}-${day}`;
     const transactionId = uuid.v4();
     if (input.value !== 0) {
         // เชื่อมต่อ firestore
@@ -677,7 +756,10 @@ export const addTransactionLiability = (userUID, itemData, input, selectedDate, 
                         // เพิ่มธุรกรรมใหม่เข้าไปในรายการ
                         return firestoreRef.collection('financials').doc(userUID)
                             .update({
-                                transactions: firestore.FieldValue.arrayUnion(newTransaction)
+                                transactions: firestore.FieldValue.arrayUnion(newTransaction),
+                                CurrentDate: nowDate,
+                                // อัพเดต IsFirstTransaction เป็น false หาก isFirstTransaction เป็น true
+                                IsFirstTransaction: isFirstTransaction ? false : false
                             })
                             .then(() => {
                                 addCategoriesExpenses(userUID, 'ค่าใช้จ่าย', categoryPlusIcon, categoryExpenses, subCategoryExpenses, itemData.photoURL, transactionId, newTransaction)
@@ -879,7 +961,6 @@ export const  retrieveDataAsset = (userUID)=>{
                 }
             });
 
-            //console.log(assetData)
             return assetData
         }
     })
@@ -971,6 +1052,26 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
     })
 }
 
+export const  retrieveAllDataQuest = (userUID)=>{
+    const QuestData = []
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(element => {
+                if(element.category != ''){
+                    QuestData.push(element)
+                }
+            });
+
+            return QuestData
+        }
+    })
+}
+
 export const editTransaction = (userUID, itemData, input, success)=>{
     
     const docRef = firestore().collection('financials').doc(userUID);
@@ -1015,25 +1116,6 @@ export const editTransaction = (userUID, itemData, input, success)=>{
     });
 
 }
-
-/*export const RemoveTransaction = (userUID, itemData, success) => {
-    console.log(userUID)
-    console.log(itemData)
-    return firestore()
-        .collection('financials')
-        .doc(userUID)
-        .update({
-            transactions: firestore.FieldValue.arrayRemove(itemData)
-        })
-        .then(() => {
-            console.log("RemoveTransaction successfully!");
-            success()
-        })
-        .catch((error) => {
-            console.error("Error RemoveTransaction:", error);
-            throw error;
-        });
-}*/
 
 export const RemoveTransaction = async(userUID, itemData, success) => {
     if(itemData.transactionType == 'หนี้สิน'){
@@ -1088,4 +1170,49 @@ export const RemoveTransaction = async(userUID, itemData, success) => {
         });
     }
     
+}
+
+export const updateLastedDate = (userUID,dateinput,isFirstTransaction) =>{
+    if (isFirstTransaction === false && dateinput !== undefined) {
+        return firestore()
+            .collection('financials')
+            .doc(userUID)
+            .update({
+                LastedDate: dateinput
+            })
+            .then(() => {
+                console.log("Update LastedDate successfully!");
+
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error update lastedDate:", error);
+                throw error;
+            });
+    } else {
+        console.error("Updated lastedDate Error");
+        throw new Error("Value must not be 0!");
+    }
+}
+export const updateGuageRiability = (userUID,newGuageRiability) =>{
+    if (newGuageRiability !== undefined) {
+        return firestore()
+            .collection('financials')
+            .doc(userUID)
+            .update({
+                GuageRiability: newGuageRiability
+            })
+            .then(() => {
+                console.log("Update GuageRiability successfully!");
+
+            })
+            // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+            .catch((error) => {
+                console.error("Error update riability guague:", error);
+                throw error;
+            });
+    } else {
+        console.error("Updated riabilityGuage Error");
+        throw new Error("Value must not be undefined");
+    }
 }

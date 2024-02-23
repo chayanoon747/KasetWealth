@@ -35,7 +35,7 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
 
     useEffect(() => {
         getDataIncomeAndExpenses();
-    }, [selectedDate, isUpdate]);
+    }, [selectedDate, incomeValuesSelected,expensesValuesSelected,isUpdate]);
 
     const getDataIncomeAndExpenses = async()=>{
         try{
@@ -79,7 +79,7 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
 
     const handleItemPress = (item) => {
         dispatch(setItemData(item))
-        navigation.navigate('DetailScreen');
+        navigation.navigate('DetailScreen', { cameFrom: 'IncomeAndExpensesScreen' });
     };
 
     const renderItem = ({ item })=>{

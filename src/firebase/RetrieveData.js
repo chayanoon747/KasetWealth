@@ -209,6 +209,7 @@ export const  retrieveDataLiability = (userUID)=>{
 
 export const retrieveAllData = (userUID)=>{
     const dataFinancial ={
+        transactionAll:[],
         incomeWork:[], //รายได้จากการทำงาน
         incomeAsset:[], //รายได้จากสินทรัพย์
         incomeInvestAsset:[], //รายได้จากสินทรัพย์(ลงทุน)
@@ -220,8 +221,12 @@ export const retrieveAllData = (userUID)=>{
         assetLiquid:[],
         assetInvest:[],
         assetPersonal:[],
-        //liabilityShort:[],
-        //liabilityLong:[],
+        liabilityShort:[],
+        liabilityLong:[],
+        currentDate: "",
+        lastedDate: "",
+        isFirstTransaction: true,
+        guageRiability: 0 
     }
     return firestore()
     .collection('financials')
@@ -234,48 +239,64 @@ export const retrieveAllData = (userUID)=>{
             allData.forEach(element => {
                 if(element.category == 'รายได้จากการทำงาน'){
                     dataFinancial.incomeWork.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'รายได้จากสินทรัพย์'){
                     dataFinancial.incomeAsset.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'รายได้จากสินทรัพย์(ลงทุน)'){
                     dataFinancial.incomeInvestAsset.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'รายได้อื่นๆ'){
                     dataFinancial.incomeOther.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
 
                 if(element.category == 'ค่าใช้จ่ายผันแปร'){
                     dataFinancial.expensesVariable.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'ค่าใช้จ่ายคงที่'){
                     dataFinancial.expensesFixed.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'ค่าใช้จ่ายออมและลงทุน(ออม)'){
                     dataFinancial.expenseSavings.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'ค่าใช้จ่ายออมและลงทุน(ลงทุน)'){
                     dataFinancial.expenseInvest.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
 
                 if(element.category == 'สินทรัพย์สภาพคล่อง'){
                     dataFinancial.assetLiquid.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'สินทรัพย์ลงทุน'){
                     dataFinancial.assetInvest.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'สินทรัพย์ส่วนตัว'){
                     dataFinancial.assetPersonal.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
 
-                /*if(element.category == 'หนี้สินระยะสั้น'){
+                if(element.category == 'หนี้สินระยะสั้น'){
                     dataFinancial.liabilityShort.push(element)
+                    dataFinancial.transactionAll.push(element)
                 }
                 if(element.category == 'หนี้สินระยะยาว'){
                     dataFinancial.liabilityLong.push(element)
-                }*/
+                    dataFinancial.transactionAll.push(element)
+                }
             });
-            
+            dataFinancial.currentDate = data.data().CurrentDate
+            dataFinancial.lastedDate = data.data().LastedDate
+            dataFinancial.isFirstTransaction = data.data().IsFirstTransaction
+            dataFinancial.guageRiability = data.data().GuageRiability
             return dataFinancial
         }
     })
@@ -360,3 +381,33 @@ export const retrieveRepayDebt = (userUID)=>{
         }
     })
 }
+export const retriveCalculateRiability = (userUID) => {
+    const calculateRiability = {
+        currentDate: "",
+        lastedDate: "",
+        isFirstTransaction: true 
+    };
+
+    return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                calculateRiability.currentDate = data.CurrentDate;
+                calculateRiability.lastedDate = data.LastedDate;
+                calculateRiability.isFirstTransaction = data.IsFirstTransaction;
+                return calculateRiability;
+            } else {
+                // กรณีไม่พบเอกสารหรือข้อมูล
+                console.log("No such document!");
+                return null;
+            }
+        })
+        .catch((error) => {
+            // กรณีเกิดข้อผิดพลาดในการดึงข้อมูล
+            console.log("Error getting document:", error);
+            return null;
+        });
+};

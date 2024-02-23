@@ -5,12 +5,15 @@ import { retrieveDataLiabilityRemaining } from "../../firebase/RetrieveData"
 import { useSelector } from "react-redux"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { addTransaction } from "../../firebase/UserModel"
+import { useDispatch } from "react-redux";
+import { setItemData } from "../../redux/variableSlice";
 
 
 export const AssetLiabilityDetailScreen = ({navigation})=>{
-
+    
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
     const [selectedType,setSelectedType] = useState('graph')
     const [selectedDetail,setSelectedDetail] = useState('asset')
@@ -35,14 +38,14 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
     const [liabilityShortValues,setLiabilityShortValues] = useState();
     const [liabilityLongValues,setliabilityLongValues] = useState();
     //
-
+    const dispatch = useDispatch();
+    
     useEffect(()=>{
         getDataAsset();
         getDataLiability();
         setNetWealthValue(assetValues - liabilityValues)
         getDataLiabilityRemaining();
-        //console.log(netWealthValue)
-    },[assetValues, liabilityValues])
+    },[assetValues, liabilityValues, isUpdate])
         
     const getDataAsset = async()=>{
         try{
@@ -242,9 +245,14 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         setSelectedDetail('liability')
     }
 
+    const handleItemPress = (item) => {
+        dispatch(setItemData(item))
+        navigation.navigate('DetailScreen', { cameFrom: 'AssetLiabilityDetailScreen' });
+    };
     const renderItem = ({ item })=>{
         return(
-            <View style={{flex:1, flexDirection:'row', alignItems:'center', marginVertical:5}}>
+            <TouchableOpacity style={{flex:1, flexDirection:'row', alignItems:'center', marginVertical:5}}
+            onPress={() => handleItemPress(item)}>
                 <View style={{flex:0.5, justifyContent:'center', alignItems:'center'}}>
                     <Image source={require('../../assets/circle.png')} width={25} height={25}/>
                     <Image source={{uri:item.photoURL}} width={25} height={25} style={{position:'absolute'}}/>
@@ -253,7 +261,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                 <Text style={{flex:2}}>{item.subCategory}</Text>
                 <Text style={styles.textValue}>{item.value}</Text>
                 <Text style={{paddingHorizontal:5}}>THB</Text>
-            </View>
+            </TouchableOpacity>
         )
         
     }

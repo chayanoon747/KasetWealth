@@ -14,7 +14,7 @@ import React from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { ActivityIndicator} from "react-native-paper";
 import { retrieveAllData, retrieveDataLiabilityRemaining } from "../../firebase/RetrieveData";
-
+import { updateLastedDate ,updateGuageRiability } from "../../firebase/UserModel"
 
 export const OverviewScreen = ({navigation})=>{
 
@@ -28,7 +28,9 @@ export const OverviewScreen = ({navigation})=>{
 
     const [isLoading, setIsLoading] = useState(true)
     const [isUpdateCurrent, setIsUpdateCurrent] = useState(true)
-    
+    //รับ transaction ทั้งหมดมาใส่แล้วค่อยมาวนหาวันเอง
+    const [allItemTransaction,setAllItemTransaction] = useState([]);
+
     const [incomeValuesAll, setIncomeValuesAll] = useState()
     const [incomeWorkValue, setIncomeWorkValue] = useState()
     const [incomeAssetValue, setIncomeAssetValue] = useState()
@@ -76,7 +78,15 @@ export const OverviewScreen = ({navigation})=>{
     const [incomeFromInvestmentAssetRatio,setIncomeFromInvestmentAssetRatio] = useState();
     //อัตราส่วนอิสรภาพทางการเงิน
     const [financialFreedomRatio,setFinancialFreedomRatio] = useState();
+    //คะแนน(guage) สุขภาพทางการเงิน เต็ม 10 คะแนน
+    const [guageWealth,setGuageWealth] = useState();
 
+    //ใช้สำหรับคำนวน คะแนนความน่าเชื่อถือ
+    const [lastedDate,setLastedDate] = useState();
+    const [currentDate,setCurrentDate] = useState();
+    const [isFirstTransaction,setIsFirstTransaction] = useState();
+    //คะแนน ความน่าเชื่อถือ เต็ม 10 คะแนน
+    const [guageRiability,setGuageRiability] = useState();
     useEffect(() => {
         setIsLoading(true)
         getAllData();
@@ -115,24 +125,37 @@ export const OverviewScreen = ({navigation})=>{
         console.log("Investment Asset Ratio: "+investmentAssetRatio);
         console.log("Income From Investment Asset Ratio: "+incomeFromInvestmentAssetRatio);
         console.log("Financial Freedom Ratio: "+financialFreedomRatio);
-        setIsUpdateCurrent(!isUpdateCurrent)
 
+        setGuageWealth(getGuageWealth());
+        console.log("guage wealth: "+guageWealth)
+        console.log("lasted date: "+lastedDate)
+        console.log("current date: " +currentDate)
+        
+        console.log("guage riability: "+guageRiability)
+        setIsUpdateCurrent(!isUpdateCurrent)
+        
         if (status) {
             setTimeout(() => {
                 setIsLoading(false);
-            }, 1000);
+            }, 2000);
         } else {
             setTimeout(() => {
                 setIsLoading(false);
                 dispatch(setStatus(true));
-            }, 4000);
+            }, 5000);
         }
 
-    }, [incomeValuesAll,expensesValuesAll,assetValues,liabilityValues, netWealthValue,netCashFlow,survivalRatio,ratioMeasureShortLiability,basicLiquidityRatio,liabilityToAssetRatio,debtRepaymentRatioFromIncome,savingsRatio,investmentAssetRatio,incomeFromInvestmentAssetRatio,financialFreedomRatio, isUpdate]);
-    
+    }, [incomeValuesAll,expensesValuesAll,assetValues,liabilityValues, netWealthValue,netCashFlow,survivalRatio,ratioMeasureShortLiability,basicLiquidityRatio,liabilityToAssetRatio,debtRepaymentRatioFromIncome,savingsRatio,investmentAssetRatio,incomeFromInvestmentAssetRatio,financialFreedomRatio,guageWealth,currentDate,isFirstTransaction, isUpdate]);
     const getAllData = async()=>{
         const itemsdata = await retrieveAllData(userUID);
-        setIncomeWorkValue(getIncomeWorkValue(itemsdata.incomeWork));
+        setAllItemTransaction(itemsdata);
+        setCurrentDate(itemsdata.currentDate)
+        setLastedDate(itemsdata.lastedDate)
+        setIsFirstTransaction(itemsdata.isFirstTransaction)
+        setGuageRiability(itemsdata.guageRiability)
+        setGuageRiability(getRiabilityGuage(lastedDate,currentDate,isFirstTransaction,allItemTransaction,itemsdata.guageRiability))
+        
+        setIncomeWorkValue(getIncomeWorkValue(itemsdata.incomeWork))
         setIncomeAssetValue(getIncomeAssetValue(itemsdata.incomeAsset));
         setIncomeInvestAssetValue(getIncomeInvestAssetValue(itemsdata.incomeInvestAsset));
         setIncomeOtherValue(getIncomeOtherValue(itemsdata.incomeOther));
@@ -289,6 +312,179 @@ export const OverviewScreen = ({navigation})=>{
         });
         return liabilityLongValue;
     }
+    //คิดคะแนน สุขภาพทางการเงิน
+    const getGuageWealth = ()=>{
+        let guageWealth = 0;
+        //ความมั่งคั่งในปัจจุบัน
+        if(netWealthValue > 0){
+            guageWealth = guageWealth + 2/3
+            console.log("netWealth 0.67")
+        }
+        if(netCashFlow > 0){
+            guageWealth = guageWealth + 2/3
+        }
+        if(survivalRatio >= 1){
+            guageWealth = guageWealth + 2/3
+        }
+        //สภาพคล่อง
+        if(ratioMeasureShortLiability >=1){
+            guageWealth = guageWealth + 1
+        }
+        if(basicLiquidityRatio > 6){
+            guageWealth = guageWealth + 0.5
+        }else if(basicLiquidityRatio >= 3 && basicLiquidityRatio <= 6){
+            guageWealth = guageWealth + 1
+        }else if(basicLiquidityRatio < 3){
+            guageWealth = guageWealth + 0
+        }
+        //หนี้สินและความสามารถในการชำระหนี้
+        if(liabilityToAssetRatio < 0.5){
+            guageWealth = guageWealth + 1
+        }
+        if(debtRepaymentRatioFromIncome < 0.35){
+            guageWealth = guageWealth + 1
+        }
+        //โอกาสในการสร้างความมั่งคั่ง (การออม)
+        if(savingsRatio > 10){
+            guageWealth = guageWealth + 2
+        }
+        //โอกาสในการสร้างความมั่งคั่ง (การลงทุน)
+        if(investmentAssetRatio < 0.5 && assetInvestValue != 0){
+            guageWealth = guageWealth + 2/3
+        }
+        if(incomeFromInvestmentAssetRatio > 0){
+            guageWealth = guageWealth + 2/3
+        }
+        if(financialFreedomRatio > 0 && expensesValuesAll == 0 && incomeValuesAll > 0){
+            guageWealth = guageWealth + 2/3
+        }
+        return guageWealth.toFixed(2)
+    }
+    //ฟังก์ชันที่ต้องใช้ในการคำนวณระยะห่างระหว่างวัน
+    function findDateDifference(nowDate, oldDate) {
+        if(nowDate !== undefined && oldDate !== undefined){
+            // แยกปี, เดือน, และวันออกจาก string วันที่
+            const [nowYear, nowMonth, nowDay] = nowDate.split('-').map(Number);
+            const [oldYear, oldMonth, oldDay] = oldDate.split('-').map(Number);
+        
+            // สร้างวัตถุ Date สำหรับวันที่ปัจจุบันและวันที่เก่า
+            const nowDateObj = new Date(nowYear, nowMonth - 1, nowDay); // เดือนต้องลบ 1 เนื่องจากเดือนใน JavaScript เริ่มนับจาก 0
+            const oldDateObj = new Date(oldYear, oldMonth - 1, oldDay);
+        
+            // หาความแตกต่างในวัน
+            const differenceTime = nowDateObj.getTime() - oldDateObj.getTime();
+            const differenceDays = Math.ceil(differenceTime / (1000 * 60 * 60 * 24)); // หาผลต่างของวันที่เป็นจำนวนวัน
+        
+            return differenceDays; 
+        }
+    }
+    
+    //ฟังก์ชันในการเพิ่มจำนวนวัน
+    function addDaysToDate(dateString, daysToAdd) {
+        if(dateString !== undefined){
+            const date = new Date(dateString); // แปลง string วันที่เป็นวัตถุ Date
+            date.setDate(date.getDate() + daysToAdd); // เพิ่มจำนวนวันที่ต้องการให้กับวันที่
+            
+            // สร้างวันที่ใหม่
+            const newDate = new Date(date);
+            const year = newDate.getFullYear();
+            const month = String(newDate.getMonth() + 1).padStart(2, '0'); // เพิ่มเลข 0 ข้างหน้าถ้าหลักเดี่ยว
+            const day = String(newDate.getDate()).padStart(2, '0'); // เพิ่มเลข 0 ข้างหน้าถ้าหลักเดี่ยว
+        
+            return `${year}-${month}-${day}`;
+        }
+    }
+    //รับ array รายการ transaction ในวัน dateinput
+    function getOnDateItem (allItemTransaction, dateinput) {
+        // สร้าง array เพื่อเก็บรายการ transaction ที่ตรงกับ dateinput
+        let transactionsOnDate = [];
+        
+        // ใช้ forEach เพื่อวน loop ผ่านทุกๆ รายการ transaction ใน allItemTransaction
+        allItemTransaction.transactionAll.forEach(transaction => {
+            // เช็คว่าวันที่ของ transaction เท่ากับ dateinput หรือไม่
+            if (transaction.date === dateinput) {
+                // ถ้าตรงกัน ให้เพิ่ม transaction นี้เข้าไปใน array transactionsOnDate
+                transactionsOnDate.push(transaction);
+            }
+        });
+        console.log(transactionsOnDate)
+        // ส่งคืนรายการ transaction ที่มีวันที่ตรงกับ dateinput
+        return transactionsOnDate;
+    }
+    //เช็คว่ามี transaction ในวันนั้นหรือไม่
+    function getCheckDataDateTransaction(itemOnDate){
+        if (itemOnDate && itemOnDate.length > 0) {
+            // มีการทำธุรกรรมในวันที่นี้
+            return true;
+        } else {
+            // ไม่มีการทำธุรกรรมในวันที่นี้
+            return false;
+        }
+    }
+
+    const getRiabilityGuage = (lastedDate,currentDate,isFirstTransaction,alldata,oldGuageRiability)=>{
+        if(lastedDate !== undefined && currentDate !== undefined && isFirstTransaction == false){
+            let roundUpdate = Math.floor(findDateDifference(currentDate, lastedDate) / 3)
+            if (roundUpdate < 1) {
+                // คืนค่าเริ่มต้นของ oldGuageRiability
+                return oldGuageRiability;
+            }
+            if(roundUpdate >= 1){
+                if(isFirstTransaction == false){
+                    // let roundUpdate = (findDateDifference(currentDate,lastedDate))/3
+                    let riabilityGuage = oldGuageRiability
+
+                    let lastedDateinput = lastedDate;
+                    console.log(roundUpdate+" round Update Point")
+                    if(roundUpdate >= 1){
+                        for(let i = 0 ; i < roundUpdate ; i++){
+                            let doTransaction = 0
+                            
+                            for(let j = 0 ; j < 3;j++){
+                                //ทำใหม่
+                                console.log(lastedDateinput)
+                                let itemOnDate = getOnDateItem(alldata,lastedDateinput)
+                                //ทำใหม่
+                                let checkDoitemOnDate = getCheckDataDateTransaction(itemOnDate)     
+                                //console.log(checkDoitemOnDate)
+                                if(checkDoitemOnDate)
+                                { 
+                                    doTransaction += 1;
+                                    console.log(lastedDateinput+" มีการทำรายการ")
+                                    // เช็ควันถัดไป 1 วัน
+                                }
+                                lastedDateinput = addDaysToDate(lastedDateinput, 1);
+                                //console.log(lastedDateinput);
+                            }
+                            if(doTransaction == 3){
+                                riabilityGuage += 1
+                            }else if(doTransaction == 2){
+                                riabilityGuage += 0.5
+                            }else if(doTransaction == 1){
+                                riabilityGuage -= 0.5 
+                            }else if(doTransaction == 0){
+                                riabilityGuage -= 1 
+                            }
+                        }
+                        if(riabilityGuage < 0){
+                            riabilityGuage = 0
+                        }
+                        if(riabilityGuage > 10){
+                            riabilityGuage = 10
+                        }
+                        
+                        updateLastedDate(userUID,lastedDateinput,isFirstTransaction)
+                        updateGuageRiability(userUID,riabilityGuage)
+                        setLastedDate(lastedDateinput)
+                        setGuageRiability(riabilityGuage)
+                        return riabilityGuage
+                    }
+                }
+            }
+            
+        }
+        
+    }
 
     const checkText = (value)=>{
         if(value == 'ไม่สามารถคำนวณได้เนื่องจากไม่มีหนี้สินระยะสั้น'){
@@ -311,7 +507,7 @@ export const OverviewScreen = ({navigation})=>{
                         onPress={()=>{
                             navigation.navigate('OverviewGuideScreen', {netWealthValue: netWealthValue, netCashFlow: netCashFlow, survivalRatio: survivalRatio, ratioMeasureShortLiability: ratioMeasureShortLiability, 
                             basicLiquidityRatio: basicLiquidityRatio, liabilityToAssetRatio: liabilityToAssetRatio, debtRepaymentRatioFromIncome: debtRepaymentRatioFromIncome, savingsRatio: savingsRatio, investmentAssetRatio: investmentAssetRatio,
-                            incomeFromInvestmentAssetRatio: incomeFromInvestmentAssetRatio, financialFreedomRatio: financialFreedomRatio});
+                            incomeFromInvestmentAssetRatio: incomeFromInvestmentAssetRatio, financialFreedomRatio: financialFreedomRatio , guageWealth: guageWealth, guageRiability:guageRiability});
                         }}
                     >
                         <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:16, color:'#000000'}}>สุขภาพทางการเงิน</Text>  
@@ -322,7 +518,7 @@ export const OverviewScreen = ({navigation})=>{
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={5.5} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageWealth} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#80011f'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#cf1020'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#fb0100'},
@@ -341,7 +537,7 @@ export const OverviewScreen = ({navigation})=>{
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={2} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageRiability ? guageRiability : 0} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#08f26e'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#06c258'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#06a94d'}]}
