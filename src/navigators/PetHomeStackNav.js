@@ -77,7 +77,7 @@ export const PetHomeStackNav = ({navigation})=>{
         />
 
         <Stack.Screen
-            name='GoalNotificationScreen'
+            name='GoalNotificationScreen' 
             component={GoalNotificationScreen}
             options={{ 
                 header: () => (

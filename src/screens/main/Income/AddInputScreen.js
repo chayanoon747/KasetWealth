@@ -1,12 +1,12 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet, Alert} from "react-native";
 import { ScrollView } from "react-native";
-import { TextInput, ActivityIndicator } from "react-native-paper";
+import { TextInput, ActivityIndicator, Checkbox } from "react-native-paper";
 import { Shadow } from "react-native-shadow-2";
 import { setIsUpdate, setItemPhotoURL } from "../../../redux/variableSlice";
-import firestore from '@react-native-firebase/firestore';
-import { addTransaction } from "../../../firebase/UserModel";
+import { addCategories, addTransaction, addTransactionLiability } from "../../../firebase/UserModel";
 import { useSelector, useDispatch} from 'react-redux'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { retrieveAllData } from "../../../firebase/RetrieveData";
 
 export const AddInputScreen = ({ navigation })=>{
     const dispatch = useDispatch()
@@ -34,6 +34,21 @@ export const AddInputScreen = ({ navigation })=>{
 
     const [isLoading, setIsLoading] = useState(false)
 
+    const [checkBoxVariableExpenses, setCheckBoxVariableExpenses] = useState(false)
+    const [checkBoxFixedExpenses, setCheckBoxFixedExpenses] = useState(false)
+
+    ///ทำเพิ่ม by sam เพื่อไว้เช็ค isFirstTransaction ไว้เช็คในการทำคะแนนความน่าเชื่อถือ
+    const [isFirstTransaction,setIsFirstTransaction] = useState();
+    
+    useEffect(()=>{
+        getIsFirstTransactionData()
+    },[isFirstTransaction])
+    const getIsFirstTransactionData = async()=>{
+        const itemsdata = await retrieveAllData(userUID);
+        setIsFirstTransaction(itemsdata.isFirstTransaction)
+        console.log("don't first transaction: "+isFirstTransaction)
+    }
+
     const setDetail = (text) => {
         setInput(oldValue => ({
             ...oldValue,
@@ -51,42 +66,163 @@ export const AddInputScreen = ({ navigation })=>{
     const handleAddTransaction = ()=>{
         //input มี 2 key คือ value กับ details
         setIsLoading(true)
+
+        let validateInput = true;
+        let validateTypeInput = true;
+
         if(input.value == ""){
+            validateInput = false
             Alert.alert('กรุณาระบุจำนวนเงิน')
-        }else{
-            const value = parseFloat(input.value)
-            //console.log(value)
-            if(!isNaN(value)){
-                if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัย
-                    
-                    addTransaction(userUID,itemData, input, formattedDate)
-                    .then(()=>{
-                        dispatch(setIsUpdate(!isUpdate))
-                        
-                        setTimeout(() => {
-                            //setIsLoading(false);
-                            navigation.navigate('FinancialScreen')
-                        }, 800);
-                    })
-                }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
-                    addTransaction(userUID,itemData, input, selectedDate)
-                    .then(()=>{
-                        dispatch(setIsUpdate(!isUpdate))
-                        setIsLoading(true);
-                        setTimeout(() => {
-                            setIsLoading(false);
-                            navigation.navigate('FinancialScreen')
-                        }, 800);
-                    })
-                }
-            }else{
-                Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
+            setIsLoading(false)
+            return;
+        }
+        
+        if(isNaN(input.value)){
+            validateTypeInput = false
+            Alert.alert('กรุณากรอกเป็นตัวเลข')
+            setIsLoading(false)
+            return;
+        }
+
+        if(validateInput && validateTypeInput){
+            if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
+                addTransaction(userUID,itemData, input, formattedDate,isFirstTransaction)
+                .then(()=>{
+                    dispatch(setIsUpdate(!isUpdate))
+
+                    setTimeout(() => {
+                        navigation.navigate('FinancialScreen')
+                    }, 800);
+                }) 
+            }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
+                addTransaction(userUID,itemData, input, selectedDate,isFirstTransaction)
+                .then(()=>{
+                    dispatch(setIsUpdate(!isUpdate))
+
+                    setTimeout(() => {
+                        navigation.navigate('FinancialScreen')
+                    }, 800);
+                })
             }
         }
     }
 
-    
-    
+    const handleAddTransactionLiability = ()=>{
+        //input มี 2 key คือ value กับ details
+        setIsLoading(true)
+
+        let validateInput = true;
+        let validateTypeInput = true;
+        let validateCheckboxExpenses = true;
+
+        if(input.value == ""){
+            validateInput = false
+            Alert.alert('กรุณาระบุจำนวนเงิน')
+            setIsLoading(false)
+            return;
+        }
+        
+        if(isNaN(input.value)){
+            validateTypeInput = false
+            Alert.alert('กรุณากรอกเป็นตัวเลข')
+            setIsLoading(false)
+            return;
+        }
+        if(!checkBoxVariableExpenses && !checkBoxFixedExpenses){
+            validateCheckboxExpenses = false
+            Alert.alert('กรุณาเลือกหัวข้อสำหรับการสร้างหัวการชำระหนี้สินว่าเป็นค่าใช้จ่ายประเภทใด')
+            setIsLoading(false)
+            return;
+        }
+
+        if(validateInput && validateTypeInput && validateCheckboxExpenses){
+            if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
+                if(checkBoxVariableExpenses){
+                    addTransactionLiability(userUID,itemData, input, formattedDate, 'ค่าใช้จ่ายผันแปร','ค่าใช้จ่ายผันแปร(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
+                    .then(()=>{
+                        dispatch(setIsUpdate(!isUpdate))
+                            
+                        setTimeout(() => {
+                            navigation.navigate('FinancialScreen')
+                        }, 800);
+                    })
+                }else{
+                    addTransactionLiability(userUID,itemData, input, formattedDate, 'ค่าใช้จ่ายคงที่','ค่าใช้จ่ายคงที่(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
+                    .then(()=>{
+                        dispatch(setIsUpdate(!isUpdate))
+                            
+                        setTimeout(() => {
+                            navigation.navigate('FinancialScreen')
+                        }, 800);
+                    })
+                }
+            }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
+                if(checkBoxVariableExpenses){
+                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายผันแปร', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
+                    .then(()=>{
+                        
+                        dispatch(setIsUpdate(!isUpdate))
+                            
+                        setTimeout(() => {
+                            navigation.navigate('FinancialScreen')
+                        }, 800);
+                    })
+                }else{
+                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายคงที่', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
+                    .then(()=>{
+                        
+                        dispatch(setIsUpdate(!isUpdate))
+                            
+                        setTimeout(() => {
+                            navigation.navigate('FinancialScreen')
+                        }, 800);
+                    })
+                }
+            }
+        }
+    }
+
+    const componentCheckBoxRepayDebt = ()=>{
+        return(
+            <View style={{flex:1}}>
+                <Text style={{color:'#FF0000'}}>*ระบบจะทำการสร้างหัวข้อสำหรับการชำระหนี้สินของรายการนี้ โปรดระบุว่าเป็นค่าใช้จ่ายแบบใด</Text>
+                <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                    <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                        <View style={{flex:2, flexDirection:'row'}}>
+                            <Checkbox style={{flex:1}}
+                                status={checkBoxVariableExpenses ? 'checked' : 'unchecked'}
+                                onPress={()=>{
+                                    setCheckBoxVariableExpenses(!checkBoxVariableExpenses);
+                                    if(checkBoxFixedExpenses){
+                                        setCheckBoxFixedExpenses(false)
+                                    }
+                                }}  
+                                color="#0ABAB5"
+                            />
+                            <Text style={{flex:1, textAlignVertical:'center', color:checkBoxVariableExpenses ? '#0ABAB5' : 'gray'}}>ค่าใช้จ่ายผันแปร</Text>
+                        </View>
+                    </View>
+
+                    <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
+                        <View style={{flex:2, flexDirection:'row'}}>
+                            <Checkbox style={{flex:1}}
+                                status={checkBoxFixedExpenses ? 'checked' : 'unchecked'}
+                                onPress={()=>{
+                                    setCheckBoxFixedExpenses(!checkBoxFixedExpenses);
+                                    if(checkBoxVariableExpenses){
+                                        setCheckBoxVariableExpenses(false)
+                                    }
+                                }}  
+                                color="#0ABAB5"
+                            />
+                            <Text style={{flex:1, textAlignVertical:'center', color:checkBoxFixedExpenses ? '#0ABAB5' : 'gray'}}>ค่าใช้จ่ายคงที่</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
     return(
         <ScrollView style={{ backgroundColor:'#fffffa', paddingHorizontal:20}}>
             {isLoading ? (<ActivityIndicator size='large' color="#0ABAB5" style={{marginVertical:'60%'}}></ActivityIndicator>) : (
@@ -124,11 +260,16 @@ export const AddInputScreen = ({ navigation })=>{
                     </TextInput>
                 </View>
                 <View style={{height:10}}></View>
+                {transactionType == 'หนี้สิน' ? componentCheckBoxRepayDebt() : <View></View>}
+                
+                
     {/* ปุ่มบันทึก */}
                 <View style={{height:100, justifyContent:'center', paddingHorizontal:3}}>
                     <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
                         <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
-                            onPress={handleAddTransaction}
+                            onPress={()=>{
+                                transactionType == 'หนี้สิน' ? handleAddTransactionLiability() : handleAddTransaction()
+                            }}
                         >
                             <Text style={{fontFamily:'ZenOldMincho-Bold', color:'#0ABAB5', fontSize:22}}>บันทึกรายการ</Text>
                         </TouchableOpacity>
