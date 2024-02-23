@@ -142,7 +142,15 @@ export const AddInputScreen = ({ navigation })=>{
         }
         if(!checkBoxVariableExpenses && !checkBoxFixedExpenses){
             validateCheckboxExpenses = false
-            Alert.alert('กรุณาเลือกหัวข้อสำหรับการสร้างหัวการชำระหนี้สินว่าเป็นค่าใช้จ่ายประเภทใด')
+            Alert.alert(
+                'แจ้งเตือน!',
+                'กรุณาเลือกหัวข้อสำหรับการสร้างหัวการชำระหนี้สินว่าเป็นค่าใช้จ่ายประเภทใด',
+                [
+                  {text: 'OK', onPress: () => console.log('OK Pressed')}
+                ],
+                {cancelable: false}
+            );
+            
             setIsLoading(false)
             return;
         }

@@ -1,4 +1,5 @@
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {addUser, addFinancials, addPetsQuest} from './UserModel';
 
 
@@ -27,9 +28,11 @@ export const signUpEmailPass = (profile, success, unsuccess)=>{
 }
 
 export const signInEmailPass = (email, password, success,unsuccess) => {
+    
     auth().signInWithEmailAndPassword(email, password)
     .then((userCredential)=>{
         const user = userCredential.user;
+        updateCurrentDate(user.uid)
         console.log(`user after logged in: ${user}`)
         success(user)
     })
@@ -37,6 +40,31 @@ export const signInEmailPass = (email, password, success,unsuccess) => {
       const msg = (`signInEmailPass error: ${error}`)
       unsuccess(msg)
     });
+}
+
+export const updateCurrentDate = (userUID)=>{
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // เพิ่ม 1 เพราะเดือนใน JavaScript เริ่มนับที่ 0
+    const day = String(currentDate.getDate()).padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
+    return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .update({
+            CurrentDate: formattedDate
+        })
+        .then(() => {
+            console.log("Update CurrentDate successfully!");
+
+        })
+        // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+        .catch((error) => {
+            console.error("Error update currentDate:", error);
+            throw error;
+        });
 }
 
 export const showCurrentEmail = (success, unsuccess) => {

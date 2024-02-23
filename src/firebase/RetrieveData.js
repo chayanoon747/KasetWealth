@@ -329,6 +329,7 @@ export const retrieveDataLiabilityRemaining = async(userUID) => {
         }
         if(liability.value > 0){
             // เพิ่มข้อมูลใหม่เข้าไปใน liabilityRemaining
+            liability.value = liability.value + '';
             liabilityRemaining.short.push(liability);
         } 
     });
@@ -348,6 +349,7 @@ export const retrieveDataLiabilityRemaining = async(userUID) => {
         }
         if(liability.value > 0){
             // เพิ่มข้อมูลใหม่เข้าไปใน liabilityRemaining
+            liability.value = liability.value + '';
             liabilityRemaining.long.push(liability);
         } 
     });

@@ -265,6 +265,22 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
         )
         
     }
+
+    const renderItemLiabilityRemaining = ({ item })=>{
+        return(
+            <View style={{flex:1, flexDirection:'row', alignItems:'center', marginVertical:5}}>
+                <View style={{flex:0.5, justifyContent:'center', alignItems:'center'}}>
+                    <Image source={require('../../assets/circle.png')} width={25} height={25}/>
+                    <Image source={{uri:item.photoURL}} width={25} height={25} style={{position:'absolute'}}/>
+                </View>
+                
+                <Text style={{flex:2}}>{item.subCategory}</Text>
+                <Text style={styles.textValue}>{item.value}</Text>
+                <Text style={{paddingHorizontal:5}}>THB</Text>
+            </View>
+        )
+        
+    }
     
     const componentAsset = ()=>{
         return(
@@ -339,7 +355,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                 <Text style={{marginVertical:5}}>หนี้ระยะสั้น</Text>
                 <FlatList style={{borderBottomWidth:1}}
                     data={liabilityRemainingData.short}
-                    renderItem={renderItem}
+                    renderItem={renderItemLiabilityRemaining}
                     keyExtractor={(item, index) => index.toString()}
                     scrollEnabled={false}
                 />
@@ -347,7 +363,7 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
                 <Text style={{marginVertical:5}}>หนี้ระยะยาว</Text>
                 <FlatList style={{borderBottomWidth:1}}
                     data={liabilityRemainingData.long}
-                    renderItem={renderItem}
+                    renderItem={renderItemLiabilityRemaining}
                     keyExtractor={(item, index) => index.toString()}
                     scrollEnabled={false}
                 />
