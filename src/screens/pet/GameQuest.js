@@ -20,11 +20,14 @@ export const GameQuest = ({navigation})=>{
 
     const [incomeAndExpensesDataSelected, setIncomeAndExpensesDataSelected] = useState({})
 
+    //dispatch ถูกใช้เพื่อ dispatch action เมื่อค่า isUpdate เปลี่ยนแปลง เพื่อทำให้ฟังก์ชัน getQuestData 
+    //ถูกเรียกใช้ใหม่เมื่อมีการอัปเดตข้อมูลที่เกี่ยวข้อง เช่น ข้อมูลของ Quest หรือข้อมูลอื่น ๆ 
+    //ซึ่งอาจมีการเปลี่ยนแปลงเมื่อมีการเพิ่มหรือลบข้อมูล หรืออื่น ๆ ที่ทำให้ข้อมูลที่แสดงในหน้าจอต้องถูกอัปเดตใหม่
     useEffect(() => {
-      getQuestData();
-    }, [isUpdate]);
-
-  const getQuestData = async()=>{
+      getQuestData(userUID);
+    }, [dispatch,isUpdate]);
+    //แก้ bug โดยการเพิ่มให้ getQuestDate รับ parameter เป็น userUID เพิ่ม แก้ config component warning
+  const getQuestData = async(userUID)=>{
       try{
           const itemAllDataIncomeAndExpenses = await retrieveAllDataQuest(userUID)
           setIncomeAndExpensesDataSelected(itemAllDataIncomeAndExpenses)
