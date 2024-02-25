@@ -1,9 +1,17 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Dimensions, TouchableHighlight} from 'react-native';
+import { useEffect } from "react";
+import { setItemData } from "../../redux/variableSlice";
+import { useDispatch } from "react-redux";
 
 
 export const EnterPetScreen = ({navigation})=>{
+    const dispatch = useDispatch();
+    useEffect(()=>{
+        dispatch(setItemData({}))
+    }, [])
+
     return(
        <SafeAreaView style={{flex:1, backgroundColor:'#0ABAB5'}}>
             <View style={{flex:1, alignItems:'flex-end', padding:'2%'}}>

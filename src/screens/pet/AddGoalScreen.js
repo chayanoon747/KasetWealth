@@ -1,11 +1,11 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from "react-native"
 import { TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
 import { Shadow } from "react-native-shadow-2";
 import { addPersonalGoal } from "../../firebase/UserModel";
-import { setIsUpdate } from "../../redux/variableSlice";
+import { setIsUpdate, setItemData } from "../../redux/variableSlice";
 
 export const AddGoalScreen = ({navigation})=>{
     const dispatch = useDispatch()

@@ -47,8 +47,10 @@ export const DetailScreen = ({navigation,route})=>{
 
      const success = ()=>{
         if (cameFrom === 'IncomeAndExpensesScreen') {
+            dispatch(setIsUpdate(!isUpdate));
             navigation.navigate('IncomeAndExpensesScreen');
         } else if (cameFrom === 'AssetLiabilityDetailScreen') {
+            dispatch(setIsUpdate(!isUpdate));
             navigation.navigate('AssetLiabilityDetailScreen');
         }
         
@@ -63,7 +65,7 @@ export const DetailScreen = ({navigation,route})=>{
              //console.log(value)
              if(!isNaN(value)){
                 editTransaction(userUID,itemData, input, success)
-                dispatch(setIsUpdate(!isUpdate));
+                
              }else{
                  Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
              }
@@ -71,7 +73,6 @@ export const DetailScreen = ({navigation,route})=>{
      }
      const handleRemoveTransaction = ()=>{
         RemoveTransaction(userUID,itemData, success)
-        dispatch(setIsUpdate(!isUpdate));
      }
      
      
