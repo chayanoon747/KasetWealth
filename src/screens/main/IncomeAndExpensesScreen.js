@@ -11,7 +11,6 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
     
     const dispatch = useDispatch();
 
-    dispatch(setItemTransactionType(''))
 
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
@@ -32,7 +31,9 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
     const day = currentDate.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-
+    useEffect(() =>{
+        dispatch(setItemTransactionType(''))
+    })
     useEffect(() => {
         getDataIncomeAndExpenses();
     }, [selectedDate, incomeValuesSelected,expensesValuesSelected,isUpdate]);

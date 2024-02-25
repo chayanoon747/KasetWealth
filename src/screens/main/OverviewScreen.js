@@ -142,7 +142,7 @@ export const OverviewScreen = ({navigation})=>{
             setTimeout(() => {
                 setIsLoading(false);
                 dispatch(setStatus(true));
-            }, 5000);
+            }, 10000);
         }
 
     }, [incomeValuesAll,expensesValuesAll,assetValues,liabilityValues, netWealthValue,netCashFlow,survivalRatio,ratioMeasureShortLiability,basicLiquidityRatio,liabilityToAssetRatio,debtRepaymentRatioFromIncome,savingsRatio,investmentAssetRatio,incomeFromInvestmentAssetRatio,financialFreedomRatio,guageWealth,currentDate,isFirstTransaction, isUpdate]);
@@ -195,7 +195,7 @@ export const OverviewScreen = ({navigation})=>{
             setBasicLiquidityRatio(getBasicLiquidityRatio(assetLiquidValue,expensesValuesAll));
             setLiabilityToAssetRatio(getLiabilityToAssetRatio(liabilityValues,assetValues));
             //การชำระเงินคืนหนี้สินยังเป็น hardcode ต้องไปทำตรงนี้ก่อน
-            setDebtRepaymentRatioFromIncome(getDebtRepaymentRatioFromIncome(1000,incomeValuesAll));
+            setDebtRepaymentRatioFromIncome(getDebtRepaymentRatioFromIncome(0,incomeValuesAll));
             setSavingsRatio(getSavingsRatio(expensesSavingsValue,incomeValuesAll));
             setInvestmentAssetRatio(getInvestmentAssetRatio(assetInvestValue,assetValues));
             setIncomeFromInvestmentAssetRatio(getIncomeFromInvestmentAssetRatio(incomeInvestAssetValue,incomeValuesAll));
@@ -497,8 +497,203 @@ export const OverviewScreen = ({navigation})=>{
             return value + ' เท่า'
         }
     }
-
-
+    const checkGoodBadText = (value)=>{
+        if(value == 'bad'){
+            return 'แย่'
+        }
+        else if(value == 'good'){
+            return 'ดี'
+        }
+        else{
+            return value + ' เท่า'
+        }
+    }
+    //wid 100% = 117.5 ใช้กับ netwealth , netcashflow
+    const checkGuageBar = (value)=>{
+        const bar = {
+            width:10,
+            color:"#FF0000"
+        }
+        if(value>0){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+        }
+        return bar
+    }
+    // ใช้กับ SurvivalRatio
+    const checkBarSurvivalRatio = (value)=>{
+        const bar = {
+            width:10,
+            color:"#FF0000"
+        }
+        if(value>=1){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+        }
+        return bar
+    }
+    // ใช้กับ RatioMeasureShortLiability
+    const checkBarRatioMeasureShortLiability = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value>=1){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else if(value < 1){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }
+        return bar
+    }
+    // ใช้กับ BasicLiquidityRatio
+    const checkBarBasicLiquidityRatio = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        //ปานกลาง
+        if(value>6){
+            bar.width = 58.75,
+            bar.color = "#FFFF00"
+            return bar
+        }else if(value >= 3 && value <= 6){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else if(value < 3){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }
+        return bar
+    }
+    //ใช้กับ LiabilityToAssetRatio
+    const checkBarLiabilityToAssetRatio = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value >= 0.5){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }else if(value < 0.5){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else{
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }
+        return bar
+    }
+    //ใช้กับ DebtRepaymentRatioFromIncome
+    const checkBarDebtRepaymentRatioFromIncome = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value >= 0.35){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }else if(value < 0.35){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else{
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }
+        return bar
+    }
+    //ใช้กับ SavingsRatio
+    const checkBarSavingsRatio = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value>10){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else if(value<=10){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }
+        return bar
+    }
+    //ใช้กับ InvestmentAssetRatio
+    const checkBarInvestmentAssetRatio = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value >= 0.5){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }else if(value < 0.5){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }
+        return bar
+    }
+    //ใช้กับ IncomeFromInvestmentAssetRatio
+    const checkBarIncomeFromInvestmentAssetRatio = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value > 0){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else if(value<=0){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }
+        return bar
+    }
+    //ใช้กับ FinancialFreedomRatio
+    const checkBarFinancialFreedomRatio = (value)=>{
+        const bar = {
+            width:0,
+            color:"#D9D9D9"
+        }
+        if(value > 0){
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }else if(value <= 0){
+            bar.width = 10,
+            bar.color = "#FF0000"
+            return bar
+        }else{
+            bar.width = 117.5,
+            bar.color = "#34D399"
+            return bar
+        }
+        return bar
+    }
+    const checkCriteriaWealth = (value)=>{
+        if(value >= 7 ){
+            return "ดี"
+        }else if(value >= 4){
+            return "ปานกลาง"
+        }else if(value < 4){
+            return "แย่"
+        }
+    }   
     return(
         <SafeAreaView style={{flex:1}}>
             {isLoading ? (<ActivityIndicator size='large' color="#0ABAB5" style={{marginVertical:'60%'}}></ActivityIndicator>) : (<ScrollView style={{flex:1, padding:10}}>
@@ -512,13 +707,13 @@ export const OverviewScreen = ({navigation})=>{
                     >
                         <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:16, color:'#000000'}}>สุขภาพทางการเงิน</Text>  
                     </TouchableOpacity>
-                    <View style={{overflow:'hidden',borderColor:'#cfd0cf',marginHorizontal:10}}>
+                    <View style={{overflow:'hidden',borderColor:'#cfd0cf',marginLeft:10}}>
                         <View style={{height:10}}></View>
                         <View style={{justifyContent:'center',alignContent:'center',flexDirection:'row'}}>
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={guageWealth} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageWealth ? parseFloat(guageWealth) : 0} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#80011f'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#cf1020'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#fb0100'},
@@ -548,11 +743,17 @@ export const OverviewScreen = ({navigation})=>{
                         </View>
                         
                         <View style={{height:20}}></View>
-                        
-                        <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
-                        <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์</Text>
-                        
+                        <View style ={{height:47.5,flexDirection:"row"}}>
+                            <View style ={{flex:3,flexDirection:"column",alignItems:"flex-start"}}>
+                                <Text style={{width:260,fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
+                                <Text style={{width:260,fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์ {checkCriteriaWealth(guageWealth)}</Text>
+                            </View>
+                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", borderTopLeftRadius: 16, borderBottomRightRadius: 16, backgroundColor: "#B3DBD8" }}>
+                                <Text style={{ fontFamily: 'ZenOldMincho-Bold', fontSize: 20, color: '#000000' }}>{guageWealth ? parseFloat(guageWealth) : 0}/10</Text>
+                            </View>
+                        </View>
                     </View>
+                    
                 </View>
                 
                 {/* ความมั่งคั่งในปัจจุบัน */}
@@ -566,16 +767,22 @@ export const OverviewScreen = ({navigation})=>{
                             <Text style={[styles.descibeText,{flex:1, paddingHorizontal:5,paddingTop:3, textAlign:'left'}]}>(สินทรัพย์รวม - หนี้สินรวม)</Text>
                          </View>
                         <View style={{flex:5, flexDirection:'column', paddingHorizontal:10}}>
-
+                            
                             <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
-                                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30}}>{netWealthValue}</Text>
+                                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30}}>{netWealthValue} THB</Text>
                                     <Image source={require('../../assets/overview_1.png')} style={{width: 100, height:100}} />
                             </View>
-
-                            <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
+                            
+                            <View style={{flex:2,paddingHorizontal:20, flexDirection:'column',textAlign:'left', paddingTop:1}}>
                                 <Text style={{flex:1, color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}> จากเกณฑ์ ควรเป็นค่า บวก </Text>
-                            </View>                          
-                        </View>                
+                                <View style={{flex:2,width:130}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkGuageBar(netWealthValue).width,borderWidth:1,marginHorizontal:5,borderRadius:16,backgroundColor:checkGuageBar(netWealthValue).color,borderColor:checkGuageBar(netWealthValue).color}}>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>            
                     </View>
 
                     <View style={{overflow:'hidden',height:210, backgroundColor:'#FFFFFA',borderBottomWidth:1,borderColor:'#D2DBD6'}}>
@@ -587,11 +794,17 @@ export const OverviewScreen = ({navigation})=>{
 
                             <View style={{flex:1,paddingHorizontal:20, flexDirection:'row',textAlign:'right', paddingTop:1}}>
                                 <Image source={require('../../assets/overview_2.png')} style={{width: 100, height:100}} />
-                                <Text style={{flex:6, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30,paddingTop:3, textAlign:'right'}}>{netCashFlow}</Text>
+                                <Text style={{flex:6, color:'#0ABAB5', fontFamily:'ZenOldMincho-Bold', fontSize:30,paddingTop:3, textAlign:'right'}}>{netCashFlow} THB</Text>
                             </View>
 
-                            <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'right', paddingTop:1}}>
-                                    <Text style={{flex:4, color:'#000000',fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:8, textAlign:'right'}}>จากเกณฑ์ ควรเป็นค่า บวก</Text>
+                            <View style={{flex:2,paddingHorizontal:20, flexDirection:'column',textAlign:'right', alignItems:"flex-end",paddingTop:1}}>
+                                <Text style={{flex:1, color:'#000000',fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:8, textAlign:'right'}}>จากเกณฑ์ ควรเป็นค่า บวก</Text>
+                                <View style={{flex:2,width:130}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkGuageBar(netCashFlow).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkGuageBar(netCashFlow).color,borderColor:checkGuageBar(netCashFlow).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                         </View>                
                     </View>
@@ -608,10 +821,14 @@ export const OverviewScreen = ({navigation})=>{
                                     <Image source={require('../../assets/overview_3.png')} style={{width: 100, height:100}} />
                             </View>
 
-                            <View style={{flex:2,paddingHorizontal:20, flexDirection:'row',textAlign:'left', paddingTop:1}}>
-                                <Text style={{flex:1, color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}> จากเกณฑ์ ควร มากกว่าหรือเท่ากับ 1 เท่า ของค่าใช้จ่ายรวม </Text>
-
-                                <Text style={{flex:1, color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}> </Text>
+                            <View style={{flex:2,width:250,paddingHorizontal:20, flexDirection:'column',textAlign:'left', paddingTop:1}}>
+                                <Text style={{flex:1, color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,flexWrap: 'wrap' }}>จากเกณฑ์ ควร มากกว่าหรือเท่ากับ 1 เท่า ของค่าใช้จ่ายรวม</Text>
+                                <View style={{flex:1.5,width:130}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarSurvivalRatio(survivalRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarSurvivalRatio(survivalRatio).color,borderColor:checkBarSurvivalRatio(survivalRatio).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                         </View>                
                     </View>
@@ -634,8 +851,14 @@ export const OverviewScreen = ({navigation})=>{
                             </View>
 
                             <View style={{flex:2,paddingHorizontal:20, flexDirection:'column',textAlign:'left'}}>
-                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12, marginTop:10}}> จากเกณฑ์ ควร มากกว่าหรือเท่ากับ 1 เท่า</Text>
-                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12, marginTop:5}}> ของหนี้สินรวม</Text>
+                                <Text style={{flex:0.5,color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12, marginTop:10}}> จากเกณฑ์ ควร มากกว่าหรือเท่ากับ 1 เท่า</Text>
+                                <Text style={{flex:0.5,color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12, marginTop:5}}> ของหนี้สินรวม</Text>
+                                <View style={{flex:0.9,width:130}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarRatioMeasureShortLiability(ratioMeasureShortLiability).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarRatioMeasureShortLiability(ratioMeasureShortLiability).color,borderColor:checkBarRatioMeasureShortLiability(ratioMeasureShortLiability).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                         </View>                
                     </View>
@@ -649,10 +872,16 @@ export const OverviewScreen = ({navigation})=>{
                             <View style={{flex:1}}>
                                 <Image source={require('../../assets/moneyExchange.png')} style={{width: 100, height:100}} />
                             </View>
-                            <View style={{flex:2}}>
+                            <View style={{flex:2, alignItems:"flex-end"}}>
                                 <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:basicLiquidityRatio == 'ไม่สามารถคำนวณได้เนื่องจากไม่มีค่าใช้จ่าย' ? 14 : 30,paddingTop:3, textAlign:'right'}}>{checkText(basicLiquidityRatio)}</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>จากเกณฑ์มาตรฐาน ควร มีค่า 3-6 เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>ของค่าใช้จ่ายรวมต่อเดือน</Text>
+                                <View style={{flex:1,width:130,marginTop:5}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarBasicLiquidityRatio(basicLiquidityRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarBasicLiquidityRatio(basicLiquidityRatio).color,borderColor:checkBarBasicLiquidityRatio(basicLiquidityRatio).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                         </View>                
                     </View>
@@ -667,12 +896,17 @@ export const OverviewScreen = ({navigation})=>{
                         <View style={{flex:1.5, flexDirection:'column', alignItems:'flex-start', paddingHorizontal:30, paddingTop:20}}>
                             <Text style={styles.subHeaderText}> อัตราส่วนหนี้สินต่อสินทรัพย์ </Text>
                             <Text style={[styles.descibeText,{flex:1, paddingHorizontal:5,paddingTop:3}]}>(หนี้สินรวม/สินทรัพย์รวม)</Text>
-                         </View>
-                        <View style={{flex:5, flexDirection:'row', paddingHorizontal:30, paddingTop:10, borderBottomWidth:1, borderColor:'#D2DBD6'}}>
+                        </View>
+                        <View style={{flex:5, flexDirection:'row', paddingHorizontal:30, borderBottomWidth:1, borderColor:'#D2DBD6'}}>
                             <View style={{flex:2, justifyContent:'flex-start'}}>
-                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{liabilityToAssetRatio} เท่า</Text>
-                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์มาตรฐาน ควร น้อยกว่า 0.5 เท่า</Text>
-                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>ของสินทรัพย์รวม</Text>
+                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{checkGoodBadText(liabilityToAssetRatio)}</Text>
+                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์มาตรฐาน ควร น้อยกว่า 0.5 เท่า ของสินทรัพย์รวม</Text>
+                                <View style={{flex:1,width:130,marginTop:5}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarLiabilityToAssetRatio(liabilityToAssetRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarLiabilityToAssetRatio(liabilityToAssetRatio).color,borderColor:checkBarLiabilityToAssetRatio(liabilityToAssetRatio).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                             <View style={{flex:1}}>
                                 <Image source={require('../../assets/homeAndCar.png')} style={{width: 100, height:100}} />
@@ -685,14 +919,20 @@ export const OverviewScreen = ({navigation})=>{
                             <Text style={styles.subHeaderText}> อัตราส่วนการชำระคืนหนี้สินจากรายได้ </Text>
                             <Text style={[styles.descibeText,{flex:1, paddingHorizontal:5,paddingTop:3, textAlign:'right'}]}>(การชำระหนี้สินต่อเดือน/รายได้รวมต่อเดือน)</Text>
                          </View>
-                        <View style={{flex:5, flexDirection:'row', paddingHorizontal:30, paddingTop:10}}>
+                        <View style={{flex:5, flexDirection:'row', paddingHorizontal:30}}>
                             <View style={{flex:1}}>
                                 <Image source={require('../../assets/manAndDEBT.png')} style={{width: 100, height:100}} />
                             </View>
-                            <View style={{flex:2}}>
-                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3, textAlign:'right'}}>{debtRepaymentRatioFromIncome} เท่า</Text>
-                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>จากเกณฑ์มาตรฐาน ควร มีค่าน้อยกว่า 0.35 เท่า</Text>
-                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>ของรายได้รวมต่อเดือน</Text>
+                            <View style={{flex:2,alignItems:"flex-end"}}>
+                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3, textAlign:'right'}}>{checkGoodBadText(debtRepaymentRatioFromIncome)}</Text>
+                                <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>จากเกณฑ์มาตรฐาน ควร มีค่าน้อยกว่า 0.35 เท่า ของรายได้รวมต่อเดือน</Text>
+                                {/* <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3, textAlign:'right'}}>ของรายได้รวมต่อเดือน</Text> */}
+                                <View style={{flex:1,width:130,marginTop:5}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarDebtRepaymentRatioFromIncome(debtRepaymentRatioFromIncome).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarDebtRepaymentRatioFromIncome(debtRepaymentRatioFromIncome).color,borderColor:checkBarDebtRepaymentRatioFromIncome(debtRepaymentRatioFromIncome).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                         </View>                
                     </View>
@@ -711,6 +951,12 @@ export const OverviewScreen = ({navigation})=>{
                             <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{savingsRatio} เท่า</Text>
                             <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์มาตรฐาน ควร มากกว่า 10 %</Text>
                             <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>ของรายได้รวมต่อเดือน</Text>
+                            <View style={{flex:1,width:130,marginTop:20}}>
+                                <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                    <View style = {{height:20,width:checkBarSavingsRatio(savingsRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarSavingsRatio(savingsRatio).color,borderColor:checkBarSavingsRatio(savingsRatio).color}}>
+                                    </View>
+                                </View>
+                            </View>
                         </View>
                          
                         <View style={{flex:1, justifyContent:'center'}}>
@@ -735,6 +981,12 @@ export const OverviewScreen = ({navigation})=>{
                                 <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{investmentAssetRatio} เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์ ควรมีค่า น้อยกว่า 0.5 เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>ของสินทรัพย์รวม</Text>
+                                <View style={{flex:1,width:130,marginTop:10}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarInvestmentAssetRatio(investmentAssetRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarInvestmentAssetRatio(investmentAssetRatio).color,borderColor:checkBarInvestmentAssetRatio(investmentAssetRatio).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                             <View style={{flex:1}}>
                                 <Image source={require('../../assets/coinPlant.png')} style={{width: 100, height:100}} />
@@ -755,6 +1007,12 @@ export const OverviewScreen = ({navigation})=>{
                             <View style={{flex:2, alignItems:'flex-end'}}>
                                 <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{incomeFromInvestmentAssetRatio} เท่า</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์ ควรมีค่ามากกว่า 0</Text>
+                                <View style={{flex:1,width:130,marginTop:10}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarIncomeFromInvestmentAssetRatio(incomeFromInvestmentAssetRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarIncomeFromInvestmentAssetRatio(incomeFromInvestmentAssetRatio).color,borderColor:checkBarIncomeFromInvestmentAssetRatio(incomeFromInvestmentAssetRatio).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                         </View>    
                     </View>
@@ -766,8 +1024,14 @@ export const OverviewScreen = ({navigation})=>{
                          </View>
                         <View style={{flex:5, flexDirection:'row', paddingHorizontal:30, paddingTop:10, borderColor:'#D2DBD6'}}>
                             <View style={{flex:2, justifyContent:'flex-start'}}>
-                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{financialFreedomRatio} เท่า</Text>
+                                <Text style={{color:'#FE0000', fontFamily:'ZenOldMincho-Regular', fontSize:30,paddingTop:3}}>{checkGoodBadText(financialFreedomRatio)}</Text>
                                 <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12,paddingTop:3}}>จากเกณฑ์ ควรมีค่ามากกว่า 0</Text>
+                                <View style={{flex:1,width:130,marginTop:10}}>
+                                    <View style = {{height:30,width:130,borderWidth:1,borderRadius:16,backgroundColor:"#D9D9D9",borderColor:"#D9D9D9",justifyContent:"center"}}>
+                                        <View style = {{height:20,width:checkBarFinancialFreedomRatio(financialFreedomRatio).width,borderWidth:1,marginLeft:5,borderRadius:16,backgroundColor:checkBarFinancialFreedomRatio(financialFreedomRatio).color,borderColor:checkBarFinancialFreedomRatio(financialFreedomRatio).color}}>
+                                        </View>
+                                    </View>
+                                </View>
                             </View>
                             <View style={{flex:1}}>
                                 <Image source={require('../../assets/moneyFly.png')} style={{width: 100, height:100}} />

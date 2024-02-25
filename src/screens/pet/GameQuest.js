@@ -11,19 +11,19 @@ import { setItemCategory } from "../../redux/variableSlice";
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
 
-    dispatch(setItemCategory(''))
 
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
-
+    
     const [incomeAndExpensesDataSelected, setIncomeAndExpensesDataSelected] = useState({})
-
+    useEffect(()=>{
+      dispatch(setItemCategory(''))
+    },[])
     useEffect(() => {
-      getQuestData();
+      getQuestData()
     }, [isUpdate]);
-
   const getQuestData = async()=>{
       try{
           const itemAllDataIncomeAndExpenses = await retrieveAllDataQuest(userUID)
