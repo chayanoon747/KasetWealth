@@ -151,6 +151,14 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                     <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}>เพราะมีหนี้สินรวมมากกว่าสินทรัพย์ คุณควรลดจำนวนหนี้สินรวมให้น้อย โดยอาจจะหาช่องทางการลงทุนเพิ่มเติมเพื่อนำชำระหนี้ส่วนนีให้มีจำนวนน้อยลง</Text>
                 </View>
             )
+        }else{
+            return(
+                <View style={{height:80, flexDirection:'row', flexWrap:'wrap'}}>
+                    <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}>ปัจจุบันคุณมีอัตราส่วนหนี้สินต่อสินทรัพย์อยู่ในเกณฑ์</Text>
+                    <Text style={{color:'#FF0000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}> แย่ </Text>
+                    <Text style={{color:'#000000', fontFamily:'ZenOldMincho-Regular', fontSize:12}}>เพราะคุณไม่มีสินทรัพย์เลย ควรเพิ่มสินทรัพย์ให้มากขึ้น</Text>
+                </View>
+            )
         }
     }
 
@@ -322,7 +330,15 @@ export const OverviewGuideScreen = ({navigation, route})=>{
             return '#FF0000'
         }
     }
-
+    const checkCriteriaWealth = (value)=>{
+        if(value >= 7 ){
+            return "ดี"
+        }else if(value >= 4){
+            return "ปานกลาง"
+        }else if(value<4){
+            return "แย่"
+        }
+    }
     
 
     
@@ -339,7 +355,7 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                     >
                         <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:16, color:'#000000'}}>สุขภาพทางการเงิน</Text>  
                     </TouchableOpacity>
-                    <View style={{overflow:'hidden',borderColor:'#cfd0cf',marginHorizontal:10}}>
+                    <View style={{overflow:'hidden',borderColor:'#cfd0cf',marginLeft:10}}>
                         <View style={{height:10}}></View>
                         <View style={{justifyContent:'center',alignContent:'center',flexDirection:'row'}}>
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
@@ -375,10 +391,15 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                         </View>
                         
                         <View style={{height:20}}></View>
-                        
-                        <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
-                        <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์</Text>
-                        
+                        <View style ={{height:47.5,flexDirection:"row"}}>
+                            <View style ={{flex:3,flexDirection:"column",alignItems:"flex-start"}}>
+                                <Text style={{width:260,fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
+                                <Text style={{width:260,fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์ {checkCriteriaWealth(guageWealth)}</Text>
+                            </View>
+                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", borderTopLeftRadius: 16, borderBottomRightRadius: 16, backgroundColor: "#B3DBD8" }}>
+                                <Text style={{ fontFamily: 'ZenOldMincho-Bold', fontSize: 20, color: '#000000' }}>{guageWealth ? parseFloat(guageWealth) : 0}/10</Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
 

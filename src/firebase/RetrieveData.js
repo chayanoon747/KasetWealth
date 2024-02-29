@@ -436,6 +436,7 @@ export const retrieveRepayDebt = (userUID)=>{
         }
     })
 }
+//ไม่ได้ใช้ อันนี้
 export const retriveCalculateRiability = (userUID) => {
     const calculateRiability = {
         currentDate: "",

@@ -1,8 +1,48 @@
 import React from "react";
-import { View,ImageBackground, Image, TouchableOpacity } from "react-native";
+import { View, ImageBackground, Text, TouchableOpacity, Image, Alert } from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context"
+import { Dimensions, TouchableHighlight} from 'react-native';
+import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
+import { TextInput} from "react-native-paper";
+import { useSelector, useDispatch} from 'react-redux';
+import { useState, useEffect } from "react";
+import { addPetName } from "../../firebase/UserModel";
+import { setIsUpdate } from "../../redux/variableSlice";
+import { retrieveAllDataPetImage } from "../../firebase/UserModel";
 
 
 export const HomeScreen =({navigation})=>{
+    const dispatch = useDispatch()
+    const [input,setInput] = useState({value:''})
+
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+
+    const user = useSelector((state)=>state.auths);
+    const userUID = user[0].uid;
+
+    const [petImageData, setPetImageData] = useState("")
+
+    useEffect(() => {
+        getImageData()
+    }, [isUpdate]);   
+
+    const getImageData = async()=>{
+        try{
+            const itemAllDataPetImage = await retrieveAllDataPetImage(userUID)
+            setPetImageData(itemAllDataPetImage)
+            
+        }catch (error) {
+            console.error('Error getImageData:', error);
+        }  
+    }
+
+    const setValue = (text) => {
+        setInput(oldValue => ({
+            ...oldValue,
+            value:text
+        }))
+    }
+
     return(
         <View style={{flex:1}}>
             <ImageBackground source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207709035797946448/pxArt_1.png?ex=65e0a1b0&is=65ce2cb0&hm=22d1404ba545efff694fcb96da06d26072e6b17849dd3daa83cd8100a6641ac8&=&format=webp&quality=lossless&width=390&height=640'}}
@@ -41,11 +81,14 @@ export const HomeScreen =({navigation})=>{
                         </View>
                     </View>
                 </View>
+
                 <View style={{flex:1,justifyContent:'flex-end',alignItems:'center'}}>
                     {/* ใส่Pet */}
-                    <View style={{backgroundColor:'transparent',width:100,height:100,marginBottom:60,alignItems:'center',justifyContent:'center'}}>
-                        <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207720267858710558/pxArt_3_2.png?ex=65e0ac26&is=65ce3726&hm=13bc94ae729a6553a146e89a648ac57a273b98b845d281aa45ecdce0ae9e89ca&=&format=webp&quality=lossless&width=180&height=212'}}
-                        width={110} height={130}></Image>
+                    <View style={{backgroundColor:'transparent',width:100,height:100,marginBottom:60,alignItems:'center',justifyContent:'center'}}>   
+                        {petImageData ? (
+                            <Image source={{uri: petImageData[0]}} 
+                            style={{width: 110, height:130,justifyContent:'center',alignContent:'center'}} />
+                        ) : null}
                     </View>
                 </View>
             </ImageBackground>

@@ -6,11 +6,36 @@ import { HomeScreen } from "../screens/pet/HomeScreen";
 import { EditHomeScreen } from "../screens/pet/EditHomeScreen";
 import { InventoryScreen } from "../screens/pet/InventoryScreen";
 import { GoalNotificationScreen } from "../screens/pet/GoalNotificationScreen";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch} from 'react-redux';
+import { retrieveAllDataPetName } from "../firebase/UserModel";
 
 export const PetHomeStackNav = ({navigation})=>{
-  const Stack = createNativeStackNavigator()
+    const Stack = createNativeStackNavigator()
+    const dispatch = useDispatch();
 
-  return(
+    const user = useSelector((state)=>state.auths);
+    const userUID = user[0].uid;
+
+    const isUpdate = useSelector((state)=>state.variables.isUpdate);
+    
+    const [petNameData, setPetNameData] = useState("")
+
+    useEffect(() => {
+        getNameData()
+    }, [isUpdate]);   
+
+    const getNameData = async()=>{
+        try{
+            const itemAllDataPetName = await retrieveAllDataPetName(userUID)
+            setPetNameData(itemAllDataPetName)
+            
+        }catch (error) {
+            console.error('Error getNameData:', error);
+        }  
+    }
+
+    return(
     <Stack.Navigator
       initialRouteName="HomeScreen" 
     >
@@ -22,7 +47,7 @@ export const PetHomeStackNav = ({navigation})=>{
                     <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
                        
 
-                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>บ้านของ...</Text>
+                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>บ้านของ {petNameData}</Text>
 
                         <TouchableOpacity style={{width:35, marginRight:15}}
                             onPress={()=>{
@@ -50,7 +75,7 @@ export const PetHomeStackNav = ({navigation})=>{
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
                     </TouchableOpacity>
 
-                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>บ้านของ...</Text>
+                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>บ้านของ{petNameData}</Text>
                     </View>
                 )
             }}
