@@ -454,11 +454,15 @@ export const addFinancials = (user,datecurrent)=>{
 
 export const addPetsQuest = (user)=>{
     const Quest = []
+    const PetName = ""
+    const PetImage = ""
     firestore()
     .collection('pets')
     .doc(user.uid)
     .set({
-        quest: Quest
+        quest: Quest,
+        petName: PetName,
+        petImage: PetImage
     })
     .then(()=>{
         console.log("addPetsQuest success")
@@ -685,17 +689,18 @@ export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTra
         throw new Error("Value must not be 0!");
     }
 };
+
 export const addPersonalGoal = (userUID, itemData, input) => {
-    const transactionId = uuid.v4();;
+    const transactionId = uuid.v4();
     if (input.value !== 0) {
         const personalGoal = {
             transactionId: transactionId,
-            detail: input.detail,
+            category: itemData.category,
+            subCategory: itemData.subCategory,
             questPic: itemData.photoURL,
+            questType: itemData.questType,
             questState: false,
-            transactionType: itemData.category,
             rewardStatus: false,
-            questType: itemData.subCategory,
             value: input.value
         };
 
@@ -721,6 +726,54 @@ export const addPersonalGoal = (userUID, itemData, input) => {
         throw new Error("Value must not be 0!");
     }
 };
+
+export const addPetName = (userUID, input) => {
+    const myPetName = input.value;
+    if (input.value !== 0) {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                petName: myPetName
+            })
+            .then(() => {
+                console.log("petName added successfully!");
+            })
+            .catch((error) => {
+                console.error("Error adding petName:", error);
+                throw error;
+            });
+    } else {
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+export const addPetImage = (userUID, input) => {
+    const myPetImage = input.value;
+    if (input.value !== 0) {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                petImage: myPetImage
+            })
+            .then(() => {
+                console.log("petImage random and added successfully!");
+            })
+            .catch((error) => {
+                console.error("Error adding petImage:", error);
+                throw error;
+            });
+    } else {
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+
 
 export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
     const currentDate = new Date();
@@ -1084,7 +1137,44 @@ export const  retrieveAllDataQuest = (userUID)=>{
             return QuestData
         }
     })
-}
+};
+
+export const retrieveAllDataPetName = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            if (data.exists) {
+                return data.data().petName;
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error("Error retrieving petName:", error);
+            throw error;
+        });
+};
+
+export const retrieveAllDataPetImage = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            if (data.exists) {
+                return data.data().petImage;
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error("Error retrieving petName:", error);
+            throw error;
+        });
+};
+
 
 export const editTransaction = async(userUID, itemData, input, success)=>{
     let resultRepayDebt = 0;
