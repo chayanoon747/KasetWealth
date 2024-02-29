@@ -414,3 +414,28 @@ export const retriveCalculateRiability = (userUID) => {
             return null;
         });
 };
+//ดึงข้อมูล inventory
+export const retrieveInventory= (userUID) => {
+    const inventoryData = {
+        decorationType:[]
+        ,food:[]
+    };
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                const inventory = doc.data().Inventories;
+                inventory.forEach(element => {
+                    if(element.ItemType == 'Decoration'){
+                        inventoryData.decorationType.push(element)
+                    }
+                    else if(element.ItemType == 'Food'){
+                        inventoryData.foodType.push(element)
+                    }
+                });
+                return inventoryData;
+            } 
+        })
+}
