@@ -140,7 +140,7 @@ export const OverviewScreen = ({navigation})=>{
             setTimeout(() => {
                 setIsLoading(false);
                 dispatch(setStatus(true));
-            }, 10000);
+            }, 5000);
         }
 
     }, [incomeValuesAll,expensesValuesAll,assetValues,liabilityValues, netWealthValue,netCashFlow,survivalRatio,ratioMeasureShortLiability,basicLiquidityRatio,liabilityToAssetRatio,debtRepaymentRatioFromIncome,savingsRatio,investmentAssetRatio,incomeFromInvestmentAssetRatio,financialFreedomRatio,guageWealth,currentDate,isFirstTransaction, isUpdate]);

@@ -361,7 +361,7 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
                                 <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
                                 {/* GAUGE  */}
-                                <RNSpeedometer value={guageWealth} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
+                                <RNSpeedometer value={guageWealth ? parseFloat(guageWealth) : 0} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#80011f'},
                                     {name:'2',labelColor:'#FFFFFA',activeBarColor:'#cf1020'},
                                     {name:'3',labelColor:'#FFFFFA',activeBarColor:'#fb0100'},
