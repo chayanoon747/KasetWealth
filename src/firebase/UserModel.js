@@ -581,23 +581,6 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         });
 };
 
-/*export const RemoveCategoryIcon = (userUID, selectedItems) => {
-    console.log(selectedItems)
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .update({
-            categories: firestore.FieldValue.arrayRemove(...selectedItems)
-        })
-        .then(() => {
-            console.log("Categories removed successfully!");
-        })
-        .catch((error) => {
-            console.error("Error removing categories:", error);
-            throw error;
-        });
-}*/
-
 export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
     console.log(selectedItems)
     let isLiabilityRemaining = false;
@@ -609,7 +592,15 @@ export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
             let matchingShort = itemsDataLiabilityRemaining.short.find(data => data.transactionId === item.transactionId);
             if (matchingShort) {
                 isLiabilityRemaining = true;
-                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ1")
+                Alert.alert(
+                    'แจ้งเตือน!',
+                    'ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ',
+                    [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')}
+                    ],
+                    {cancelable: false}
+                );
+                
                 return;
             }
 
@@ -617,7 +608,14 @@ export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
             //console.log(matchingLong)
             if (matchingLong) {
                 isLiabilityRemaining = true;
-                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ2")
+                Alert.alert(
+                    'แจ้งเตือน!',
+                    'ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ',
+                    [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')}
+                    ],
+                    {cancelable: false}
+                );
                 return;
             }
         }
@@ -1012,7 +1010,7 @@ export const addTransactionExpenses = async(userUID, itemData, input, selectedDa
     }else{
         Alert.alert(
             'แจ้งเตือน!',
-            'ไม่สามารถชำระหนี้ก้อนนี้ได้เนื่องจากหนี้ก้อนนี้ไม้มีอยู่จริง',
+            'ไม่สามารถชำระหนี้ก้อนนี้ได้เนื่องจากหนี้ก้อนนี้ไม่มีอยู่จริง',
             [
               {text: 'OK', onPress: () => console.log('OK Pressed')}
             ],

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
 import { Shadow } from "react-native-shadow-2";
 import { addPersonalGoal } from "../../firebase/UserModel";
-import { setIsUpdate } from "../../redux/variableSlice";
+import { setIsUpdate, setItemData } from "../../redux/variableSlice";
 
 export const AddGoalScreen = ({navigation})=>{
     const dispatch = useDispatch()

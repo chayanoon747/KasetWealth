@@ -67,7 +67,7 @@ export const AddInputScreen = ({ navigation })=>{
         if(transactionType == 'หนี้สิน'){
             handleAddTransactionLiability()
         }
-        else if(transactionType == 'ค่าใช้จ่าย'){
+        else if(itemData.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || itemData.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)'){
             handleAddTransactionExpenses()
         }
         else{

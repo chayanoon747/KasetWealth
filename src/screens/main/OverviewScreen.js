@@ -43,6 +43,8 @@ export const OverviewScreen = ({navigation})=>{
     const [expensesSavingsAndInvestmentValue, setExpensesSavingsAndInvestmentValue] = useState()
     //ค่าใช้จ่ายจากการออม
     const [expensesSavingsValue,setExpensesSavingsValue] = useState();
+    //ค่าใช้จ่ายชำระหนี้สิน
+    const [expensesRepayDebt,setExpensesRepayDebt] = useState();
 
     const [assetValues, setAssetValues] = useState()
     const [assetLiquidValue,setAssetLiquidValue] = useState();
@@ -90,26 +92,22 @@ export const OverviewScreen = ({navigation})=>{
     useEffect(() => {
         setIsLoading(true)
         getAllData();
-        getDataLiabilityRemaining();
+        //getDataLiabilityRemaining();
         //getDataIncome();
         console.log("income All: "+incomeValuesAll);
         console.log("income Work: "+incomeWorkValue);
         console.log("income Asset: "+incomeAssetValue);
         console.log("income Invest Asset: "+incomeInvestAssetValue);
         console.log("income Other: "+incomeOtherValue);
-        //getDataExpenses();
-        //getDataExpensesSavings();
         console.log("expenses All: "+expensesValuesAll);
         console.log("expenses Variable: "+expensesVariableValue);
         console.log("expenses Fixed: "+expensesFixedValue);
         console.log("expenses Saving And Investment: "+expensesSavingsAndInvestmentValue);
         console.log("expenses Saving: "+expensesSavingsValue)
-        //getDataAsset();
         console.log("asset All: "+assetValues);
         console.log("asset Liquid: "+assetLiquidValue);
         console.log("asset Invest: "+assetInvestValue);
         console.log("asset Personal: "+assetPersonalValue);
-        //getDataLiability();
         console.log("liability All: "+liabilityValues);
         console.log("liability Short: "+liabilityShortValues);
         console.log("liability Long: "+liabilityLongValues);
@@ -142,7 +140,7 @@ export const OverviewScreen = ({navigation})=>{
             setTimeout(() => {
                 setIsLoading(false);
                 dispatch(setStatus(true));
-            }, 10000);
+            }, 5000);
         }
 
     }, [incomeValuesAll,expensesValuesAll,assetValues,liabilityValues, netWealthValue,netCashFlow,survivalRatio,ratioMeasureShortLiability,basicLiquidityRatio,liabilityToAssetRatio,debtRepaymentRatioFromIncome,savingsRatio,investmentAssetRatio,incomeFromInvestmentAssetRatio,financialFreedomRatio,guageWealth,currentDate,isFirstTransaction, isUpdate]);
@@ -165,25 +163,20 @@ export const OverviewScreen = ({navigation})=>{
         setExpensesFixedValue(getExpensesFixedValues(itemsdata.expensesFixed));
         setExpensesSavingsAndInvestmentValue(getExpensesSavingAndInvestmentValues(itemsdata.expenseSavings, itemsdata.expenseInvest));
         setExpensesSavingsValue(getExpensesSavingsValue(itemsdata.expenseSavings))
-        setExpensesValuesAll(expensesVariableValue+expensesFixedValue+expensesSavingsAndInvestmentValue);
+        setExpensesRepayDebt(getExpensesRepayDebt(itemsdata.expenseRepayDebt))
+        setExpensesValuesAll(expensesVariableValue+expensesFixedValue+expensesSavingsAndInvestmentValue+expensesRepayDebt);
+        
 
         setAssetLiquidValue(getAssetLiquidValue(itemsdata.assetLiquid));
         setAssetInvestValue(getAssetInvestValue(itemsdata.assetInvest));
         setAssetPersonalValue(getAssetPersonalValue(itemsdata.assetPersonal));
         setAssetValues(assetLiquidValue+assetInvestValue+assetPersonalValue);
 
-        
-    }
+        setLiabilityShortValues(getLiabilityShortValue(itemsdata.liabilityShortRemaining));
+        setLiabilityLongValues(getLiabilityLongValue(itemsdata.liabilityLongRemaining));
+        setLiabilityValues(liabilityShortValues+liabilityLongValues);
 
-    const getDataLiabilityRemaining = async()=>{
-        try{
-            const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID)
-            setLiabilityShortValues(getLiabilityShortValue(itemsDataLiabilityRemaining.short));
-            setLiabilityLongValues(getLiabilityLongValue(itemsDataLiabilityRemaining.long));
-            setLiabilityValues(liabilityShortValues+liabilityLongValues);
-        }catch (error) {
-            console.error('Error getLiabilityRemaining:', error);
-        }
+        
     }
     
     const getAllCalculationFormular = async()=>{
@@ -195,7 +188,7 @@ export const OverviewScreen = ({navigation})=>{
             setBasicLiquidityRatio(getBasicLiquidityRatio(assetLiquidValue,expensesValuesAll));
             setLiabilityToAssetRatio(getLiabilityToAssetRatio(liabilityValues,assetValues));
             //การชำระเงินคืนหนี้สินยังเป็น hardcode ต้องไปทำตรงนี้ก่อน
-            setDebtRepaymentRatioFromIncome(getDebtRepaymentRatioFromIncome(0,incomeValuesAll));
+            setDebtRepaymentRatioFromIncome(getDebtRepaymentRatioFromIncome(expensesRepayDebt,incomeValuesAll));
             setSavingsRatio(getSavingsRatio(expensesSavingsValue,incomeValuesAll));
             setInvestmentAssetRatio(getInvestmentAssetRatio(assetInvestValue,assetValues));
             setIncomeFromInvestmentAssetRatio(getIncomeFromInvestmentAssetRatio(incomeInvestAssetValue,incomeValuesAll));
@@ -272,6 +265,15 @@ export const OverviewScreen = ({navigation})=>{
             expensesSavingValue += parseFloat(element.value);
         });
         return expensesSavingValue;
+    }
+
+    //เงินชะระหนี้สิน
+    const getExpensesRepayDebt = (data)=>{
+        let expensesRepayDebt = 0;
+        data.forEach(element => {
+            expensesRepayDebt += parseFloat(element.value);
+        });
+        return expensesRepayDebt;
     }
 
     //รับค่าสินทรัพย์ 3 ประเภท
@@ -483,7 +485,6 @@ export const OverviewScreen = ({navigation})=>{
             }
             
         }
-        
     }
 
     const checkText = (value)=>{

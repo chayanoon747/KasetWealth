@@ -1,6 +1,7 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {addUser, addFinancials, addPetsQuest} from './UserModel';
+import { Alert } from 'react-native';
 
 
 export const signUpEmailPass = (profile, success, unsuccess)=>{
@@ -77,17 +78,51 @@ export const showCurrentEmail = (success, unsuccess) => {
   }
 };
 
-export const forgetPassword = (email,success, unsuccess) => {
-  auth().sendPasswordResetEmail(email)
-    .then(() => {
-      success()
-    })
-    .catch((error) => {
-        const msg = `Reset password error: ${error}`
-        console.error(msg)
-        unsuccess(msg)
-    }) 
+export const retrieveUserData = ()=>{
+  return firestore()
+        .collection('users')
+        .get()
+        .then((doc)=>{
+          if (!doc.empty) {
+            const userData = [];
+            doc.forEach((doc) => {
+              userData.push(doc.data());
+            });
+            return userData;
+          } else {
+              console.log("No such document");
+              return false;
+          }
+        })
+        .catch((error) => {
+          console.log(`retrieveUserData error: ${error}`)
+        })
 }
+
+export const forgetPassword = async(email, phoneNumber, success, unsuccess) => {
+  console.log(email)
+  console.log(phoneNumber)
+  const userData = await retrieveUserData()
+  if(userData){
+    let matchingUserData = userData.find(data => data.email == email && data.phoneNumber == phoneNumber)
+    if(matchingUserData){
+      auth().sendPasswordResetEmail(email)
+      .then(() => {
+        success(`Reset password ${email}`)
+      })
+      .catch((error) => {
+        const msg = `Reset password error: ${error}`
+        unsuccess(msg)
+      }) 
+    }else{
+      Alert.alert(`email กับ phone number ไม่ตรงกัน หรือ ไม่มี email นี้อยู่ในระบบ`)
+    }
+  } else {
+    console.log("No user data");
+  }
+}
+
+
 
 export const changePassword = (email, oldPassword, newPassword, success, unsuccess) => {
   const user = auth().currentUser;
