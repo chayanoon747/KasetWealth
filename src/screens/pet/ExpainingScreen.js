@@ -66,7 +66,7 @@ export const ExpainingScreen = ({navigation})=>{
                           }}
                          >                       
                         {petImageData ? (
-                            <Image source={{uri: petImageData}} 
+                            <Image source={{uri: petImageData[0]}} 
                             style={{width: 250, height:250,justifyContent:'center',alignContent:'center'}} />
                         ) : null}
  

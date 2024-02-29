@@ -5,6 +5,7 @@ import { Dimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import { retrieveAllDataPetName } from '../../firebase/UserModel';
 import { addPetImage } from '../../firebase/UserModel';
+import { addPetImages } from '../../firebase/UserModel';
 
 export const EnterPetScreen = ({ navigation }) => {
   const [petNameExists, setPetNameExists] = useState(null);
@@ -32,14 +33,14 @@ export const EnterPetScreen = ({ navigation }) => {
       console.error('Error checking pet name:', error);
     }
   };
-
+  /*
   const handleTapToHatching = async () => {
     const lockedGroups = [
         ["Pet_0", "Pet_1", "Pet_2"],
         ["Pet_3", "Pet_4", "Pet_5"],
         ["Pet_6", "Pet_7", "Pet_8"]
     ];
-    //สุ่มและ save ลงไปใน firebase 3 รูปเลย
+    //สุ่มและ save ลงไปใน firebase 3 รูปเลยดีกว่าแบบนี้งง?
     const petImages = [
         "https://cdn.discordapp.com/attachments/951838870272606259/1212575825313009704/Pet_0.png?ex=65f2563d&is=65dfe13d&hm=23c0a7fcdfedb02c4791b7fb5ffadd45aeb2ee2eae31c142d84ac270e9680f0b&",
         "https://cdn.discordapp.com/attachments/951838870272606259/1212575822494433310/Pet_3.png?ex=65f2563c&is=65dfe13c&hm=f10dcc3b12e52562c6b2cd4942769901a26a71467af8a47eeb70405a3f8e5770&",
@@ -82,6 +83,7 @@ export const EnterPetScreen = ({ navigation }) => {
     const petImage = selectedPetImages[randomNumber];
 
     if (petNameExists === '') {
+      // 'Tap to Hatching...'
         try {
             await addPetImage(userUID, { value: petImage });
             navigation.navigate('EnterNameScreen');
@@ -90,36 +92,52 @@ export const EnterPetScreen = ({ navigation }) => {
             Alert.alert('Failed to add pet image. Please try again.');
         }
     } else {
+      // 'Tap to Start...'
       navigation.navigate('ExpainingScreen');
     }
   };
-
-  /*
+  */
+  
+  
   const handleTapToHatching = async () => {
-    const petImages = [
-        "https://cdn.discordapp.com/attachments/951838870272606259/1212575825313009704/Pet_0.png?ex=65f2563d&is=65dfe13d&hm=23c0a7fcdfedb02c4791b7fb5ffadd45aeb2ee2eae31c142d84ac270e9680f0b&",
-        "https://cdn.discordapp.com/attachments/951838870272606259/1212575825631641610/Pet_1.png?ex=65f2563d&is=65dfe13d&hm=12a70f75a9dd25990a1d5c69b97a4791fe87973691f4ef53a03eac2b2f49e550&",
-        "https://cdn.discordapp.com/attachments/951838870272606259/1212575821961633792/Pet_2.png?ex=65f2563c&is=65dfe13c&hm=ed5ef5ba169ab06ef14460df026824f971e4b8ea6b6e4282f860be445fa743ec&",
-        "https://cdn.discordapp.com/attachments/951838870272606259/1212575822494433310/Pet_3.png?ex=65f2563c&is=65dfe13c&hm=f10dcc3b12e52562c6b2cd4942769901a26a71467af8a47eeb70405a3f8e5770&",
-        "https://cdn.discordapp.com/attachments/951838870272606259/1212575822880444446/Pet_4.png?ex=65f2563c&is=65dfe13c&hm=1f97c8297a59dd27a9757cbc057463edff4910e2726879d0b52b6f48e120da7e&"
+    const totalGuage = (guageWealth * 0.4) + (guageRiability * 0.6);
+    console.log('Total Guage:', totalGuage);
+
+    const allPetImages = [
+        [
+            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777643217395752/1709219089933.png?ex=65f31232&is=65e09d32&hm=8f59fbde0a093d6ebd8c0d09bb0aca866d05ddd0436523f3cb9fdd14c13d7d70&",
+            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777643884281876/1709219087770.png?ex=65f31232&is=65e09d32&hm=c5ae60e774912a752c5f2148067f878d8a9cc777ca19820bb3d1ed076f484299&",
+            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777644178014218/1709219091612.png?ex=65f31232&is=65e09d32&hm=4c3c1004fdf3b24b61cbbbbab25f74b80e7608bd48dce323e8f69355198c5df7&"
+        ],
+        [
+            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777755846910032/1709219127470.png?ex=65f3124d&is=65e09d4d&hm=8a6c919660d3cfba4710525a32569bb88f0c1f96cb5bb4fb93037895e2f4e728&",
+            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777756136570880/1709219131704.png?ex=65f3124d&is=65e09d4d&hm=b784e67186a60b396af0d949e339901b8d5e31575b69d42076815b22d3a65c37&",
+            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777756425715812/1709219133893.png?ex=65f3124d&is=65e09d4d&hm=461dd465d5fb9a9d6b1aa186d791986dc02a9a98e36e36c6d79f5f8d0738b1b3&"
+        ],
+        [
+            "https://cdn.discordapp.com/attachments/951838870272606259/1212575823593480303/Pet_6.png?ex=65f2563c&is=65dfe13c&hm=939c460a311959ad83763b8a79e7c26672a89ef83046f948869f1860c421ab98&",
+            "https://cdn.discordapp.com/attachments/951838870272606259/1212575824549515264/Pet_7.png?ex=65f2563d&is=65dfe13d&hm=4fbaa0d3de4efd154f63eeae6ed811e4c3fa3c36f5826803cd698daefdcf4098&",
+            "https://cdn.discordapp.com/attachments/951838870272606259/1212575823182430240/Pet_5.png?ex=65f2563c&is=65dfe13c&hm=ae90041eea1d433283bce0f115b2690651d84aa1a92c0454f44af168d0a8e6c2&"
+        ]
     ];
 
-    const randomNumber = Math.floor(Math.random() * petImages.length);
-    const petImage = petImages[randomNumber];
+    const randomIndex = Math.floor(Math.random() * allPetImages.length);
+    const selectedPetImages = allPetImages[randomIndex];
 
     if (petNameExists === '') {
         try {
-            await addPetImage(userUID, { value: petImage });
+            await addPetImages(userUID, selectedPetImages);
             navigation.navigate('EnterNameScreen');
         } catch (error) {
-            console.error('Error adding pet image:', error);
-            Alert.alert('Failed to add pet image. Please try again.');
+            console.error('Error adding pet images:', error);
+            Alert.alert('Failed to add pet images. Please try again.');
         }
     } else {
         navigation.navigate('ExpainingScreen');
     }
-};
-*/
+  };
+
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#0ABAB5' }}>
       <View style={{ flex: 1, alignItems: 'flex-end', padding: '2%' }}>

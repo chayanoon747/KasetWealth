@@ -86,7 +86,7 @@ export const HomeScreen =({navigation})=>{
                     {/* ใส่Pet */}
                     <View style={{backgroundColor:'transparent',width:100,height:100,marginBottom:60,alignItems:'center',justifyContent:'center'}}>   
                         {petImageData ? (
-                            <Image source={{uri: petImageData}} 
+                            <Image source={{uri: petImageData[0]}} 
                             style={{width: 110, height:130,justifyContent:'center',alignContent:'center'}} />
                         ) : null}
                     </View>

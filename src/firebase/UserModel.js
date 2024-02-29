@@ -749,7 +749,7 @@ export const addPetName = (userUID, input) => {
         throw new Error("Value must not be 0!");
     }
 };
-
+/*
 export const addPetImage = (userUID, input) => {
     const myPetImage = input.value;
     if (input.value !== 0) {
@@ -772,7 +772,30 @@ export const addPetImage = (userUID, input) => {
         throw new Error("Value must not be 0!");
     }
 };
+*/
 
+export const addPetImages = (userUID, images) => {
+    if (!Array.isArray(images) || images.length === 0) {
+        Alert.alert("Images array must not be empty!");
+        console.error("Images array must not be empty!");
+        throw new Error("Images array must not be empty!");
+    }
+
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            petImages: images
+        })
+        .then(() => {
+            console.log("Pet images added successfully!");
+        })
+        .catch((error) => {
+            console.error("Error adding pet images:", error);
+            throw error;
+        });
+        //สร้าง field ขึ้นมาเพิ่ม
+};
 
 
 export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
@@ -1033,8 +1056,6 @@ export const  retrieveDataAsset = (userUID)=>{
     })
 }
 
-
-
 export const  retrieveDataLiability = (userUID)=>{
     const liabilityData = {
         short:[],
@@ -1164,7 +1185,7 @@ export const retrieveAllDataPetImage = (userUID) => {
         .get()
         .then((data) => {
             if (data.exists) {
-                return data.data().petImage;
+                return data.data().petImages;
             } else {
                 return null;
             }

@@ -81,7 +81,7 @@ export const GameQuest = ({navigation})=>{
         <ScrollView style={{flex:1, padding:30, backgroundColor:'#B3DBD8'}}>
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff',height: 300}}>
               {petImageData ? (
-                <Image source={{uri: petImageData}} 
+                <Image source={{uri: petImageData[0]}} 
                 style={{width: 150, height:200,alignSelf: 'center',transform: [{translateY: 90}]}} />
               ) : null}
             </View>

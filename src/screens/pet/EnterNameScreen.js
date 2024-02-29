@@ -113,10 +113,9 @@ export const EnterNameScreen = ({navigation})=>{
                          }}
                         >                       
                         {petImageData ? (
-                            <Image source={{uri: petImageData}} 
+                            <Image source={{uri: petImageData[0]}} 
                             style={{width: 250, height:250,justifyContent:'center',alignContent:'center'}} />
                         ) : null}
-
                         </View>
                     </View>
             </View>
