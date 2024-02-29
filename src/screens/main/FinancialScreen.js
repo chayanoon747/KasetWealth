@@ -4,7 +4,7 @@ import { AssetLiabilityDetailScreen } from "./AssetLiabilityDetailScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { setItemTransactionType } from "../../redux/variableSlice";
-import { retrieveAllDataIncomeAndExpenses, retrieveDataLiability, retrieveDataAsset } from "../../firebase/RetrieveData";
+import { retrieveAllDataIncomeAndExpenses, retrieveDataLiabilityRemaining, retrieveDataAsset } from "../../firebase/RetrieveData";
 
 export const FinancialScreen = ({navigation})=>{
     const dispatch = useDispatch();
@@ -22,7 +22,7 @@ export const FinancialScreen = ({navigation})=>{
     useEffect(() => {
         getDataIncomeAndExpenses();
         getDataAsset();
-        getDataLiability();
+        getDataLiabilityRemaining();
     }, [incomeValuesAll, expensesValuesAll, assetValuesAll, liabilityValuesAll, isUpdate]);
 
     const getIncomeValues = (itemData)=>{
@@ -95,10 +95,10 @@ export const FinancialScreen = ({navigation})=>{
         return liabilityValues
     }
 
-    const getDataLiability = async()=>{
+    const getDataLiabilityRemaining = async()=>{
         try{
-            const itemsDataAsset = await retrieveDataLiability(userUID);
-            setLiabilityValuesAll(getLiabilityValues(itemsDataAsset))
+            const itemsDataLiabilityRemaining = await retrieveDataLiabilityRemaining(userUID);
+            setLiabilityValuesAll(getLiabilityValues(itemsDataLiabilityRemaining))
         } catch (error){
             console.error('Error getDataLiability:', error);
         }

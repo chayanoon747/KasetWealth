@@ -22,7 +22,8 @@ const TurquoiseHeader = ({ navigation }) => {
 };
 
 const SecureEmail = ({ email }) => {
-  const securePart = email.substring(0, email.indexOf('@')).replace(/./g, '*');
+  const firstPart = email.substring(0, email.indexOf('@'));
+  const securePart = firstPart.substring(0,3) + firstPart.substring(3).replace(/./g, '*');
   const visiblePart = email.substring(email.indexOf('@'));
   const secureEmail = securePart + visiblePart;
 
