@@ -2,7 +2,7 @@ import { View, Text, Image, TouchableOpacity,ScrollView, StyleSheet, Animated} f
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AssetLiabilityDetailScreen } from "./AssetLiabilityDetailScreen";
 import { useDispatch } from "react-redux";
-import { setItemTransactionType, setIsUpdate, setStatus } from "../../redux/variableSlice";
+import { setItemTransactionType, setIsUpdate, setStatus, setGuageValues } from "../../redux/variableSlice";
 import { useSelector } from 'react-redux'
 import RNSpeedometer from 'react-native-speedometer';
 import { useEffect, useState } from "react"; 
@@ -133,7 +133,7 @@ export const OverviewScreen = ({navigation})=>{
         
         console.log("guage riability: "+guageRiability)
         setIsUpdateCurrent(!isUpdateCurrent)
-        
+        dispatch(setGuageValues({ guageWealth, guageRiability }));
         if (status) {
             setTimeout(() => {
                 setIsLoading(false);

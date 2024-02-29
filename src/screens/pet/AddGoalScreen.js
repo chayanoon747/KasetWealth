@@ -1,6 +1,5 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ScrollView } from "react-native"
 import { TextInput } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context"
 import { useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
 import { Shadow } from "react-native-shadow-2";
@@ -9,7 +8,7 @@ import { setIsUpdate } from "../../redux/variableSlice";
 
 export const AddGoalScreen = ({navigation})=>{
     const dispatch = useDispatch()
-    const [input,setInput] = useState({detail:'',value:''})
+    const [input,setInput] = useState({value:''})
 
     const itemData = useSelector((state)=>state.variables.itemData); 
     //console.log(itemData);
@@ -27,28 +26,30 @@ export const AddGoalScreen = ({navigation})=>{
     }
 
     const handleAddPersonalGoal = () => {
-        //input มี 2 key คือ value กับ details
-        if(input.value == ""){
+        if (input.value == "") {
             Alert.alert('กรุณาระบุจำนวนเงิน')
-        }else{
-            const value = parseFloat(input.value)
-            //console.log(value)
-            if(!isNaN(value)){
+        } else {
+            const commaValue = input.value.replace(/,/g, '');
+            const value = parseFloat(commaValue);
+    
+            if (!isNaN(value)) {
                 addPersonalGoal(userUID, itemData, input)
-                .then(()=>{
-                    dispatch(setIsUpdate(!isUpdate))
-                    
-                    setTimeout(() => {
-                        //setIsLoading(false);
-                        navigation.navigate('GameQuest')
-                        console.log(`จำนวนเงิน: ${value}`);
-                    }, 700);
-                })
-            }else{
+                    .then(() => {
+                        dispatch(setIsUpdate(!isUpdate))
+    
+                        setTimeout(() => {
+                            //setIsLoading(false);
+                            navigation.navigate('GameQuest')
+                            console.log(`จำนวนเงิน: ${value}`);
+                            console.log(`userUID: ${userUID}`);
+                        }, 700);
+                    })
+            } else {
                 Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
             }
         }
     };
+    
 
     const CategoryGoalScreen = () => {
         navigation.navigate('CategoryGoal');
