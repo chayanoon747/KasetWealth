@@ -8,7 +8,7 @@ import { InventoryScreen } from "../screens/pet/InventoryScreen";
 import { GoalNotificationScreen } from "../screens/pet/GoalNotificationScreen";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
-import { retrieveAllDataPetName } from "../firebase/UserModel";
+import { retrieveAllDataPet } from "../firebase/UserModel";
 
 export const PetHomeStackNav = ({navigation})=>{
     const Stack = createNativeStackNavigator()
@@ -27,8 +27,8 @@ export const PetHomeStackNav = ({navigation})=>{
 
     const getNameData = async()=>{
         try{
-            const itemAllDataPetName = await retrieveAllDataPetName(userUID)
-            setPetNameData(itemAllDataPetName)
+            const itemAllDataPet = await retrieveAllDataPet(userUID)
+            setPetNameData(itemAllDataPet.petName)
             
         }catch (error) {
             console.error('Error getNameData:', error);

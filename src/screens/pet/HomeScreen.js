@@ -8,19 +8,26 @@ import { useSelector, useDispatch} from 'react-redux';
 import { useState, useEffect } from "react";
 import { addPetName } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
-import { retrieveAllDataPetImage } from "../../firebase/UserModel";
+import { retrieveAllDataPet } from "../../firebase/UserModel";
 
 
 export const HomeScreen =({navigation})=>{
     const dispatch = useDispatch()
     const [input,setInput] = useState({value:''})
+    const [petImageData, setPetImageData] = useState(null);
+
+    
+    const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
+    console.log('differenceDate in HomeScreen:', totalDifferenceDate);
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
-    const [petImageData, setPetImageData] = useState("")
+    const totalGuage = useSelector(state => state.variables.totalGuage);
+    console.log('Total Guage in HomeScreen:', totalGuage);
+
 
     useEffect(() => {
         getImageData()
@@ -28,8 +35,8 @@ export const HomeScreen =({navigation})=>{
 
     const getImageData = async()=>{
         try{
-            const itemAllDataPetImage = await retrieveAllDataPetImage(userUID)
-            setPetImageData(itemAllDataPetImage)
+            const itemAllDataPet = await retrieveAllDataPet(userUID)
+            setPetImageData(itemAllDataPet)
             
         }catch (error) {
             console.error('Error getImageData:', error);
@@ -41,6 +48,13 @@ export const HomeScreen =({navigation})=>{
             ...oldValue,
             value:text
         }))
+    }
+
+    let selectedPetImageIndex = 0;
+    if (totalGuage > 7) {
+        selectedPetImageIndex = 2;
+    } else if (totalGuage > 4) {
+        selectedPetImageIndex = 1;
     }
 
     return(
@@ -86,7 +100,7 @@ export const HomeScreen =({navigation})=>{
                     {/* ใส่Pet */}
                     <View style={{backgroundColor:'transparent',width:100,height:100,marginBottom:60,alignItems:'center',justifyContent:'center'}}>   
                         {petImageData ? (
-                            <Image source={{uri: petImageData[0]}} 
+                            <Image source={{uri: petImageData.petImage}} 
                             style={{width: 110, height:130,justifyContent:'center',alignContent:'center'}} />
                         ) : null}
                     </View>

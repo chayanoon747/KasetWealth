@@ -5,30 +5,44 @@ import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
 import { TextInput} from "react-native-paper";
 import { useSelector, useDispatch} from 'react-redux';
 import { useState, useEffect } from "react";
-import { addPetName } from "../../firebase/UserModel";
+import { addLastedDate, addPetName } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
-import { retrieveAllDataPetImage } from "../../firebase/UserModel";
-
+import { retrieveAllDataPet, addOnePetImage } from "../../firebase/UserModel";
 
 export const ExpainingScreen = ({navigation})=>{
     const dispatch = useDispatch()
     const [input,setInput] = useState({value:''})
+    const [petImageData, setPetImageData] = useState();
+    const [updateImage, setUpdateImage] = useState('');
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
-    const [petImageData, setPetImageData] = useState("")
+    const totalGuage = useSelector(state => state.variables.totalGuage);
+    console.log('Total Guage in ExpainingScreen:', totalGuage);
+
+    const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
+    console.log('differenceDate in ExpainingScreen:', totalDifferenceDate);
 
     useEffect(() => {
         getImageData()
-    }, [isUpdate]);   
+        //calculateDate()
+    }, [isUpdate,updateImage]);   
 
     const getImageData = async()=>{
         try{
-            const itemAllDataPetImage = await retrieveAllDataPetImage(userUID)
-            setPetImageData(itemAllDataPetImage)
+            const itemAllDataPet = await retrieveAllDataPet(userUID)
+            console.log('itemAllDataPet value:', itemAllDataPet);
+            setPetImageData(itemAllDataPet)
+            calculateDate(itemAllDataPet)
             
         }catch (error) {
             console.error('Error getImageData:', error);
@@ -40,6 +54,28 @@ export const ExpainingScreen = ({navigation})=>{
             ...oldValue,
             value:text
         }))
+    }
+
+    const calculateDate = (petImageData) => {
+        console.log('petImageData value:', petImageData);
+        if (totalDifferenceDate >= 7){
+            if (totalGuage > 7) {
+                setUpdateImage(petImageData.petImages[2])
+                addOnePetImage(userUID, petImageData.petImages[2])
+                addLastedDate(userUID, formattedDate)
+            } else if (totalGuage > 4) {
+                setUpdateImage(petImageData.petImages[1])
+                addOnePetImage(userUID, petImageData.petImages[1])
+                addLastedDate(userUID, formattedDate)
+            } else {
+                console.log('setUpdateImage:', petImageData);
+                setUpdateImage(petImageData.petImages[0])
+                addOnePetImage(userUID, petImageData.petImages[0])
+                addLastedDate(userUID, formattedDate)
+            }
+        }else{
+            setUpdateImage(petImageData.petImage)
+        }
     }
 
     return(
@@ -65,8 +101,8 @@ export const ExpainingScreen = ({navigation})=>{
                                  alignItems: "center"
                           }}
                          >                       
-                        {petImageData ? (
-                            <Image source={{uri: petImageData[0]}} 
+                        {updateImage ? (
+                            <Image source={{uri: updateImage}} 
                             style={{width: 250, height:250,justifyContent:'center',alignContent:'center'}} />
                         ) : null}
  

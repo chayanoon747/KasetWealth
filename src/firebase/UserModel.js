@@ -454,15 +454,19 @@ export const addFinancials = (user,datecurrent)=>{
 
 export const addPetsQuest = (user)=>{
     const Quest = []
+    const PetImages = []
     const PetName = ""
     const PetImage = ""
+    const LastedDate = ""
     firestore()
     .collection('pets')
     .doc(user.uid)
     .set({
         quest: Quest,
         petName: PetName,
-        petImage: PetImage
+        petImage: PetImage,
+        petImages: PetImages,
+        lastedDate: LastedDate
     })
     .then(()=>{
         console.log("addPetsQuest success")
@@ -747,10 +751,33 @@ export const addPetName = (userUID, input) => {
         throw new Error("Value must not be 0!");
     }
 };
-/*
-export const addPetImage = (userUID, input) => {
-    const myPetImage = input.value;
-    if (input.value !== 0) {
+
+export const addLastedDate = (userUID, formattedDate) => {
+    const myLastedDate = formattedDate;
+    if (formattedDate !== 0) {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                lastedDate: myLastedDate
+            })
+            .then(() => {
+                console.log("petName added successfully!");
+            })
+            .catch((error) => {
+                console.error("Error adding petName:", error);
+                throw error;
+            });
+    } else {
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+export const addOnePetImage = (userUID, input) => {
+    const myPetImage = input;
+    if (input !== 0) {
         return firestore()
             .collection('pets')
             .doc(userUID)
@@ -770,7 +797,6 @@ export const addPetImage = (userUID, input) => {
         throw new Error("Value must not be 0!");
     }
 };
-*/
 
 export const addPetImages = (userUID, images) => {
     if (!Array.isArray(images) || images.length === 0) {
@@ -1158,14 +1184,24 @@ export const  retrieveAllDataQuest = (userUID)=>{
     })
 };
 
-export const retrieveAllDataPetName = (userUID) => {
+export const retrieveAllDataPet = (userUID) => {
+    const PetData = {
+        petName: "",
+        lastedDate: "",
+        petImage: "",
+        petImages: []
+    };
     return firestore()
         .collection('pets')
         .doc(userUID)
         .get()
         .then((data) => {
-            if (data.exists) {
-                return data.data().petName;
+            if (data.exists) { 
+                PetData.petName = data.data().petName
+                PetData.lastedDate = data.data().lastedDate
+                PetData.petImage = data.data().petImage
+                PetData.petImages = data.data().petImages
+                return PetData;
             } else {
                 return null;
             }
