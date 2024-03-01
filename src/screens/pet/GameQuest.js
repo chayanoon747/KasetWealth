@@ -6,19 +6,24 @@ import { useSelector, useDispatch} from 'react-redux';
 import { setItemTransactionType } from "../../redux/variableSlice";
 import { AddGoalScreen } from "./AddGoalScreen";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
-import { retrieveAllDataPetImage } from "../../firebase/UserModel";
+import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { setItemCategory } from "../../redux/variableSlice";
 
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
-
+    const [questDataSelected, setQuestDataSelected] = useState({})
+    const [petImageData, setPetImageData] = useState(null);
+    
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
+    const totalGuage = useSelector(state => state.variables.totalGuage);
+    console.log('Total Guage in GameQuest:', totalGuage);
+
+    const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
+    console.log('differenceDate in GameQuest:', totalDifferenceDate);
+
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
-    
-    const [questDataSelected, setQuestDataSelected] = useState({})
-    const [petImageData, setPetImageData] = useState("")
 
     useEffect(() => {
       getQuestData()
@@ -41,12 +46,19 @@ export const GameQuest = ({navigation})=>{
 
     const getImageData = async()=>{
         try{
-            const itemAllDataPetImage = await retrieveAllDataPetImage(userUID)
-            setPetImageData(itemAllDataPetImage)
+            const itemAllDataPet = await retrieveAllDataPet(userUID)
+            setPetImageData(itemAllDataPet)
             
         }catch (error) {
             console.error('Error getImageData:', error);
         }  
+    }
+
+    let selectedPetImageIndex = 0;
+    if (totalGuage > 7) {
+        selectedPetImageIndex = 2;
+    } else if (totalGuage > 4) {
+        selectedPetImageIndex = 1;
     }
 
     const renderItem = ({ item })=>{
@@ -81,7 +93,7 @@ export const GameQuest = ({navigation})=>{
         <ScrollView style={{flex:1, padding:30, backgroundColor:'#B3DBD8'}}>
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff',height: 300}}>
               {petImageData ? (
-                <Image source={{uri: petImageData[0]}} 
+                <Image source={{uri: petImageData.petImage}} 
                 style={{width: 150, height:200,alignSelf: 'center',transform: [{translateY: 90}]}} />
               ) : null}
             </View>

@@ -10,8 +10,10 @@ const INIT_VARIABLES = {
     selectedDate: "",
     isUpdate: false,
     status: false,
-    guageWealth: 0, // Initialize with default value
-    guageRiability: 0, // Initialize with default value
+    guageWealth: 0, 
+    guageRiability: 0, 
+    totalGuage: 0,
+    totalDifferenceDate: ""
 }
 
 const variableSlice = createSlice({
@@ -50,9 +52,15 @@ const variableSlice = createSlice({
         state.guageWealth = action.payload.guageWealth;
         state.guageRiability = action.payload.guageRiability;
       },
+      setTotalGuage(state, action) {
+        state.totalGuage = action.payload;
+      },
+      setTotalDifferenceDate(state, action) {
+        state.totalDifferenceDate = action.payload;
+      }
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues } = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, setTotalGuage, setTotalDifferenceDate  } = actions;
 export default reducer;
