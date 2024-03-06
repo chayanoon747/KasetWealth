@@ -9,6 +9,8 @@ import { useState, useEffect } from "react";
 import { addPetName } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
+import { addItemValuetoFalse } from "../../firebase/UserModel";
+import { setTotalInputValue } from "../../redux/variableSlice";
 
 
 export const HomeScreen =({navigation})=>{
@@ -19,6 +21,9 @@ export const HomeScreen =({navigation})=>{
     
     const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
     console.log('differenceDate in HomeScreen:', totalDifferenceDate);
+
+    const totalInputValue = useSelector(state => state.variables.totalInputValue);
+    console.log('InputValue in HomeScreen:', totalInputValue);
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
@@ -31,7 +36,8 @@ export const HomeScreen =({navigation})=>{
 
     useEffect(() => {
         getImageData()
-    }, [isUpdate]);   
+        handleTotalInputValue()
+    }, [isUpdate,totalInputValue]);   
 
     const getImageData = async()=>{
         try{
@@ -41,6 +47,13 @@ export const HomeScreen =({navigation})=>{
         }catch (error) {
             console.error('Error getImageData:', error);
         }  
+    }
+
+    const handleTotalInputValue = async() => {
+        if (totalInputValue) {
+            addItemValuetoFalse(userUID);
+            dispatch(setTotalInputValue(false));
+        }
     }
 
     const setValue = (text) => {
