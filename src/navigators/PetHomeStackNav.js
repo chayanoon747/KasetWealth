@@ -9,6 +9,7 @@ import { GoalNotificationScreen } from "../screens/pet/GoalNotificationScreen";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
 import { retrieveAllDataPet } from "../firebase/UserModel";
+import { setEditItemLocation } from "../redux/variableSlice";
 
 export const PetHomeStackNav = ({navigation})=>{
     const Stack = createNativeStackNavigator()
@@ -58,7 +59,7 @@ export const PetHomeStackNav = ({navigation})=>{
                         </TouchableOpacity>
                     </View>
                 )
-            }}
+            }} 
         />
 
         <Stack.Screen
@@ -69,7 +70,8 @@ export const PetHomeStackNav = ({navigation})=>{
                     <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
                     <TouchableOpacity style={{width:35, marginLeft:15}}
                         onPress={()=>{
-                        navigation.navigate('HomeScreen');
+                            dispatch(setEditItemLocation(false));
+                            navigation.navigate('HomeScreen');
                         }}
                     >
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>

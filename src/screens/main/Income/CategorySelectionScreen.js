@@ -57,7 +57,7 @@ export const CategorySelectionScreen = ({navigation})=>{
             }
 
             for (const item of categoryData) {
-                if (item.category == "รายได้จากสินทรัพย์") {
+                if (item.category == "รายได้จากสินทรัพย์" || item.category == "รายได้จากสินทรัพย์(ลงทุน)") {
                     items2.push(item);
                 }
             }
@@ -81,6 +81,7 @@ export const CategorySelectionScreen = ({navigation})=>{
        
         return(
             <TouchableOpacity style={{width:'20%', height:'50%', alignItems:'center', marginVertical:5}}
+                disabled={editStatus ? (item.subCategory == 'เพิ่ม' ? true : false) : false}
                 onPress={() => handleItemPress(item)}
             >
                 <View style={{justifyContent:'center', alignItems:'center'}}>

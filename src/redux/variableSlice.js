@@ -13,7 +13,9 @@ const INIT_VARIABLES = {
     guageWealth: 0, 
     guageRiability: 0, 
     totalGuage: 0,
-    totalDifferenceDate: ""
+    totalDifferenceDate: "",
+    editItemLocation: false,
+    isUpdateItemPet: false
 }
 
 const variableSlice = createSlice({
@@ -57,10 +59,18 @@ const variableSlice = createSlice({
       },
       setTotalDifferenceDate(state, action) {
         state.totalDifferenceDate = action.payload;
+      },
+      setEditItemLocation(state, action) {
+        state.editItemLocation = action.payload;
+      },
+      setIsUpdateItemPet(state, action) {
+        state.isUpdateItemPet = action.payload;
       }
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, setTotalGuage, setTotalDifferenceDate  } = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, 
+  setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, 
+  setTotalGuage, setTotalDifferenceDate,setEditItemLocation, setIsUpdateItemPet  } = actions;
 export default reducer;
