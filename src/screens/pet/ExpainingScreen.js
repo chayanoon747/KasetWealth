@@ -8,12 +8,15 @@ import { useState, useEffect } from "react";
 import { addLastedDate, addPetName } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
 import { retrieveAllDataPet, addOnePetImage } from "../../firebase/UserModel";
+import { addItemValuetoTrue, addItemValuetoFalse } from "../../firebase/UserModel";
+import { setTotalInputValue } from "../../redux/variableSlice";
 
 export const ExpainingScreen = ({navigation})=>{
     const dispatch = useDispatch()
     const [input,setInput] = useState({value:''})
     const [petImageData, setPetImageData] = useState();
     const [updateImage, setUpdateImage] = useState('');
+    const [inputValue, setInputValue] = useState();
 
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -35,12 +38,22 @@ export const ExpainingScreen = ({navigation})=>{
     useEffect(() => {
         getImageData()
         //calculateDate()
-    }, [isUpdate,updateImage]);   
+    }, [isUpdate, updateImage]);   
+
+    useEffect(() => {
+        if (petImageData && petImageData.itemValue !== undefined) {
+            setInputValue(petImageData.itemValue);
+        }
+    }, [petImageData]);
+    
+    useEffect(() => {
+        console.log("inputValue updated:", inputValue);
+    }, [inputValue]);
 
     const getImageData = async()=>{
         try{
             const itemAllDataPet = await retrieveAllDataPet(userUID)
-            console.log('itemAllDataPet value:', itemAllDataPet);
+            //console.log('itemAllDataPet value:', itemAllDataPet);
             setPetImageData(itemAllDataPet)
             calculateDate(itemAllDataPet)
             
@@ -57,24 +70,76 @@ export const ExpainingScreen = ({navigation})=>{
     }
 
     const calculateDate = (petImageData) => {
-        console.log('petImageData value:', petImageData);
-        if (totalDifferenceDate >= 7){
-            if (totalGuage > 7) {
-                setUpdateImage(petImageData.petImages[2])
-                addOnePetImage(userUID, petImageData.petImages[2])
-                addLastedDate(userUID, formattedDate)
-            } else if (totalGuage > 4) {
-                setUpdateImage(petImageData.petImages[1])
-                addOnePetImage(userUID, petImageData.petImages[1])
-                addLastedDate(userUID, formattedDate)
-            } else {
-                console.log('setUpdateImage:', petImageData);
-                setUpdateImage(petImageData.petImages[0])
-                addOnePetImage(userUID, petImageData.petImages[0])
-                addLastedDate(userUID, formattedDate)
+        //console.log('petImageData itemValue:', petImageData.itemValue);
+        //console.log('petImageData all value:', petImageData);
+        if(petImageData.itemValue === false){
+            console.log("itemValue is false (ไม่มีบัตรกันลดขั้น)",petImageData.itemValue)
+            if (totalDifferenceDate >= 7){
+                if (totalGuage > 7) {
+                    setUpdateImage(petImageData.petImages[2])
+                    addOnePetImage(userUID, petImageData.petImages[2])
+                    addLastedDate(userUID, formattedDate)
+                } else if (totalGuage > 4) {
+                    setUpdateImage(petImageData.petImages[1])
+                    addOnePetImage(userUID, petImageData.petImages[1])
+                    addLastedDate(userUID, formattedDate)
+                } else {
+                    //console.log('setUpdateImage:', petImageData);
+                    setUpdateImage(petImageData.petImages[0])
+                    addOnePetImage(userUID, petImageData.petImages[0])
+                    addLastedDate(userUID, formattedDate)
+                }
+            }else{
+                setUpdateImage(petImageData.petImage)
             }
         }else{
-            setUpdateImage(petImageData.petImage)
+            console.log("itemValue is true (ใช้บัตรกันลดขั้น): ",petImageData.itemValue)
+            if (totalDifferenceDate >= 7){
+                if (petImageData.petImage === petImageData.petImages[2] || totalGuage > 7) {
+                    setUpdateImage(petImageData.petImages[2])
+                    addOnePetImage(userUID, petImageData.petImages[2])
+                    addLastedDate(userUID, formattedDate)
+                    /*if((totalGuage > 7) == false){
+                        dispatch(setTotalInputValue(inputValue))
+                    }*/
+                    dispatch(setTotalInputValue(inputValue))
+
+                } else if (petImageData.petImage === petImageData.petImages[1] || totalGuage > 4) {
+                    setUpdateImage(petImageData.petImages[1])
+                    addOnePetImage(userUID, petImageData.petImages[1])
+                    addLastedDate(userUID, formattedDate)
+                    /*if((totalGuage > 4) == false){
+                        dispatch(setTotalInputValue(inputValue))
+                    }*/
+                    dispatch(setTotalInputValue(inputValue))
+
+                /*} else if (totalGuage > 7){ //กรณีนี้ไม่ต้องใช้บัตรกันลดขั้น
+                    setUpdateImage(petImageData.petImages[2])
+                    addOnePetImage(userUID, petImageData.petImages[2])
+                    addLastedDate(userUID, formattedDate)
+                    //dispatch(setTotalInputValue(inputValue))
+
+                } else if (totalGuage > 4){//กรณีนี้ไม่ต้องใช้บัตรกันลดขั้น
+                    setUpdateImage(petImageData.petImages[1])
+                    addOnePetImage(userUID, petImageData.petImages[1])
+                    addLastedDate(userUID, formattedDate)
+                    //dispatch(setTotalInputValue(inputValue))*/
+
+                }else {
+                    //console.log('setUpdateImage:', petImageData);
+                    setUpdateImage(petImageData.petImages[0])
+                    addOnePetImage(userUID, petImageData.petImages[0])
+                    addLastedDate(userUID, formattedDate)
+                    dispatch(setTotalInputValue(inputValue))
+                }
+            }else{
+                setUpdateImage(petImageData.petImage)
+                dispatch(setTotalInputValue(inputValue))
+            }
+            //setUpdateImage(petImageData.petImage)
+            //addLastedDate(userUID, formattedDate)
+            //dispatch(setTotalInputValue(inputValue))
+            //console.log('dispatch setTotalInputValue into redux:',inputValue)
         }
     }
 

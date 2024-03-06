@@ -2,9 +2,12 @@ import { View,TouchableOpacity,Image,Text, FlatList, Alert } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState,useEffect} from "react";
 import { useDispatch,useSelector } from "react-redux";
-import { getPetMoney,getPetRuby,updateMoney,updateRuby,addItemFurniture2Inventory,retrieveDataInventory,addUseIteme2Inventory } from "../../firebase/UserModel";
+import { getPetMoney,getPetRuby,updateMoney,updateRuby,addItemFurniture2Inventory,
+    retrieveDataInventory,addUseIteme2Inventory, addItemValuetoFalse, addItemValuetoTrue } from "../../firebase/UserModel";
 import uuid from 'react-native-uuid';
 import { setIsUpdate } from "../../redux/variableSlice";
+import { addPetImages } from '../../firebase/UserModel';
+import { addOnePetImage } from "../../firebase/UserModel";
 
 export const PetShopScreen = ({navigation}) => {
 
@@ -235,6 +238,37 @@ export const PetShopScreen = ({navigation}) => {
     //     console.log("First Item: "+isFirstItem)
     // }
 
+    const randomPetCard = async () => { //บัตรสุ่มสัตว์เลี้ยง
+        const allPetImages = [
+            [
+                "https://cdn.discordapp.com/attachments/1194490268959907870/1212777643217395752/1709219089933.png?ex=65f31232&is=65e09d32&hm=8f59fbde0a093d6ebd8c0d09bb0aca866d05ddd0436523f3cb9fdd14c13d7d70&",
+                "https://cdn.discordapp.com/attachments/1194490268959907870/1212777643884281876/1709219087770.png?ex=65f31232&is=65e09d32&hm=c5ae60e774912a752c5f2148067f878d8a9cc777ca19820bb3d1ed076f484299&",
+                "https://cdn.discordapp.com/attachments/1194490268959907870/1212777644178014218/1709219091612.png?ex=65f31232&is=65e09d32&hm=4c3c1004fdf3b24b61cbbbbab25f74b80e7608bd48dce323e8f69355198c5df7&"
+            ],
+            [
+                "https://cdn.discordapp.com/attachments/1194490268959907870/1212777755846910032/1709219127470.png?ex=65f3124d&is=65e09d4d&hm=8a6c919660d3cfba4710525a32569bb88f0c1f96cb5bb4fb93037895e2f4e728&",
+                "https://cdn.discordapp.com/attachments/1194490268959907870/1212777756136570880/1709219131704.png?ex=65f3124d&is=65e09d4d&hm=b784e67186a60b396af0d949e339901b8d5e31575b69d42076815b22d3a65c37&",
+                "https://cdn.discordapp.com/attachments/1194490268959907870/1212777756425715812/1709219133893.png?ex=65f3124d&is=65e09d4d&hm=461dd465d5fb9a9d6b1aa186d791986dc02a9a98e36e36c6d79f5f8d0738b1b3&"
+            ],
+            [
+                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263385268264/Bear04-01.png?ex=65f3e62f&is=65e1712f&hm=1bc31960662fd06c8573e7cee5cb03d2398333f16f3b4ee12a51f21b9a382fad&",
+                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263146061875/Bear04-02.png?ex=65f3e62f&is=65e1712f&hm=a9f6fdb3949e8e13d153b464c5437c251779bda5af00b71372f7ef38971fa220&",
+                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263611887656/Bear04-03.png?ex=65f3e62f&is=65e1712f&hm=6f35b25aa402cb7a3b128386a438df69fd4df9f95862ec256a65992aa069786d&"
+            ],
+            [
+                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044624592916/Devil03-01.png?ex=65f3e6e9&is=65e171e9&hm=c51323259f207777c3088fe7cfccf66bde0d3d67c491d65e7508afeb2c0123e5&",
+                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044335177728/Devil03-02.png?ex=65f3e6e9&is=65e171e9&hm=d65ea4cfca21cb322ec67d0134128b089741b655faa809a3e0eda0b3a8557061&",
+                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534389272617/Devil03-03.png?ex=65f3e75e&is=65e1725e&hm=fe7d759e8a0624db3b770cb612470f4f033bf3bf687824b346aec55324d84538&"
+            ],
+        ];
+    
+        const randomIndex = Math.floor(Math.random() * allPetImages.length);
+        const selectedPetImages = allPetImages[randomIndex];
+        addPetImages(userUID, selectedPetImages);
+        addOnePetImage(userUID, selectedPetImages[0])
+
+    };
+
     const renderItem = ({ item, index }) => {
         let renderStyle;
         if (item.category === 'กล่องสุ่ม') {
@@ -337,6 +371,14 @@ export const PetShopScreen = ({navigation}) => {
                         onPress={() =>{
                             reportBuyItem(item)
                             sendUseItem2Inventory(item)
+                            console.log('pressed: ',item.subCategory)
+                            if(item.subCategory === 'บัตรกันลดขั้น'){
+                                addItemValuetoTrue(userUID)
+                                console.log('ใช้บัตรกันลดขั้น: ',item.subCategory)
+                            } else if (item.subCategory === 'บัตรสุ่มสัตว์เลี้ยง'){
+                                randomPetCard()
+                                console.log('ใช้บัตรสุ่มสัตว์เลี้ยง: ',item.subCategory)
+                            }
                         }}
                     >
                         <View>
@@ -557,7 +599,7 @@ const styles = {
         borderRadius:12,
         borderWidth:1, 
         borderColor:'#000000',
-        backgroundColor:'red'
+        backgroundColor:'#ffffff'
     },
     viewImageItemBox:{
         alignItems:'center'
@@ -754,7 +796,7 @@ const UseItem = [
     {
         category: "ไอเทมกดใช้",
         itemCurrencyType: 'ruby',
-        subCategory: "item4",
+        subCategory: "บัตรกันลดขั้น",
         price:40,
         itemlocation: null,
         purchased: false,
@@ -764,7 +806,7 @@ const UseItem = [
     {
         category: "ไอเทมกดใช้",
         itemCurrencyType: 'ruby',
-        subCategory: "item5",
+        subCategory: "บัตรสุ่มสัตว์เลี้ยง",
         price:40,
         itemlocation: null,
         purchased: false,
