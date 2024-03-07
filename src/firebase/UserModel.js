@@ -1659,7 +1659,6 @@ export const updateAllQuestSeenStatus = (userUID, questArray) => {
                 throw error;
             });
     } else {
-        console.warn('questArray is null or empty');
         return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
     }
 };
