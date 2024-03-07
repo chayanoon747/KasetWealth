@@ -45,6 +45,7 @@ export const IncomeStackNav = ({navigation})=>{
   const day = currentDate.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
 
+  const cameFrom = useSelector((state)=>state.variables.cameFrom)
   return(
     <Stack.Navigator
       initialRouteName="FinancialScreen"
@@ -288,7 +289,7 @@ export const IncomeStackNav = ({navigation})=>{
       <Stack.Screen
         name='DetailScreen'
         component={DetailScreen}
-        options={({ route }) => {
+        options={{
           header: () => (
             <View style={{height:80, backgroundColor:'#0ABAB5'}}>
               <View style={{flex:1}}>
@@ -299,7 +300,11 @@ export const IncomeStackNav = ({navigation})=>{
                 <TouchableOpacity style={{width:35, marginLeft:15}}
                   onPress={()=>{
                     dispatch(setSelectedDate(""))
-                    navigation.navigate('IncomeAndExpensesScreen');
+                    if(cameFrom === "IncomeAndExpenseScreen"){
+                      navigation.navigate('IncomeAndExpensesScreen');
+                    }else if(cameFrom === "AssetLiabilityDetailScreen"){
+                      navigation.navigate('AssetLiabilityDetailScreen');
+                    }
                   }}
                 >
                   <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>

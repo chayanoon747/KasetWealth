@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView} from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack'
 import { GameQuest } from "../screens/pet/GameQuest";
@@ -6,10 +6,15 @@ import { AddGoalScreen } from "../screens/pet/AddGoalScreen";
 import { CategoryGoal } from "../screens/pet/CategoryGoal";
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { GoalNotificationScreen } from "../screens/pet/GoalNotificationScreen";
+import { useSelector, useDispatch} from 'react-redux';
 
 export const PetQuestStackNav = ({navigation})=>{
+  const dispatch = useDispatch();
   const Stack = createNativeStackNavigator()
-
+  const hasNotification = useSelector(state => state.variables.hasNotification);
+  const isUpdate = useSelector((state)=>state.variables.isUpdate);
+  const cameFromNoti = useSelector(state => state.variables.cameFromNoti);
+  
   return(
     <Stack.Navigator
       initialRouteName="GameQuest" 
@@ -29,7 +34,17 @@ export const PetQuestStackNav = ({navigation})=>{
                             navigation.navigate('GoalNotificationScreen');
                             }}
                         >
-                            <Image source={require('../assets/petBottomTab/notificationIcon.png')} style={{ width: 32, height: 32, marginRight:'10%'}} />
+                            {hasNotification ? (
+                            <Image 
+                                source={require('../assets/petBottomTab/notificationRedIcon.png')} 
+                                style={{ width: 32, height: 32, marginRight:'10%'}} 
+                            />
+                            ) : 
+                            <Image 
+                                source={require('../assets/petBottomTab/notificationIcon.png')} 
+                                style={{ width: 32, height: 32, marginRight:'10%'}} 
+                            />
+                        }  
                         </TouchableOpacity>
                     </View>
                 )
