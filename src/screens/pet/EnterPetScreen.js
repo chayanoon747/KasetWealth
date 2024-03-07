@@ -43,6 +43,7 @@ export const EnterPetScreen = ({ navigation }) => {
       setDifferenceDate(findDateDifference(formattedDate, PetData.lastedDate));
       console.log('PetData:', PetData.lastedDate);
       console.log('DateDifference:',findDateDifference(formattedDate, PetData.lastedDate));
+      //console.log('PetNameExists:',petNameExists)
     } catch (error) {
       console.error('Error checking pet name:', error);
     }

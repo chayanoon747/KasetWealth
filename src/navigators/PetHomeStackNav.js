@@ -10,7 +10,8 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
 import { retrieveAllDataPet } from "../firebase/UserModel";
 import { setEditItemLocation } from "../redux/variableSlice";
-
+import { PetQuestStackNav } from "./PetQuestStackNav";
+import { PetBottomTabNav } from "./PetBottomTabNav";
 export const PetHomeStackNav = ({navigation})=>{
     const Stack = createNativeStackNavigator()
     const dispatch = useDispatch();
@@ -21,10 +22,13 @@ export const PetHomeStackNav = ({navigation})=>{
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
     
     const [petNameData, setPetNameData] = useState("")
-
+    //const [hasNotification,setHasNotification] = useState(false)
+    const hasNotification = useSelector(state => state.variables.hasNotification);
+    
     useEffect(() => {
         getNameData()
-    }, [isUpdate]);   
+        
+    }, [isUpdate,hasNotification]);   
 
     const getNameData = async()=>{
         try{
@@ -38,13 +42,15 @@ export const PetHomeStackNav = ({navigation})=>{
 
     return(
     <Stack.Navigator
-      initialRouteName="HomeScreen" 
+      initialRouteName="HomeScreen"
+      //initialParams={{ hasNotification: hasNotification }}
     >
         <Stack.Screen
             name='HomeScreen'
             component={HomeScreen}
             options={{ 
-                header: () => (
+                header: ({navigation}) => (
+                    
                     <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
                        
 
@@ -54,8 +60,18 @@ export const PetHomeStackNav = ({navigation})=>{
                             onPress={()=>{
                             navigation.navigate('GoalNotificationScreen');
                             }}
-                        >
-                            <Image source={require('../assets/petBottomTab/notificationIcon.png')} style={{ width: 32, height: 32, marginRight:'10%'}} />
+                        >   
+                        {hasNotification ? (
+                            <Image 
+                                source={require('../assets/petBottomTab/notificationRedIcon.png')} 
+                                style={{ width: 32, height: 32, marginRight:'10%'}} 
+                            />
+                            ) : 
+                            <Image 
+                                source={require('../assets/petBottomTab/notificationIcon.png')} 
+                                style={{ width: 32, height: 32, marginRight:'10%'}} 
+                            />
+                        }    
                         </TouchableOpacity>
                     </View>
                 )
@@ -122,6 +138,13 @@ export const PetHomeStackNav = ({navigation})=>{
                 )
             }}
         />
+        <Stack.Screen name="PetQuestStackNav" component={PetQuestStackNav}
+            options={{ headerShown: false }}
+        />
+        <Stack.Screen name="PetBottomTabNav" component={PetBottomTabNav}
+            options={{ headerShown: false }}
+        />
+        
 
 
 

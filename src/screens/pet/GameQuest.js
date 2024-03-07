@@ -8,6 +8,8 @@ import { AddGoalScreen } from "./AddGoalScreen";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { setItemCategory } from "../../redux/variableSlice";
+import { useFocusEffect } from '@react-navigation/native';
+import { setCameFromNoti } from "../../redux/variableSlice";
 
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
@@ -24,9 +26,11 @@ export const GameQuest = ({navigation})=>{
     console.log('differenceDate in GameQuest:', totalDifferenceDate);
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
-
+    
     useEffect(() => {
       getQuestData()
+      dispatch(setCameFromNoti(false))
+      console.log("มาแล้ว")
     }, [isUpdate]);
 
     const getQuestData = async()=>{
@@ -41,7 +45,8 @@ export const GameQuest = ({navigation})=>{
     }
 
     useEffect(() => {
-        getImageData()
+      getImageData()
+      dispatch(setCameFromNoti(false));
     }, [isUpdate]);   
 
     const getImageData = async()=>{

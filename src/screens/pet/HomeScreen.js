@@ -10,6 +10,11 @@ import { addPetName } from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 import { setEditItemLocation } from "../../redux/variableSlice";
+import { retrieveAllDataQuest } from "../../firebase/UserModel";
+import { retrieveQuestDaliyAndWeek } from "../../firebase/UserModel"
+import { setHasNotification } from "../../redux/variableSlice";
+import { addItemValuetoFalse } from "../../firebase/UserModel";
+import { setTotalInputValue } from "../../redux/variableSlice";
 
 
 export const HomeScreen =({navigation})=>{
@@ -28,6 +33,9 @@ export const HomeScreen =({navigation})=>{
     const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
     console.log('differenceDate in HomeScreen:', totalDifferenceDate);
 
+    const totalInputValue = useSelector(state => state.variables.totalInputValue);
+    console.log('InputValue in HomeScreen:', totalInputValue);
+
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
     const isUpdateItemPet = useSelector((state)=>state.variables.isUpdateItemPet);
 
@@ -37,11 +45,19 @@ export const HomeScreen =({navigation})=>{
     const totalGuage = useSelector(state => state.variables.totalGuage);
     console.log('Total Guage in HomeScreen:', totalGuage);
 
+    const [questPersonalData, setQuestPersonalData] = useState([])
+    const [questDaily, setQuestDaily] = useState([])
+    const [questWeekly, setQuestWeekly] = useState([])
+
+    const hasNotification = useSelector(state => state.variables.hasNotification);
+    const cameFromNoti = useSelector(state => state.variables.cameFromNoti);
     useEffect(() => {
-        getImageData();
         findLocationItem();
-        console.log(`isUpdateItemPet: ${isUpdateItemPet}`)
-    }, [isUpdate, editItemLocation, isUpdateItemPet]); 
+        getImageData()
+        getQuestData()
+        console.log(hasNotification)
+        handleTotalInputValue()
+    }, [isUpdate,hasNotification,cameFromNoti,totalInputValue, editItemLocation, isUpdateItemPet]);    
 
     const getImageData = async()=>{
         try{
@@ -54,7 +70,6 @@ export const HomeScreen =({navigation})=>{
     }
 
     const findLocationItem = async()=>{
-        console.log("AAAAAAAAAAAAAAAAAAAA")
         setItemTable1();
         setItemTable2();
         setItemTable3();
@@ -86,7 +101,13 @@ export const HomeScreen =({navigation})=>{
                 setItemWall3(element);
             }
         })
+    }
         
+    const handleTotalInputValue = async() => {
+        if (totalInputValue) {
+            addItemValuetoFalse(userUID);
+            dispatch(setTotalInputValue(false));
+        }
     }
 
     const componentItem = (item)=>{
@@ -110,7 +131,23 @@ export const HomeScreen =({navigation})=>{
         }
         
     }
-
+    const getQuestData = async()=>{
+        try{
+            const itemAllDataQuestPersonal = await retrieveAllDataQuest(userUID)
+            const itemAllDataQuestDailyAndWeek = await retrieveQuestDaliyAndWeek();
+            setQuestPersonalData(itemAllDataQuestPersonal)
+            setQuestDaily(itemAllDataQuestDailyAndWeek.daily)
+            setQuestWeekly(itemAllDataQuestDailyAndWeek.weekly)
+            //เอา Quest ทั้งหมดมารวมเพื่อหาว่ามีแค่อันเดียวที่เสร็จแล้วยังไม่ได้ดูก็ขึ้น แจ้งเตือน
+            const combinedData = [...itemAllDataQuestPersonal, ...itemAllDataQuestDailyAndWeek.daily, ...itemAllDataQuestDailyAndWeek.weekly];
+            dispatch(setHasNotification(checkNotiRed(combinedData)))
+        }catch (error) {
+            console.error('Error getQuestData:', error);
+        }  
+    }
+    function checkNotiRed(items) {
+        return items.some(item => item.rewardStatus && !item.seen);
+    }
     return(
         <View style={{flex:1}}>
             <ImageBackground source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207709035797946448/pxArt_1.png?ex=65e0a1b0&is=65ce2cb0&hm=22d1404ba545efff694fcb96da06d26072e6b17849dd3daa83cd8100a6641ac8&=&format=webp&quality=lossless&width=390&height=640'}}

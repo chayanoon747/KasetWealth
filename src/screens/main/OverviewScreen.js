@@ -484,6 +484,8 @@ export const OverviewScreen = ({navigation})=>{
                 }
             }
             
+        }else{
+            return 0
         }
     }
 

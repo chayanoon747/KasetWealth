@@ -15,7 +15,11 @@ const INIT_VARIABLES = {
     totalGuage: 0,
     totalDifferenceDate: "",
     editItemLocation: false,
-    isUpdateItemPet: false
+    isUpdateItemPet: false,
+    hasNotification: false,
+    cameFromNoti: false,
+    cameFrom: "",
+    totalInputValue: false
 }
 
 const variableSlice = createSlice({
@@ -65,6 +69,18 @@ const variableSlice = createSlice({
       },
       setIsUpdateItemPet(state, action) {
         state.isUpdateItemPet = action.payload;
+      },
+      setHasNotification(state, action) {
+        state.hasNotification = action.payload;
+      },
+      setCameFromNoti(state, action) {
+        state.cameFromNoti = action.payload;
+      },
+      setCameFrom(state, action) {
+        state.cameFrom = action.payload;
+      },
+      setTotalInputValue(state, action) {
+        state.totalInputValue = action.payload;
       }
     },
 });
@@ -72,5 +88,6 @@ const variableSlice = createSlice({
 const { actions, reducer } = variableSlice;
 export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, 
   setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, 
-  setTotalGuage, setTotalDifferenceDate,setEditItemLocation, setIsUpdateItemPet  } = actions;
+  setTotalGuage, setTotalDifferenceDate,setEditItemLocation, setIsUpdateItemPet,
+  setTotalInputValue, setHasNotification, setCameFromNoti, setCameFrom  } = actions;
 export default reducer;
