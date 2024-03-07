@@ -467,3 +467,35 @@ export const retriveCalculateRiability = (userUID) => {
             return null;
         });
 };
+
+export const retrieveInventory = (userUID)=>{
+    const inventory = {
+        all:[],
+        wall:[],
+        table:[]
+    };
+    
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().inventory;
+            //console.log(allData);
+            allData.forEach(element => {
+                if(element.itemType == 'wall'){
+                    inventory.wall.push(element)
+                }
+                if(element.itemType == 'table'){
+                    inventory.table.push(element)
+                }
+
+                inventory.all.push(element)
+            });
+
+            //console.log(inventory)
+            return inventory
+        }
+    })
+}

@@ -74,6 +74,7 @@ export const CategoryLiabilitySelectionScreen = ({navigation})=>{
        
         return(
             <TouchableOpacity style={{width:'20%', height:'50%', alignItems:'center', marginVertical:5}}
+                disabled={editStatus ? (item.subCategory == 'เพิ่ม' ? true : false) : false}
                 onPress={() => handleItemPress(item)}
             >
                 <View style={{justifyContent:'center', alignItems:'center'}}>

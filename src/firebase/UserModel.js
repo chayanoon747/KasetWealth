@@ -461,6 +461,7 @@ export const addPetsQuest = (user)=>{
     const PetName = ""
     const PetImage = ""
     const LastedDate = ""
+    const Inventory = []
     firestore()
     .collection('pets')
     .doc(user.uid)
@@ -470,7 +471,9 @@ export const addPetsQuest = (user)=>{
         petName: PetName,
         petImage: PetImage,
         petImages: PetImages,
-        lastedDate: LastedDate
+        lastedDate: LastedDate,
+        inventory: Inventory
+
     })
     .then(()=>{
         console.log("addPetsQuest success")
@@ -1656,7 +1659,6 @@ export const updateAllQuestSeenStatus = (userUID, questArray) => {
                 throw error;
             });
     } else {
-        console.warn('questArray is null or empty');
         return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
     }
 };
@@ -1755,8 +1757,39 @@ export const addUseIteme2Inventory = (userUID, itemData) => {
         });
 };
 
+export const updateLocationItem = (userUID, item, newItem)=>{
+        firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            inventory: firestore.FieldValue.arrayUnion(newItem)
+        })
+        .then(() => {
+            return(
+                firestore()
+                .collection('pets')
+                .doc(userUID)
+                .update({
+                    inventory: firestore.FieldValue.arrayRemove(item)
+                })
+                .then(()=>{
+                    console.log(`update item successfully`)
+                })
+                .catch((error) => {
+                    console.error("Error remove locationItem:", error);
+                    throw error;
+                })
+            )
+            
+        })
+        .catch((error) => {
+            console.error("Error add newLocationItem:", error);
+            throw error;
+        });
+}
 
-export const retrieveInventory = (userUID) => {
+
+/*export const retrieveInventory = (userUID) => {
     return firestore()
         .collection('inventory')
         .doc(userUID)
@@ -1776,7 +1809,7 @@ export const retrieveInventory = (userUID) => {
             console.error("Error getting document:", error);
             throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
         });
-}
+}*/
 
 
 /*---------------------------------------------------------------------*/

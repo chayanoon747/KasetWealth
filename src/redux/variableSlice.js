@@ -14,6 +14,8 @@ const INIT_VARIABLES = {
     guageRiability: 0, 
     totalGuage: 0,
     totalDifferenceDate: "",
+    editItemLocation: false,
+    isUpdateItemPet: false,
     hasNotification: false,
     cameFromNoti: false,
     cameFrom: "",
@@ -62,6 +64,12 @@ const variableSlice = createSlice({
       setTotalDifferenceDate(state, action) {
         state.totalDifferenceDate = action.payload;
       },
+      setEditItemLocation(state, action) {
+        state.editItemLocation = action.payload;
+      },
+      setIsUpdateItemPet(state, action) {
+        state.isUpdateItemPet = action.payload;
+      },
       setHasNotification(state, action) {
         state.hasNotification = action.payload;
       },
@@ -71,12 +79,15 @@ const variableSlice = createSlice({
       setCameFrom(state, action) {
         state.cameFrom = action.payload;
       },
-        setTotalInputValue(state, action) {
+      setTotalInputValue(state, action) {
         state.totalInputValue = action.payload;
       }
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, setTotalGuage, setTotalDifferenceDate, setTotalInputValue, setHasNotification, setCameFromNoti, setCameFrom  } = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, 
+  setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, 
+  setTotalGuage, setTotalDifferenceDate,setEditItemLocation, setIsUpdateItemPet,
+  setTotalInputValue, setHasNotification, setCameFromNoti, setCameFrom  } = actions;
 export default reducer;

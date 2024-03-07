@@ -7,7 +7,7 @@ import { retrieveAllDataPet } from '../../firebase/UserModel';
 import { addPetImage } from '../../firebase/UserModel';
 import { addPetImages } from '../../firebase/UserModel';
 import { setTotalGuage } from '../../redux/variableSlice';
-import { setTotalDifferenceDate } from '../../redux/variableSlice';
+import { setTotalDifferenceDate, setEditItemLocation } from '../../redux/variableSlice';
 import { addOnePetImage } from '../../firebase/UserModel';
 import { addLastedDate } from '../../firebase/UserModel';
 
@@ -50,6 +50,7 @@ export const EnterPetScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    dispatch(setEditItemLocation(false));
     checkPetName();
     dispatch(setTotalGuage(totalGuage));
   }, []);

@@ -9,6 +9,7 @@ import { PetQuestStackNav } from './PetQuestStackNav';
 import { BottomTabNav } from './BottomTabNav';
 import { EditHomeScreen } from '../screens/pet/EditHomeScreen';
 import { PetHomeStackNav } from './PetHomeStackNav';
+import { setEditItemLocation } from '../redux/variableSlice';
 import { useSelector, useDispatch} from 'react-redux';
 import React, { useState,useEffect } from 'react';
 export const PetBottomTabNav = ({navigation})=>{
@@ -69,10 +70,10 @@ export const PetBottomTabNav = ({navigation})=>{
                 listeners={() => ({
                     tabPress: (e) => {
                       e.preventDefault(); // Prevent default action
-                      //dispatch(setIsUpdate(!isUpdate))
-                      navigation.navigate('PetHomeStackNav',{screen:"HomeScreen"}) 
+                      dispatch(setEditItemLocation(false));
+                      navigation.navigate('PetHomeStackNav', {screen: 'HomeScreen'})
                     },
-                  })}
+                })}
             />
 
             <BottomTab.Screen name="PetQuestStackNav" component={PetQuestStackNav}

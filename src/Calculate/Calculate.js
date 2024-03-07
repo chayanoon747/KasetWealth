@@ -66,7 +66,7 @@ export const getDebtRepaymentRatioFromIncome = (debtSettlementValue,incomeValues
 //อัตราส่วนการออม (เงินออม/รายได้รวม)
 export const getSavingsRatio = (savingsValue,incomeValuesAll)=>{
     if(incomeValuesAll > 0){
-        let savingsRatioValue = (savingsValue/incomeValuesAll).toFixed(2);
+        let savingsRatioValue = (savingsValue/incomeValuesAll).toFixed(2) * 100;
         return savingsRatioValue;
     }else{
         return 0;
