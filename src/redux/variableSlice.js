@@ -16,7 +16,8 @@ const INIT_VARIABLES = {
     totalDifferenceDate: "",
     hasNotification: false,
     cameFromNoti: false,
-    cameFrom: ""
+    cameFrom: "",
+    totalInputValue: false
 }
 
 const variableSlice = createSlice({
@@ -69,10 +70,13 @@ const variableSlice = createSlice({
       },
       setCameFrom(state, action) {
         state.cameFrom = action.payload;
+      },
+        setTotalInputValue(state, action) {
+        state.totalInputValue = action.payload;
       }
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, setTotalGuage, setTotalDifferenceDate, setHasNotification, setCameFromNoti, setCameFrom } = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, setTotalGuage, setTotalDifferenceDate, setTotalInputValue, setHasNotification, setCameFromNoti, setCameFrom  } = actions;
 export default reducer;

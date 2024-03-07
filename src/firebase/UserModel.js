@@ -455,6 +455,7 @@ export const addFinancials = (user,datecurrent)=>{
 }
 
 export const addPetsQuest = (user)=>{
+    const ItemValue = false
     const Quest = []
     const PetImages = []
     const PetName = ""
@@ -464,6 +465,7 @@ export const addPetsQuest = (user)=>{
     .collection('pets')
     .doc(user.uid)
     .set({
+        itemValue: ItemValue,
         quest: Quest,
         petName: PetName,
         petImage: PetImage,
@@ -824,6 +826,39 @@ export const addPetImages = (userUID, images) => {
         //สร้าง field ขึ้นมาเพิ่ม
 };
 
+export const addItemValuetoTrue = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            itemValue: true
+        })
+        .then(() => {
+            console.log("petImage random and added successfully!");
+        })
+        .catch((error) => {
+            console.error("Error addItemValuetoTrue:", error);
+            throw error;
+        });
+    
+};
+
+export const addItemValuetoFalse = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            itemValue: false
+        })
+        .then(() => {
+            console.log("petImage random and added successfully!");
+        })
+        .catch((error) => {
+            console.error("Error addItemValuetoFalse:", error);
+            throw error;
+        });
+    
+};
 
 export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
     const currentDate = new Date();
@@ -1235,7 +1270,8 @@ export const retrieveAllDataPet = (userUID) => {
         petName: "",
         lastedDate: "",
         petImage: "",
-        petImages: []
+        petImages: [],
+        itemValue: false
     };
     return firestore()
         .collection('pets')
@@ -1247,6 +1283,7 @@ export const retrieveAllDataPet = (userUID) => {
                 PetData.lastedDate = data.data().lastedDate
                 PetData.petImage = data.data().petImage
                 PetData.petImages = data.data().petImages
+                PetData.itemValue = data.data().itemValue
                 return PetData;
             } else {
                 return null;

@@ -12,6 +12,9 @@ import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
 import { retrieveQuestDaliyAndWeek } from "../../firebase/UserModel"
 import { setHasNotification } from "../../redux/variableSlice";
+import { addItemValuetoFalse } from "../../firebase/UserModel";
+import { setTotalInputValue } from "../../redux/variableSlice";
+
 
 export const HomeScreen =({navigation})=>{
     const dispatch = useDispatch()
@@ -21,6 +24,9 @@ export const HomeScreen =({navigation})=>{
     
     const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
     console.log('differenceDate in HomeScreen:', totalDifferenceDate);
+
+    const totalInputValue = useSelector(state => state.variables.totalInputValue);
+    console.log('InputValue in HomeScreen:', totalInputValue);
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
@@ -41,7 +47,8 @@ export const HomeScreen =({navigation})=>{
         getImageData()
         getQuestData()
         console.log(hasNotification)
-    }, [isUpdate,hasNotification,cameFromNoti]);   
+        handleTotalInputValue()
+    }, [isUpdate,hasNotification,cameFromNoti,totalInputValue]);    
 
     const getImageData = async()=>{
         try{
@@ -52,6 +59,14 @@ export const HomeScreen =({navigation})=>{
             console.error('Error getImageData:', error);
         }  
     }
+
+    const handleTotalInputValue = async() => {
+        if (totalInputValue) {
+            addItemValuetoFalse(userUID);
+            dispatch(setTotalInputValue(false));
+        }
+    }
+
     const setValue = (text) => {
         setInput(oldValue => ({
             ...oldValue,
