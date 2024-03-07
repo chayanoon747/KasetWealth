@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { retrieveSelectedDataIncomeAndExp, retrieveAllDataIncomeAndExpenses } from "../../firebase/UserModel";
 import { useSelector } from "react-redux";
-import { setItemTransactionType, setItemData } from "../../redux/variableSlice";
+import { setItemTransactionType, setItemData, setCameFrom } from "../../redux/variableSlice";
 
 
 export const IncomeAndExpensesScreen = ({navigation})=>{
@@ -16,7 +16,7 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
     const userUID = user[0].uid;
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
-
+    const cameFrom = useSelector((state)=>state.variables.cameFrom);
     let selectedDate = useSelector((state)=>state.variables.selectedDate);
     console.log(selectedDate)
 
@@ -80,7 +80,8 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
 
     const handleItemPress = (item) => {
         dispatch(setItemData(item))
-        navigation.navigate('DetailScreen', { cameFrom: 'IncomeAndExpensesScreen' });
+        dispatch(setCameFrom("IncomeAndExpenseScreen"));
+        navigation.navigate('DetailScreen');
     };
 
     const renderItem = ({ item })=>{

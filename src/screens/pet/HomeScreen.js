@@ -9,7 +9,9 @@ import { useState, useEffect } from "react";
 import { addPetName } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
-
+import { retrieveAllDataQuest } from "../../firebase/UserModel";
+import { retrieveQuestDaliyAndWeek } from "../../firebase/UserModel"
+import { setHasNotification } from "../../redux/variableSlice";
 
 export const HomeScreen =({navigation})=>{
     const dispatch = useDispatch()
@@ -28,10 +30,18 @@ export const HomeScreen =({navigation})=>{
     const totalGuage = useSelector(state => state.variables.totalGuage);
     console.log('Total Guage in HomeScreen:', totalGuage);
 
+    //const [hasNotification, setHasNotification] = useState(false);
+    const [questPersonalData, setQuestPersonalData] = useState([])
+    const [questDaily, setQuestDaily] = useState([])
+    const [questWeekly, setQuestWeekly] = useState([])
 
+    const hasNotification = useSelector(state => state.variables.hasNotification);
+    const cameFromNoti = useSelector(state => state.variables.cameFromNoti);
     useEffect(() => {
         getImageData()
-    }, [isUpdate]);   
+        getQuestData()
+        console.log(hasNotification)
+    }, [isUpdate,hasNotification,cameFromNoti]);   
 
     const getImageData = async()=>{
         try{
@@ -42,7 +52,6 @@ export const HomeScreen =({navigation})=>{
             console.error('Error getImageData:', error);
         }  
     }
-
     const setValue = (text) => {
         setInput(oldValue => ({
             ...oldValue,
@@ -56,7 +65,23 @@ export const HomeScreen =({navigation})=>{
     } else if (totalGuage > 4) {
         selectedPetImageIndex = 1;
     }
-
+    const getQuestData = async()=>{
+        try{
+            const itemAllDataQuestPersonal = await retrieveAllDataQuest(userUID)
+            const itemAllDataQuestDailyAndWeek = await retrieveQuestDaliyAndWeek();
+            setQuestPersonalData(itemAllDataQuestPersonal)
+            setQuestDaily(itemAllDataQuestDailyAndWeek.daily)
+            setQuestWeekly(itemAllDataQuestDailyAndWeek.weekly)
+            //เอา Quest ทั้งหมดมารวมเพื่อหาว่ามีแค่อันเดียวที่เสร็จแล้วยังไม่ได้ดูก็ขึ้น แจ้งเตือน
+            const combinedData = [...itemAllDataQuestPersonal, ...itemAllDataQuestDailyAndWeek.daily, ...itemAllDataQuestDailyAndWeek.weekly];
+            dispatch(setHasNotification(checkNotiRed(combinedData)))
+        }catch (error) {
+            console.error('Error getQuestData:', error);
+        }  
+    }
+    function checkNotiRed(items) {
+        return items.some(item => item.rewardStatus && !item.seen);
+    }
     return(
         <View style={{flex:1}}>
             <ImageBackground source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207709035797946448/pxArt_1.png?ex=65e0a1b0&is=65ce2cb0&hm=22d1404ba545efff694fcb96da06d26072e6b17849dd3daa83cd8100a6641ac8&=&format=webp&quality=lossless&width=390&height=640'}}

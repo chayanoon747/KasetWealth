@@ -6,7 +6,7 @@ import { useSelector } from "react-redux"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { addTransaction } from "../../firebase/UserModel"
 import { useDispatch } from "react-redux";
-import { setItemData } from "../../redux/variableSlice";
+import { setItemData, setCameFrom } from "../../redux/variableSlice";
 
 
 export const AssetLiabilityDetailScreen = ({navigation})=>{
@@ -247,7 +247,8 @@ export const AssetLiabilityDetailScreen = ({navigation})=>{
 
     const handleItemPress = (item) => {
         dispatch(setItemData(item))
-        navigation.navigate('DetailScreen', { cameFrom: 'AssetLiabilityDetailScreen' });
+        dispatch(setCameFrom("AssetLiabilityDetailScreen"));
+        navigation.navigate('DetailScreen');
     };
     const renderItem = ({ item })=>{
         return(

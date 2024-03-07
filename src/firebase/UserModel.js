@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import firebase from '@react-native-firebase/app';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt } from './RetrieveData';
@@ -704,6 +705,7 @@ export const addPersonalGoal = (userUID, itemData, input) => {
             questType: itemData.questType,
             questState: false,
             rewardStatus: false,
+            seen: false,
             value: input.value
         };
 
@@ -1164,7 +1166,7 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
         }
     })
 }
-
+//เฉพาะ PersonalGoal
 export const  retrieveAllDataQuest = (userUID)=>{
     const QuestData = []
     return firestore()
@@ -1181,8 +1183,51 @@ export const  retrieveAllDataQuest = (userUID)=>{
             });
 
             return QuestData
+        }else{
+            return null
         }
     })
+    .catch((error) => {
+        console.error("Error retrieving AllDataQuest:", error);
+        throw error;
+    });
+};
+// ของ Quest and Week แยกกันกับ Personal
+export const retrieveQuestDaliyAndWeek = async () => {
+    const QuestData = {
+        daily: [],
+        weekly: []
+    };
+
+    try {
+        const dailyData = await firestore()
+            .collection('quests')
+            .doc('daily')
+            .get();
+
+        if (dailyData.exists) {
+            const allData = dailyData.data().quest;
+            allData.forEach(element => {
+                QuestData.daily.push(element);
+            });
+        }
+
+        const weeklyData = await firestore()
+            .collection('quests')
+            .doc('weekly')
+            .get();
+
+        if (weeklyData.exists) {
+            const allData = weeklyData.data().quest;
+            allData.forEach(element => {
+                QuestData.weekly.push(element);
+            });
+        }
+    } catch (error) {
+        console.error('Error retrieving quest data:', error);
+    }
+
+    return QuestData;
 };
 
 export const retrieveAllDataPet = (userUID) => {
@@ -1540,7 +1585,7 @@ export const updateMoney = (userUID, data) => {
     });
 }
   
-export const updateRuby = (userUID, data) => {
+export const updateRuby = (userUID, allquest) => {
     return firestore()
     .collection('pets')
     .doc(userUID)
@@ -1550,6 +1595,34 @@ export const updateRuby = (userUID, data) => {
 }
 /*-----------------------------------------------*/
 
+//update seen เป็น true ใน quest ที่มี rewardStatus เป็น true
+export const updateAllQuestSeenStatus = (userUID, questArray) => {
+    const firestore = firebase.firestore();
+    const docRef = firestore.collection('pets').doc(userUID);
+
+    // ตรวจสอบว่า questArray ไม่ใช่ค่า null หรือ undefined
+    if (questArray && questArray.length > 0) {
+        const updatedQuestArray = questArray.map((quest) => {
+            if (quest.rewardStatus) {
+                return { ...quest, seen: true };
+            } else {
+                return quest;
+            }
+        });
+
+        return docRef.update({ quest: updatedQuestArray })
+            .then(() => {
+                console.log('Seen status updated successfully for quests with rewardStatus = true');
+            })
+            .catch((error) => {
+                console.error('Error updating seen status:', error);
+                throw error;
+            });
+    } else {
+        console.warn('questArray is null or empty');
+        return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
+    }
+};
 // export const addInventory = (user)=>{
 //     const Items = []
 //     const isFirstItem = true
