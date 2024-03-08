@@ -701,12 +701,22 @@ export const OverviewScreen = ({navigation})=>{
         return bar
     }
     const checkCriteriaWealth = (value)=>{
+        const bar = {
+            color:"#D9D9D9",
+            text: ""
+        }
         if(value >= 7 ){
-            return "ดี"
+            bar.color = '#0ABAB5'
+            bar.text = "ดี"
+            return bar
         }else if(value >= 4){
-            return "ปานกลาง"
+            bar.color = '#FFD000'
+            bar.text = "ปานกลาง"
+            return bar
         }else if(value < 4){
-            return "แย่"
+            bar.color = '#FF0000'
+            bar.text = "แย่"
+            return bar
         }
     }   
     return(
@@ -761,7 +771,10 @@ export const OverviewScreen = ({navigation})=>{
                         <View style ={{height:47.5,flexDirection:"row"}}>
                             <View style ={{flex:3,flexDirection:"column",alignItems:"flex-start"}}>
                                 <Text style={{width:260,fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
-                                <Text style={{width:260,fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์ {checkCriteriaWealth(guageWealth)}</Text>
+                                <View style={{flexDirection:'row',textAlign:'left'}}>
+                                    <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์ </Text>
+                                    <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:checkCriteriaWealth(guageWealth).color}}>{checkCriteriaWealth(guageWealth).text}</Text>
+                                </View>
                             </View>
                             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", borderTopLeftRadius: 16, borderBottomRightRadius: 16, backgroundColor: "#B3DBD8" }}>
                                 <Text style={{ fontFamily: 'ZenOldMincho-Bold', fontSize: 20, color: '#000000' }}>{guageWealth ? parseFloat(guageWealth) : 0}/10</Text>
