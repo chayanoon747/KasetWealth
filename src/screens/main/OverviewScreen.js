@@ -324,41 +324,53 @@ export const OverviewScreen = ({navigation})=>{
         }
         if(netCashFlow > 0){
             guageWealth = guageWealth + 2/3
+            console.log("netCashFlow 0.67")
         }
         if(survivalRatio >= 1){
             guageWealth = guageWealth + 2/3
+            console.log("survivalRatio 0.67")
         }
         //สภาพคล่อง
         if(ratioMeasureShortLiability >=1){
             guageWealth = guageWealth + 1
+            console.log("ratioMeasureShortLiability 1")
         }
         if(basicLiquidityRatio > 6){
             guageWealth = guageWealth + 0.5
+            console.log("basicLiquidityRatio 0.5")
         }else if(basicLiquidityRatio >= 3 && basicLiquidityRatio <= 6){
             guageWealth = guageWealth + 1
+            console.log("basicLiquidityRatio 1")
         }else if(basicLiquidityRatio < 3){
             guageWealth = guageWealth + 0
+            console.log("basicLiquidityRatio 0")
         }
         //หนี้สินและความสามารถในการชำระหนี้
         if(liabilityToAssetRatio < 0.5){
             guageWealth = guageWealth + 1
+            console.log("liabilityToAssetRatio 1")
         }
         if(debtRepaymentRatioFromIncome < 0.35){
             guageWealth = guageWealth + 1
+            console.log("debtRepaymentRatioFromIncome 1")
         }
         //โอกาสในการสร้างความมั่งคั่ง (การออม)
         if(savingsRatio > 10){
             guageWealth = guageWealth + 2
+            console.log("savingsRatio 2")
         }
-        //โอกาสในการสร้างความมั่งคั่ง (การลงทุน)
+        //โอกาสในการสร้างความมั่งคั่ง (การลงทุน) /////
         if(investmentAssetRatio < 0.5 && assetInvestValue != 0){
             guageWealth = guageWealth + 2/3
+            console.log("investmentAssetRatio 0.67")
         }
         if(incomeFromInvestmentAssetRatio > 0){
             guageWealth = guageWealth + 2/3
+            console.log("incomeFromInvestmentAssetRatio 0.67")
         }
-        if(financialFreedomRatio > 0 && expensesValuesAll == 0 && incomeValuesAll > 0){
+        if(financialFreedomRatio > 0 && expensesValuesAll >= 0 && incomeValuesAll > 0){
             guageWealth = guageWealth + 2/3
+            console.log("financialFreedomRatio 0.67")
         }
         return guageWealth.toFixed(2)
     }
@@ -689,12 +701,22 @@ export const OverviewScreen = ({navigation})=>{
         return bar
     }
     const checkCriteriaWealth = (value)=>{
+        const bar = {
+            color:"#D9D9D9",
+            text: ""
+        }
         if(value >= 7 ){
-            return "ดี"
+            bar.color = '#0ABAB5'
+            bar.text = "ดี"
+            return bar
         }else if(value >= 4){
-            return "ปานกลาง"
+            bar.color = '#FFD000'
+            bar.text = "ปานกลาง"
+            return bar
         }else if(value < 4){
-            return "แย่"
+            bar.color = '#FF0000'
+            bar.text = "แย่"
+            return bar
         }
     }   
     return(
@@ -749,7 +771,10 @@ export const OverviewScreen = ({navigation})=>{
                         <View style ={{height:47.5,flexDirection:"row"}}>
                             <View style ={{flex:3,flexDirection:"column",alignItems:"flex-start"}}>
                                 <Text style={{width:260,fontFamily:'ZenOldMincho-Regular',fontSize:16}}>สุขภาพการเงินของคุณ มีคะแนน</Text>
-                                <Text style={{width:260,fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์ {checkCriteriaWealth(guageWealth)}</Text>
+                                <View style={{flexDirection:'row',textAlign:'left'}}>
+                                    <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:'#0ABAB5'}}>อยู่ในเกณฑ์ </Text>
+                                    <Text style={{fontFamily:'ZenOldMincho-Bold',fontSize:16,fontWeight:'bold',color:checkCriteriaWealth(guageWealth).color}}>{checkCriteriaWealth(guageWealth).text}</Text>
+                                </View>
                             </View>
                             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", borderTopLeftRadius: 16, borderBottomRightRadius: 16, backgroundColor: "#B3DBD8" }}>
                                 <Text style={{ fontFamily: 'ZenOldMincho-Bold', fontSize: 20, color: '#000000' }}>{guageWealth ? parseFloat(guageWealth) : 0}/10</Text>
