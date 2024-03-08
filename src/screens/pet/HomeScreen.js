@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ImageBackground, Text, TouchableOpacity, Image, Alert } from "react-native"
+import { View, ImageBackground, Text, TouchableOpacity, Image, Alert, Modal } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { Dimensions, TouchableHighlight} from 'react-native';
 import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
@@ -13,8 +13,8 @@ import { setEditItemLocation } from "../../redux/variableSlice";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
 import { retrieveQuestDaliyAndWeek } from "../../firebase/UserModel"
 import { setHasNotification } from "../../redux/variableSlice";
-import { addItemValuetoFalse } from "../../firebase/UserModel";
-import { setTotalInputValue } from "../../redux/variableSlice";
+import { addDownGradeCardtoFalse } from "../../firebase/UserModel";
+import { setTotalDownGradeCardValue } from "../../redux/variableSlice";
 
 
 export const HomeScreen =({navigation})=>{
@@ -29,12 +29,13 @@ export const HomeScreen =({navigation})=>{
     const [itemTable2, setItemTable2] = useState();
     const [itemTable3, setItemTable3] = useState();
     const [itemInventory, setItemInventory] = useState();
-    
+    const [modalVisible, setModalVisible] = useState(false);
+
     const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
     console.log('differenceDate in HomeScreen:', totalDifferenceDate);
 
-    const totalInputValue = useSelector(state => state.variables.totalInputValue);
-    console.log('InputValue in HomeScreen:', totalInputValue);
+    const totalDownGradeCardValue = useSelector(state => state.variables.totalDownGradeCardValue);
+    console.log('InputValue in HomeScreen:', totalDownGradeCardValue);
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
     const isUpdateItemPet = useSelector((state)=>state.variables.isUpdateItemPet);
@@ -56,8 +57,8 @@ export const HomeScreen =({navigation})=>{
         getImageData()
         getQuestData()
         console.log(hasNotification)
-        handleTotalInputValue()
-    }, [isUpdate,hasNotification,cameFromNoti,totalInputValue, editItemLocation, isUpdateItemPet]);    
+        handleTotalDownGradeCardValue()
+    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet]);    
 
     const getImageData = async()=>{
         try{
@@ -102,11 +103,28 @@ export const HomeScreen =({navigation})=>{
             }
         })
     }
+
+    const showAlert = () => {
+        Alert.alert(
+            "Downgrade Card Used",
+            "The downgrade card has been used.",
+            [
+                { text: "OK", onPress: () => console.log("OK Pressed") }
+            ],
+            { cancelable: false }
+        );
+    };
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    };
         
-    const handleTotalInputValue = async() => {
-        if (totalInputValue) {
-            addItemValuetoFalse(userUID);
-            dispatch(setTotalInputValue(false));
+    const handleTotalDownGradeCardValue = async() => {
+        if (totalDownGradeCardValue) {
+            addDownGradeCardtoFalse(userUID);
+            dispatch(setTotalDownGradeCardValue(false));
+            //showAlert();
+            toggleModal();
         }
     }
 
@@ -235,6 +253,23 @@ export const HomeScreen =({navigation})=>{
                 </View>
                 
             </ImageBackground>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    toggleModal();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Downgrade card has been used.</Text>
+                        <TouchableOpacity onPress={toggleModal} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     )
 }

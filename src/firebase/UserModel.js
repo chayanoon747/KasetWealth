@@ -455,7 +455,7 @@ export const addFinancials = (user,datecurrent)=>{
 }
 
 export const addPetsQuest = (user)=>{
-    const ItemValue = false
+    const DownGradeCard = false
     const Quest = []
     const PetImages = []
     const PetName = ""
@@ -466,7 +466,7 @@ export const addPetsQuest = (user)=>{
     .collection('pets')
     .doc(user.uid)
     .set({
-        itemValue: ItemValue,
+        downGradeCard: DownGradeCard,
         quest: Quest,
         petName: PetName,
         petImage: PetImage,
@@ -829,35 +829,58 @@ export const addPetImages = (userUID, images) => {
         //สร้าง field ขึ้นมาเพิ่ม
 };
 
-export const addItemValuetoTrue = (userUID) => {
+export const addDownGradeCardtoTrue = (userUID) => {
     return firestore()
         .collection('pets')
         .doc(userUID)
-        .update({
-            itemValue: true
-        })
-        .then(() => {
-            console.log("petImage random and added successfully!");
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                const downGradeCardValue = data.downGradeCard;
+                if (!downGradeCardValue) {
+                    return firestore()
+                        .collection('pets')
+                        .doc(userUID)
+                        .update({
+                            downGradeCard: true
+                        })
+                        .then(() => {
+                            console.log("downGradeCard updated successfully!");
+                            alert("Purchased Complete!");
+                        })
+                        .catch((error) => {
+                            console.error("Error updating downGradeCard:", error);
+                            throw error;
+                        });
+                } else {
+                    console.log("downGradeCard is already true. Cannot add more.");
+                    alert("คุณยังไม่ได้ใช้งานบัตรกันลดขั้น ไม่สามารถซื้อเพิ่มได้");
+                }
+            } else {
+                console.log("document doesn't exist");
+            }
         })
         .catch((error) => {
-            console.error("Error addItemValuetoTrue:", error);
+            console.error("Error getting document:", error);
             throw error;
         });
-    
 };
 
-export const addItemValuetoFalse = (userUID) => {
+
+
+export const addDownGradeCardtoFalse = (userUID) => {
     return firestore()
         .collection('pets')
         .doc(userUID)
         .update({
-            itemValue: false
+            downGradeCard: false
         })
         .then(() => {
             console.log("petImage random and added successfully!");
         })
         .catch((error) => {
-            console.error("Error addItemValuetoFalse:", error);
+            console.error("Error addDownGradeCardtoFalse:", error);
             throw error;
         });
     
@@ -1274,7 +1297,7 @@ export const retrieveAllDataPet = (userUID) => {
         lastedDate: "",
         petImage: "",
         petImages: [],
-        itemValue: false
+        downGradeCard: false
     };
     return firestore()
         .collection('pets')
@@ -1286,7 +1309,7 @@ export const retrieveAllDataPet = (userUID) => {
                 PetData.lastedDate = data.data().lastedDate
                 PetData.petImage = data.data().petImage
                 PetData.petImages = data.data().petImages
-                PetData.itemValue = data.data().itemValue
+                PetData.downGradeCard = data.data().downGradeCard
                 return PetData;
             } else {
                 return null;

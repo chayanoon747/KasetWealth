@@ -8,15 +8,15 @@ import { useState, useEffect } from "react";
 import { addLastedDate, addPetName } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
 import { retrieveAllDataPet, addOnePetImage } from "../../firebase/UserModel";
-import { addItemValuetoTrue, addItemValuetoFalse } from "../../firebase/UserModel";
-import { setTotalInputValue } from "../../redux/variableSlice";
+import { addDownGradeCardtoFalse, addDownGradeCardtoTrue } from "../../firebase/UserModel";
+import { setTotalDownGradeCardValue } from "../../redux/variableSlice";
 
 export const ExpainingScreen = ({navigation})=>{
     const dispatch = useDispatch()
     const [input,setInput] = useState({value:''})
     const [petImageData, setPetImageData] = useState();
     const [updateImage, setUpdateImage] = useState('');
-    const [inputValue, setInputValue] = useState();
+    const [downGradeCardValue, setDownGradeCardValue] = useState();
 
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -41,14 +41,14 @@ export const ExpainingScreen = ({navigation})=>{
     }, [isUpdate, updateImage]);   
 
     useEffect(() => {
-        if (petImageData && petImageData.itemValue !== undefined) {
-            setInputValue(petImageData.itemValue);
+        if (petImageData && petImageData.downGradeCard !== undefined) {
+            setDownGradeCardValue(petImageData.downGradeCard);
         }
     }, [petImageData]);
     
     useEffect(() => {
-        console.log("inputValue updated:", inputValue);
-    }, [inputValue]);
+        console.log("downGradeCardValue updated:", downGradeCardValue);
+    }, [downGradeCardValue]);
 
     const getImageData = async()=>{
         try{
@@ -70,10 +70,10 @@ export const ExpainingScreen = ({navigation})=>{
     }
 
     const calculateDate = (petImageData) => {
-        //console.log('petImageData itemValue:', petImageData.itemValue);
+        //console.log('petImageData downGradeCard:', petImageData.downGradeCard);
         //console.log('petImageData all value:', petImageData);
-        if(petImageData.itemValue === false){
-            console.log("itemValue is false (ไม่มีบัตรกันลดขั้น)",petImageData.itemValue)
+        if(petImageData.downGradeCard === false){
+            console.log("downGradeCard is false (ไม่มีบัตรกันลดขั้น)",petImageData.downGradeCard)
             if (totalDifferenceDate >= 7){
                 if (totalGuage > 7) {
                     setUpdateImage(petImageData.petImages[2])
@@ -93,53 +93,34 @@ export const ExpainingScreen = ({navigation})=>{
                 setUpdateImage(petImageData.petImage)
             }
         }else{
-            console.log("itemValue is true (ใช้บัตรกันลดขั้น): ",petImageData.itemValue)
+            console.log("downGradeCard is true (ใช้บัตรกันลดขั้น): ",petImageData.downGradeCard)
             if (totalDifferenceDate >= 7){
                 if (petImageData.petImage === petImageData.petImages[2] || totalGuage > 7) {
                     setUpdateImage(petImageData.petImages[2])
                     addOnePetImage(userUID, petImageData.petImages[2])
                     addLastedDate(userUID, formattedDate)
-                    /*if((totalGuage > 7) == false){
-                        dispatch(setTotalInputValue(inputValue))
-                    }*/
-                    dispatch(setTotalInputValue(inputValue))
+                    if(totalGuage <= 7){ //ใช้บัตรกันลดขั้นทันที -> เปลี่ยน downGradeCard เป็น false ใน HomeScreen
+                        dispatch(setTotalDownGradeCardValue(downGradeCardValue))
+                    }                                 
 
                 } else if (petImageData.petImage === petImageData.petImages[1] || totalGuage > 4) {
                     setUpdateImage(petImageData.petImages[1])
                     addOnePetImage(userUID, petImageData.petImages[1])
                     addLastedDate(userUID, formattedDate)
-                    /*if((totalGuage > 4) == false){
-                        dispatch(setTotalInputValue(inputValue))
-                    }*/
-                    dispatch(setTotalInputValue(inputValue))
+                    if(totalGuage <= 4){ //ใช้บัตรกันลดขั้นทันที -> เปลี่ยน downGradeCard เป็น false ใน HomeScreen
+                        dispatch(setTotalDownGradeCardValue(downGradeCardValue))
+                    } 
 
-                /*} else if (totalGuage > 7){ //กรณีนี้ไม่ต้องใช้บัตรกันลดขั้น
-                    setUpdateImage(petImageData.petImages[2])
-                    addOnePetImage(userUID, petImageData.petImages[2])
-                    addLastedDate(userUID, formattedDate)
-                    //dispatch(setTotalInputValue(inputValue))
-
-                } else if (totalGuage > 4){//กรณีนี้ไม่ต้องใช้บัตรกันลดขั้น
-                    setUpdateImage(petImageData.petImages[1])
-                    addOnePetImage(userUID, petImageData.petImages[1])
-                    addLastedDate(userUID, formattedDate)
-                    //dispatch(setTotalInputValue(inputValue))*/
-
-                }else {
+                }else { //กรณี lvl0 ไม่ต้องใช้บัตรกันลดขั้น
                     //console.log('setUpdateImage:', petImageData);
                     setUpdateImage(petImageData.petImages[0])
                     addOnePetImage(userUID, petImageData.petImages[0])
                     addLastedDate(userUID, formattedDate)
-                    dispatch(setTotalInputValue(inputValue))
+                    //dispatch(setTotalDownGradeCardValue(downGradeCardValue))
                 }
             }else{
                 setUpdateImage(petImageData.petImage)
-                dispatch(setTotalInputValue(inputValue))
             }
-            //setUpdateImage(petImageData.petImage)
-            //addLastedDate(userUID, formattedDate)
-            //dispatch(setTotalInputValue(inputValue))
-            //console.log('dispatch setTotalInputValue into redux:',inputValue)
         }
     }
 
@@ -151,7 +132,9 @@ export const ExpainingScreen = ({navigation})=>{
              </View>
  
              <View  style={{flex: 5,justifyContent:'center',alignContent:'center',flexDirection:'row'}} >
-                 <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:36, color:'#FFFFFF',textAlign:'center', paddingHorizontal:70, paddingTop:30}}>นี้คืออสูรเงินฝากของคุณในปัจจุบัน!</Text> 
+                 <Text style={{fontFamily:'ZenOldMincho-Bold', fontSize:36, color:'#FFFFFF',
+                 textAlign:'center', paddingHorizontal:70, paddingTop:30}}>
+                    นี้คืออสูรเงินฝากของคุณในปัจจุบัน!</Text> 
              </View>
  
              <View style={{flex: 5,justifyContent:'Top',alignContent:'Top',flexDirection:'column'}} > 
@@ -179,16 +162,25 @@ export const ExpainingScreen = ({navigation})=>{
                      </View>
              </View>
  
-             <View  style={{flex: 5,justifyContent:'center',alignContent:'center',flexDirection:'row', borderWidth:1, borderColor:'#000000',backgroundColor:'#2C6264'}} >
+             <View  style={{flex: 5,justifyContent:'center',alignContent:'center',flexDirection:'row', 
+             borderWidth:1, borderColor:'#000000',backgroundColor:'#2C6264'}} >
                 <TouchableOpacity style={{flex:1}} 
                     onPress={()=>{
                     navigation.navigate('PetBottomTabNav');
                     }}
                     >
-                    <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:15, marginVertical:12,marginHorizontal : 5, backgroundColor:'#ffffff'}}>
-                     <View style={{flex:1, flexDirection:'row', alignItems:'center', paddingHorizontal:60, paddingTop:1}}>
-                         <Text style={{fontFamily:'ZenOldMincho-Regular', fontSize:24, color:'#000000',textAlign:'center'}}>ภารกิจของคุณคือทำ Quest ในแต่ละวันเพื่ออัปเกรดอสูรของคุณ</Text> 
-                         <Text style={{fontFamily:'ZenOldMincho-Regular', fontSize:20, color:'#0ABAB5',textAlign:'right',paddingTop:150}}>Next..</Text> 
+                    <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:15, marginVertical:12,
+                    marginHorizontal : 5, backgroundColor:'white'}}>
+                     <View style={{flex:1, flexDirection:'column', alignItems:'center',backgroundColor:'transparent',
+                     justifyContent:'center',paddingHorizontal:'8%'}}>
+                        
+                        <Text style={{fontFamily:'ZenOldMincho-Regular', fontSize:24, color:'#000000',textAlign:'center',paddingTop:'5%'}}>
+                            {petImageData && petImageData.petImage === petImageData.petImages[2] ? 'อสูรเงินฝากของคุณ\nระดับสูงสุด!' : petImageData && petImageData.petImage === petImageData.petImages[1] ? 'อสูรเงินฝากของคุณ\nอยู่ในระดับไม่มากไม่น้อย ;)' : 'ภารกิจของคุณคือทำ Quest\nในแต่ละวันเพื่ออัปเกรด\nอสูรเงินฝากของคุณ'}
+                        </Text>
+
+                    </View>
+                    <View style={{flex:0, flexDirection:'column', alignItems:'center',backgroundColor:'transparent',alignItems:'flex-end',paddingRight:'5%'}}>
+                        <Text style={{fontFamily:'ZenOldMincho-Regular', fontSize:20, color:'#0ABAB5',paddingBottom:'5%'}}>Next..</Text> 
                      </View>      
                  </View>
                      
