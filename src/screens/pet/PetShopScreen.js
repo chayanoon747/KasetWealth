@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState,useEffect} from "react";
 import { useDispatch,useSelector } from "react-redux";
 import { getPetMoney,getPetRuby,updateMoney,updateRuby,addItemFurniture2Inventory,
-    retrieveDataInventory,addUseIteme2Inventory, addItemValuetoFalse, addItemValuetoTrue } from "../../firebase/UserModel";
+    retrieveDataInventory,addUseIteme2Inventory, addDownGradeCardtoFalse, addDownGradeCardtoTrue } from "../../firebase/UserModel";
 import uuid from 'react-native-uuid';
 import { setIsUpdate } from "../../redux/variableSlice";
 import { addPetImages } from '../../firebase/UserModel';
@@ -144,7 +144,9 @@ export const PetShopScreen = ({navigation}) => {
             if (rubyBalance >= item.price) {
                 setRubyBalance(rubyBalance - item.price);
                 console.log(`Item purchased: ${item.subCategory}`);
-                alert('Purchased Complete!');
+                if(item.subCategory != 'บัตรกันลดขั้น'){
+                    alert('Purchased Complete!');
+                }
                 item.quatity += 1;
             } else {
                 console.log('Insufficient rubies to buy this item');
@@ -373,7 +375,7 @@ export const PetShopScreen = ({navigation}) => {
                             sendUseItem2Inventory(item)
                             console.log('pressed: ',item.subCategory)
                             if(item.subCategory === 'บัตรกันลดขั้น'){
-                                addItemValuetoTrue(userUID)
+                                addDownGradeCardtoTrue(userUID)
                                 console.log('ใช้บัตรกันลดขั้น: ',item.subCategory)
                             } else if (item.subCategory === 'บัตรสุ่มสัตว์เลี้ยง'){
                                 randomPetCard()
