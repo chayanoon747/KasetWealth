@@ -1324,124 +1324,22 @@ export const updateGuageRiability = (userUID,newGuageRiability) =>{
     }
 }
 
-/*----------------------ส่วนที่ เค ทำยังไม่เรียบร้อยดี-------------------------------*/
-
-/*-------------------ระบบเงินยังไม่เรียบร้อย----------*/
-export const createPetCurrency = (userUID) => {
-    return firestore()
-    .collection('pets')
-    .doc(userUID)
-    .set({
-      Money: 0,
-      Ruby: 0
-    });
-}
-
-// ตัวอย่าง getPetMoney
-export const getPetMoney = (userUID) => {
-    return firestore()
-        .collection('pets')
-        .doc(userUID)
-        .get()
-        .then((documentSnapshot) => {
-            if (documentSnapshot.exists) {
-                const petData = documentSnapshot.data();
-                const money = petData && petData.Money ? petData.Money : 0;
-                return money;
-            } else {
-                // กรณีไม่พบเอกสาร
-                console.log("No such document!");
-                return 0;
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting document:", error);
-            throw error;
-        });
-}
-
-// ตัวอย่าง getPetRuby
-export const getPetRuby = (userUID) => {
-    return firestore()
-        .collection('pets')
-        .doc(userUID)
-        .get()
-        .then((documentSnapshot) => {
-            if (documentSnapshot.exists) {
-                const petData = documentSnapshot.data();
-                const ruby = petData && petData.Ruby ? petData.Ruby : 0;
-                return ruby;
-            } else {
-                // กรณีไม่พบเอกสาร
-                console.log("No such document!");
-                return 0;
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting document:", error);
-            throw error;
-        });
-}
-
-
-export const updateMoney = (userUID, data) => {
-    return firestore()
-    .collection('pets')
-    .doc(userUID)
-    .update({
-      Money: data
-    });
-}
-  
-export const updateRuby = (userUID, data) => {
-    return firestore()
-    .collection('pets')
-    .doc(userUID)
-    .update({
-      Ruby: data
-    });
-}
-/*-----------------------------------------------*/
-
-// export const addInventory = (user)=>{
-//     const Items = []
-//     const isFirstItem = true
-//     firestore()
-//     .collection('items')
-//     .doc(user.uid)
-//     .set({
-//         Items: Items,
-//         isFirstItem: isFirstItem
-//     })
-//     .then(()=>{
-//         console.log("Item2Inventory added successfully!")
-//     })
-//     .catch((error) => {
-//         console.error("Error adding Item2Inventory:", error);
-//         throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
-//     });
-// }
-
-//ต้นแบบ addTransaction
-export const addItemFurniture2Inventory = (userUID, itemData/*, isFirstItem*/) => {
-    const newInventory = {
-        ItemType: itemData.category,
-        ItemName: itemData.subCategory,
-        ItemURl: itemData.photoURL,
-        ItemLocation: itemData.itemlocation,
-        ItemPurchased: itemData.purchased,
-        ItemPrice: itemData.price,
-        ItemQuatity: itemData.quatity
+//เพิ่มไอเท็มไปใน inventory
+export const addItem2Inventory = (userUID, itemData) => {
+    const newItem2Inventory = {
+        ItemName: itemData.itemName,
+        ItemType: itemData.itemType,
+        ItemPhotoURL: itemData.itemPhotoURL,
     };
 
     return firestore()
         .collection('inventory')
         .doc(userUID)
         .update({
-            Inventory: firestore.FieldValue.arrayUnion(newInventory),
+            Inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {
-            console.log("Item2Inventory added successfully!");
+            console.log("add Item2Inventory successfully!");
         })
         // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
         .catch((error) => {
@@ -1450,55 +1348,34 @@ export const addItemFurniture2Inventory = (userUID, itemData/*, isFirstItem*/) =
         });
 };
 
-export const addUseIteme2Inventory = (userUID, itemData) => {
-    const newInventory = {
-        ItemType: itemData.category,
-        ItemName: itemData.subCategory,
-        ItemURl: itemData.photoURL,
-        ItemLocation: itemData.itemlocation,
-        ItemQuatity: itemData.quatity
+//เพิ่มของตกแต่งไปใน inventory
+export const addFurniture2Inventory = (userUID, itemData) => {
+    const newItem2Inventory = {
+        ItemName: itemData.itemName,
+        ItemType: itemData.itemType,
+        ItemLocation: itemData.itemLocation,
+        ItemHave: !itemData.itemHave,
+        ItemPhotoURL: itemData.itemPhotoURL,
+        ItemSoldoutURL: itemData.itemSoldoutURL
     };
 
-    const inventoryRef = firestore().collection('inventory').doc(userUID);
-
-    return inventoryRef.get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existsInventory = doc.data().Inventory || [];
-
-                const existingItemIndex = existsInventory.findIndex(oldItem => 
-                    oldItem.subCategory === newInventory.subCategory    
-                );
-
-                if (existingItemIndex !== -1) {
-                    // Item exists, update its quantity
-                    existsInventory[existingItemIndex].ItemQuatity = itemData.quatity;
-                } else {
-                    // Item doesn't exist, add it to the array
-                    existsInventory.push(newInventory);
-                }
-
-                // Update the entire inventory array
-                return inventoryRef.update({
-                    Inventory: existsInventory
-                });
-            } else {
-                // Document doesn't exist, create a new one with the item
-                return inventoryRef.set({
-                    Inventory: [newInventory]
-                });
-            }
+    return firestore()
+        .collection('inventory')
+        .doc(userUID)
+        .update({
+            Inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {
-            console.log("Item2Inventory added successfully!");
+            console.log("add Furniture2Inventory successfully!");
         })
+        // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
         .catch((error) => {
-            console.error("Error adding Item2Inventory:", error);
+            console.error("Error adding Furniture2Inventory:", error);
             throw error;
         });
 };
 
-
+//ดึงข้อมูลใน Inventory
 export const retrieveInventory = (userUID) => {
     return firestore()
         .collection('inventory')
@@ -1506,13 +1383,13 @@ export const retrieveInventory = (userUID) => {
         .get()
         .then((doc) => {
             if (doc.exists) {
-                const ItemType = doc.data().ItemType;
-                return ItemType;
+                const inventory = doc.data().Inventory;
+                return inventory;
             } else {
                 // กรณีไม่พบเอกสาร
                 console.log("No such document555");
                 return null;
-            }        
+            }
         })
         .catch((error) => {
             // กรณีเกิดข้อผิดพลาดในการดึงข้อมูล
@@ -1521,5 +1398,94 @@ export const retrieveInventory = (userUID) => {
         });
 }
 
+// ตรวจสอบว่ามี itemName ที่ซ้ำกับ newItemName ใน Firebase หรือไม่
+export const checkDuplicateItem = async (userUID, newItemName) => {
+    try {
+        const inventory = await retrieveInventory(userUID);
+        if (inventory) {
+            // ใช้เมธอด some เพื่อตรวจสอบว่ามีชื่อสินค้าซ้ำหรือไม่
+            const isDuplicate = inventory.some(item => item.ItemName === newItemName.itemName);
+            console.log('return: ' + isDuplicate)
+            return isDuplicate;
+        } else {
+            // กรณีไม่พบข้อมูลใน inventory
+            console.log("No inventory data found.");
+            return false;
+        }
+    } catch (error) {
+        console.error("Error checking duplicate item:", error);
+        throw error;
+    }
+};
 
-/*---------------------------------------------------------------------*/
+export const retrieveCurrencyPet = (userUID) => {
+    const CurrencyData = {
+        Money:0,
+        Ruby:0,
+        Guarantee:8
+    };
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            if (data.exists) { 
+                CurrencyData.Money = data.data().Money
+                CurrencyData.Ruby = data.data().Ruby
+                CurrencyData.Guarantee = data.data().Guarantee
+                return CurrencyData;
+            } else {
+                alert('field not have')
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error("Error retrieving CurrencyData:", error);
+            throw error;
+        });
+};
+
+export const updateMoneyBalance = async (userUID, newBalance) => {
+    try {
+        await firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                Money: newBalance
+            });
+        console.log("Money balance updated successfully!");
+    } catch (error) {
+        console.error("Error updating money balance: ", error);
+        throw error;
+    }
+};
+
+export const updateRubyBalance = async (userUID, newRuby) => {
+    try {
+        await firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                Ruby: newRuby
+            });
+        console.log("Ruby balance updated successfully!");
+    } catch (error) {
+        console.error("Error updating Ruby balance: ", error);
+        throw error;
+    }
+};
+
+export const updateGuarantee = async (userUID, newGuarantee) => {
+    try {
+        await firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                Guarantee: newGuarantee
+            });
+        console.log("Guarantee balance updated successfully!");
+    } catch (error) {
+        console.error("Error updating Guarantee: ", error);
+        throw error;
+    }
+};
