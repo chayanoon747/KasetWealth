@@ -288,7 +288,7 @@ export const PetShopScreen = ({navigation}) => {
                             <Text style={mysteryStyles.textTopic}>MysteryBox กล่องปริศนา</Text>
                         </View>
                         <View style={mysteryStyles.viewDetaillTextTopic}>
-                                <Text style={styles.textDetailTopic}>เปิดกล่องปริศนาเพื่อลุ้นรับของตกแต่งมากมาย</Text>
+                                <Text style={styles.textDetailTopic}>เปิดกล่องปริศนาเพื่อลุ้นรับเหรียญ</Text>
                             </View>
                         <View style={mysteryStyles.viewTouchableOpacity}>
                             <View style={mysteryStyles.viewPriceButton}>
@@ -373,7 +373,7 @@ export const PetShopScreen = ({navigation}) => {
                         }}
                         
                     >
-                        <View>
+                        <View style={styles.viewImageAndNameItemBox}>
                             <View style={styles.viewImageItemBox}>
                                 <Image
                                     style={styles.ImageItemBox}
@@ -383,7 +383,7 @@ export const PetShopScreen = ({navigation}) => {
                                 />
                             </View>
                             <View style={styles.itemName}>
-                                <Text style={styles.textStyleItem}>{item.itemName}</Text>
+                                <Text style={styles.textStyleItem}>{item.itemName} </Text>{/*<Text style={styles.textStyleItem}>{item.itemName}</Text>*/}
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -434,7 +434,7 @@ export const PetShopScreen = ({navigation}) => {
                         }}
                         
                     >
-                        <View style={{flex:1}}>
+                        <View style={styles.viewImageAndNameItemBox}>
                             <View style={styles.viewImageItemBox}>
                                 <Image
                                     style={styles.ImageItemBox}
@@ -604,23 +604,24 @@ const styles = {
         flex:1,
         borderRadius:14,  
         borderColor:'#000000', 
-        justifyContent:'center', 
+        justifyContent:'space around', 
         backgroundColor:'#0ABAB5'
     },
     ViewTouchableBoxCategoryHealthy:{
-        marginVertical:10,
-        marginHorizontal:23
+        marginVertical:'2%'
     },
     ViewTouchableBoxCategoryFurniture:{
-        marginTop:10,
+        marginTop:'2%',
         marginHorizontal:20
     },
     TouchableItemBox:{
         flex:1,
         width:'100%',
+        height:'100%',
         borderRadius:12,
         borderWidth:1, 
-        borderColor:'#000000'
+        borderColor:'#000000',
+        //backgroundColor:'orange'
     },
     viewImageItemBox:{
         alignItems:'center'
@@ -630,42 +631,52 @@ const styles = {
     },
     textStyleItem:{
         fontFamily: 'ZenOldMincho-Bold',
-        fontSize: 14,
+        fontSize: 14
     },
     itemName:{
         flexDirection:'row',
         justifyContent:'center',
-        marginHorizontal:5
+        //backgroundColor:'green'
     },
     itemPrice:{
         flexDirection:'row',
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        //backgroundColor:'pink'
+    },
+    viewImageAndNameItemBox:{
+        width:'auto',
+        height:'auto'
     }
 }
 
 const mysteryStyles = {
     viewTouchableBoxCategoryMysteryBox:{
-        flexDirection:'row'
+        flexDirection:'row',
+        //backgroundColor:'red'
     },
     view136:{
         flex:1.36,
-        flexDirection:'column'
+        flexDirection:'column',
+        //backgroundColor:'green'
     },
     view164:{
         flex:1.64,
-        flexDirection:'column'
+        flexDirection:'column',
+        //backgroundColor:'pink'
     },
     viewImage:{
         flex:4.5,
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        //backgroundColor:'yellow'
     },
     imageItemBox:{
         position:'relative',
         borderRadius:12,
         borderWidth:1, 
-        borderColor:'#000000'
+        borderColor:'#000000',
+        //backgroundColor:'brown'
     },
     viewGuarantee:{
         flex:0.5
@@ -677,7 +688,8 @@ const mysteryStyles = {
         marginHorizontal:5
     },
     viewTextTopic:{
-        flex:1
+        flex:1,
+        //backgroundColor:'orange'
     },
     textTopic:{
         fontFamily:'Rubik-Meduim',
@@ -686,7 +698,8 @@ const mysteryStyles = {
         color:'#2C6264'
     },
     viewDetaillTextTopic:{
-        flex:0.5
+        flex:0.5,
+        //backgroundColor:'green'
     },
     textDetailTopic:{
         fontFamily:'Rubik-Meduim',
@@ -707,24 +720,11 @@ const mysteryStyles = {
         borderRadius:12,
         borderWidth:1, 
         borderColor:'#000000',
-        marginHorizontal:5,
-        marginVertical:50,
+        marginHorizontal:'5%',
+        marginVertical:'10%',
         justifyContent:'center',
         alignItems:'center',
         //backgroundColor:'green'
-    },
-    touchableMysteryKeyItemBox:{
-        flex:1,
-        width:'100%',
-        height:'25%',
-        borderRadius:12,
-        borderWidth:1, 
-        borderheight:12,
-        borderColor:'#000000',
-        marginHorizontal:5,
-        marginVertical:50,
-        justifyContent:'center',
-        alignItems:'center'
     },
     viewCountKeySecurity:{
         justifyContent:'center',
@@ -743,7 +743,8 @@ const mysteryStyles = {
     viewTextPriceButton:{
         flexDirection:'row',
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        //backgroundColor:'yellow'
     },
     viewResetTime:{
         flex:0.5
@@ -751,7 +752,8 @@ const mysteryStyles = {
     viewResetTimeText:{
         flexDirection:'row',
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        //backgroundColor:'yellow'
     },
 }
 
