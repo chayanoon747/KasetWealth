@@ -295,8 +295,8 @@ export const PetShopScreen = ({navigation}) => {
                             <Text style={mysteryStyles.textTopic}>MysteryBox กล่องปริศนา</Text>
                         </View>
                         <View style={mysteryStyles.viewDetaillTextTopic}>
-                                <Text style={styles.textDetailTopic}>เปิดกล่องปริศนาเพื่อลุ้นรับของตกแต่งมากมาย</Text>
-                            </View>
+                            <Text style={styles.textDetailTopic}>เปิดกล่องปริศนาเพื่อลุ้นรับของตกแต่งมากมาย</Text>
+                        </View>
                         <View style={mysteryStyles.viewTouchableOpacity}>
                             <View style={mysteryStyles.viewKeySecurity}>                        
                                 <TouchableOpacity
@@ -392,6 +392,7 @@ export const PetShopScreen = ({navigation}) => {
                                     height={40}
                                 />
                             </View>
+                            {/*แก้บรรทัดนี้*/ }
                             <View style={styles.itemName}>
                                 <Text style={styles.textStyleItem}>{item.subCategory}</Text>
                             </View>
@@ -462,7 +463,7 @@ export const PetShopScreen = ({navigation}) => {
     return(
         <SafeAreaView style={{flex:1,backgroundColor:'#2C6264'}}>
             <View style={{flex:12,padding:5}}>
-                <View style={{flex:0.5,marginHorizontal:19}}>
+                <View style={{flex:0.5,marginHorizontal:19,borderWidth:1}}>
                     <View style={{flex:1}}>
                         <View style={{flex:1,flexDirection:'row'}}>
                             <View style={{flex:0.2}}>
@@ -498,20 +499,94 @@ export const PetShopScreen = ({navigation}) => {
                         <View style={{flex:0.4}}></View>
                     </View>
                 </View>
-                <View style={{flex:3, marginVertical:5}}>
-                <View style={styles.box}>
+                <View style={{flex:3, marginVertical:5,borderWidth:1}}>
+                    <View style={styles.box}>
                         <View style={{flex:3}}>
-                            <FlatList
+                            {/**/}
+                            {/* <FlatList
                                 data={itemsMysteryBox}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={renderItem}
-                                horizontal={true}
-                            />
+                                horizontal={false}
+                                scrollEnabled={false}
+                            /> */}
+                            <View style={mysteryStyles.viewTouchableBoxCategoryMysteryBox}>
+                                <View 
+                                    style={mysteryStyles.view136}>
+                                    <View style={mysteryStyles.viewImage}>
+                                        <Image
+                                            style={mysteryStyles.imageItemBox}
+                                            source={{uri: "https://cdn.discordapp.com/attachments/1202281623585034250/1206324628419649566/image_7_box.png?ex=65db985b&is=65c9235b&hm=9be1bf2dd2ce56b8eb47d27a176c2a2b159ba320b64ed52f2c1ff1351237f4a4&"}}
+                                            width={120}
+                                            height={120}
+                                        />
+                                    </View>
+                                    <View style={mysteryStyles.viewGuarantee}>
+                                        <Text style={mysteryStyles.textGuaranteeDetaill}>เปิดอีก {changeGuarantee(itemsMysteryBox)} กล่องเพื่อรับตำนาน</Text>
+                                    </View>
+                                </View>
+                                <View style={mysteryStyles.view164}>
+                                    <View style={mysteryStyles.viewTextTopic}>
+                                        <Text style={mysteryStyles.textTopic}>MysteryBox กล่องปริศนา</Text>
+                                    </View>
+                                    <View style={mysteryStyles.viewDetaillTextTopic}>
+                                        <Text style={styles.textDetailTopic}>เปิดกล่องปริศนาเพื่อลุ้นรับของตกแต่งมากมาย</Text>
+                                    </View>
+                                    <View style={mysteryStyles.viewTouchableOpacity}>
+                                        <View style={mysteryStyles.viewPriceButton}>
+                                            <TouchableOpacity
+                                                style={mysteryStyles.touchableMysteryItemBox}
+                                                onPress={() => {
+                                                    reportBuyItem(itemsMysteryBox)
+                                                }}
+                                            >
+                                                <View style={mysteryStyles.viewTextPriceButton}>
+                                                    <Text style={mysteryStyles.textDetaillMysteryStyle}>เปิด {itemsMysteryBox.itemPrice}</Text>
+                                                    <Image
+                                                        source={{
+                                                            uri: itemsMysteryBox.itemCurrencyType === 'coin'
+                                                                ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'
+                                                                : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'
+                                                        }}
+                                                        width={15}
+                                                        height={15}
+                                                    />
+                                                </View>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <View style={mysteryStyles.viewResetTime}>
+                                        <View style={mysteryStyles.viewResetTimeText}>
+                                            <TouchableOpacity
+                                                onPress={() =>{
+                                                    infoAlert()
+                                                }}
+                                            >
+                                                <Text style={mysteryStyles.textDetaillMysteryStyle}>รายละเอียดเพิ่มเติมคลิก</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={() =>{
+                                                    infoAlert()
+                                                }}
+                                            >
+                                                <Image
+                                                    source={{uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1213008042174586880/Vector.png?ex=65f3e8c5&is=65e173c5&hm=d1cecd3133b7e415b7dc3576772dcc0c9e2dec7463734ea748e35175a20f47c6&'}}
+                                                    width={13}
+                                                    height={13}
+                                                />
+                                            </TouchableOpacity>
+                                            {/* <View stryle={{}}>
+                                                <Text style={mysteryStyles.textDetaillMysteryStyle}>   Page {index + 1}</Text>
+                                            </View> */}
+                                        </View>
+                                    </View>
+                                </View>
+                        </View>
                         </View>
                     </View>
                 </View>
                 <View style={{flex:2, marginVertical:5}}>
-                <View style={styles.box}>
+                    <View style={styles.box}>
                         <View style={styles.boxhead}>
                             <Text style={styles.headerText}>ไอเทมกดใช้</Text>
                         </View>
