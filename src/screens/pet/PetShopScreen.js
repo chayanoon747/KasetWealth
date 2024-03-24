@@ -48,11 +48,35 @@ export const PetShopScreen = ({navigation}) => {
         if (item.itemType === 'กล่องสุ่ม') {
             if (item.itemName === 'CardBoard') {
                 if (mysteryBoxGuaranteeNormal === 1) {
-                    setmysteryBoxGuaranteeNormal(item.itemGuarantee);
-                    updateGuarantee(userUID, item.itemGuarantee);
-                    alert('Congratulations! You have received many decorative items');
-                    setCoinBalance(coinBalance + randomMoney(item));
-                    console.log(`Item Purchased: ${item.itemName}`);
+                    const newRubyBalance = rubyBalance - item.itemPrice;
+                    const updatedMysteryBoxCount = mysteryBoxGuaranteeNormal - 1;
+                    const newRandomMoney = randomMoney(item);
+                    const newCoinBalance = coinBalance + newRandomMoney;
+                    // อัปเดตยอดเงินใน Firebase และ เลขการันตี
+                    setRubyBalance(newRubyBalance);
+                    setmysteryBoxGuaranteeNormal(updatedMysteryBoxCount);
+                    updateGuarantee(userUID, updatedMysteryBoxCount)
+                    updateRubyBalance(userUID, newRubyBalance)
+                        .catch((error) => {
+                            console.error("Error updating ruby balance:", error);
+                            alert('Purchased Incomplete!');
+                            // คืนค่าเพชรกลับไปเป็นค่าเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตค่า
+                            setRubyBalance(rubyBalance);
+                    })
+                    setCoinBalance(newCoinBalance);
+                    updateMoneyBalance(userUID, newCoinBalance)
+                        .then(() => {
+                            console.log(`Item Purchased: ${item.itemName}`);
+                            alert('Purchased Complete!\nจำนวนเงินที่สุ่มได้คือ ' + newRandomMoney);
+                        })
+                        .catch((error) => {
+                            console.error("Error updating money balance:", error);
+                            alert('Purchased Incomplete!');
+                            // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
+                            setCoinBalance(coinBalance);
+                        })
+                            alert('Congratulations! You have received many decorative items\n'+newRandomMoney);
+                            console.log(`Item Purchased: ${item.itemName}`);
                 }else {
                     if (item.itemCurrencyType === 'coin') {
                         if (coinBalance >= item.itemPrice) {
@@ -323,7 +347,8 @@ export const PetShopScreen = ({navigation}) => {
                     <TouchableOpacity
                         style={styles.TouchableItemBox}
                         onPress={() => {
-                            checkDuplicateItem(userUID, item)
+                            if (rubyBalance >= item.itemPrice) {
+                                checkDuplicateItem(userUID, item)
                                 .then(isDuplicate => {
                                     // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
                                     // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
@@ -341,6 +366,10 @@ export const PetShopScreen = ({navigation}) => {
                                     console.error('Error checking duplicate item:', error);
                                     // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
                                 });
+                            }else{
+                                console.log('Insufficient rubies to buy this item');
+                                alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+                            }
                         }}
                         
                     >
@@ -378,7 +407,8 @@ export const PetShopScreen = ({navigation}) => {
                     <TouchableOpacity
                         style={styles.TouchableItemBox}
                         onPress={() => {
-                            checkDuplicateItem(userUID, item)
+                            if (coinBalance >= item.itemPrice) {
+                                checkDuplicateItem(userUID, item)
                                 .then(isDuplicate => {
                                     // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
                                     // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
@@ -396,6 +426,11 @@ export const PetShopScreen = ({navigation}) => {
                                     console.error('Error checking duplicate on press item:', error);
                                     // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
                                 });
+                            }else{
+                                console.log('Insufficient coins to buy this item');
+                                alert('Purchased Incomplete!\nInsufficient coins to buy this item');
+                            }
+                            
                         }}
                         
                     >
