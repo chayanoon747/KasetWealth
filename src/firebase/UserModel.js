@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
-import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt } from './RetrieveData';
+import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt, retrieveInventory } from './RetrieveData';
 import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
 
 export const addUser = (user, profile, success, unsuccess)=>{
@@ -1327,16 +1327,16 @@ export const updateGuageRiability = (userUID,newGuageRiability) =>{
 //เพิ่มไอเท็มไปใน inventory
 export const addItem2Inventory = (userUID, itemData) => {
     const newItem2Inventory = {
-        ItemName: itemData.itemName,
-        ItemType: itemData.itemType,
-        ItemPhotoURL: itemData.itemPhotoURL,
+        itemName: itemData.itemName,
+        itemType: itemData.itemType,
+        itemPhotoURL: itemData.itemPhotoURL,
     };
 
     return firestore()
-        .collection('inventory')
+        .collection('pets')
         .doc(userUID)
         .update({
-            Inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
+            inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {
             console.log("add Item2Inventory successfully!");
@@ -1351,19 +1351,18 @@ export const addItem2Inventory = (userUID, itemData) => {
 //เพิ่มของตกแต่งไปใน inventory
 export const addFurniture2Inventory = (userUID, itemData) => {
     const newItem2Inventory = {
-        ItemName: itemData.itemName,
-        ItemType: itemData.itemType,
-        ItemLocation: itemData.itemLocation,
-        ItemHave: !itemData.itemHave,
-        ItemPhotoURL: itemData.itemPhotoURL,
-        ItemSoldoutURL: itemData.itemSoldoutURL
+        itemName: itemData.itemName,
+        itemType: itemData.itemType,
+        itemLocation: 0,
+        itemPhotoURL: itemData.itemPhotoURL,
+        itemSoldoutURL: itemData.itemSoldoutURL
     };
 
     return firestore()
-        .collection('inventory')
+        .collection('pets')
         .doc(userUID)
         .update({
-            Inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
+            inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {
             console.log("add Furniture2Inventory successfully!");
@@ -1375,36 +1374,15 @@ export const addFurniture2Inventory = (userUID, itemData) => {
         });
 };
 
-//ดึงข้อมูลใน Inventory
-export const retrieveInventory = (userUID) => {
-    return firestore()
-        .collection('inventory')
-        .doc(userUID)
-        .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const inventory = doc.data().Inventory;
-                return inventory;
-            } else {
-                // กรณีไม่พบเอกสาร
-                console.log("No such document555");
-                return null;
-            }
-        })
-        .catch((error) => {
-            // กรณีเกิดข้อผิดพลาดในการดึงข้อมูล
-            console.error("Error getting document:", error);
-            throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
-        });
-}
+
 
 // ตรวจสอบว่ามี itemName ที่ซ้ำกับ newItemName ใน Firebase หรือไม่
 export const checkDuplicateItem = async (userUID, newItemName) => {
     try {
         const inventory = await retrieveInventory(userUID);
-        if (inventory) {
+        const isDuplicate = inventory.all.some(item => item.itemName === newItemName.itemName);        
+        if (isDuplicate) {
             // ใช้เมธอด some เพื่อตรวจสอบว่ามีชื่อสินค้าซ้ำหรือไม่
-            const isDuplicate = inventory.some(item => item.ItemName === newItemName.itemName);
             console.log('return: ' + isDuplicate)
             return isDuplicate;
         } else {

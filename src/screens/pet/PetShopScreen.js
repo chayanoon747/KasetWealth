@@ -2,10 +2,9 @@ import { View,TouchableOpacity,Image,Text, FlatList, Alert } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState,useEffect} from "react";
 import { useDispatch,useSelector } from "react-redux";
-import uuid from 'react-native-uuid';
 import { setIsUpdate } from "../../redux/variableSlice";
-import firestore from '@react-native-firebase/firestore';
 import { addItem2Inventory, checkDuplicateItem, retrieveCurrencyPet, addFurniture2Inventory, updateMoneyBalance, updateRubyBalance, updateGuarantee} from "../../firebase/UserModel";
+import { retrieveInventory } from "../../firebase/RetrieveData";
 
 export const PetShopScreen = ({navigation}) => {
 
@@ -16,12 +15,17 @@ export const PetShopScreen = ({navigation}) => {
     const [coinBalance, setCoinBalance] = useState();//แทนด้วยเงินทั้งหมด user
     const [rubyBalance, setRubyBalance] = useState();//แทนด้วยเพชรทั้งหมด user
     const [mysteryBoxGuaranteeNormal, setmysteryBoxGuaranteeNormal] = useState();
-    //const [itemHaveIiInventory, setItemHaveIiInventory] = useState();
+    const [inventory, setInventory] = useState();
 
     useEffect(() => {
         retrieveCurrency();
-        //changeItemURL();
+        handleRetriveInventory()
     }, [coinBalance,rubyBalance,isUpdate]);
+
+    const handleRetriveInventory = async () => {
+        const data = await retrieveInventory(userUID);
+        setInventory(data);
+    }
 
     //ดึงข้อมูล currency และ เลขการันตี
     const retrieveCurrency = async () => {
@@ -198,33 +202,15 @@ export const PetShopScreen = ({navigation}) => {
         return randomAmount;
     }
 
-    /* ไม่เวิร์ค
-    const getItemName = (inventory)=>{
-        checkDuplicateItem(userUID, inventory.itemName)
-            .then(isDuplicate => {
-                if (!isDuplicate) {
-                    return false
-                }else{
-                    return true
-                }
-            })
-            .catch(error => {
-                console.error('Error checking duplicate item:', error);
-                // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
-            });
-    }
-
-    const changeItemURL = async() => {
-        try{
-            const itemHaveData = await retrieveInventory(userUID);
-            setItemHaveIiInventory(checkDuplicateItem(userUID, itemName))
-        }catch(error){
-            console.log('Error changeItemURL:', error);
-        }
-    }
-    */
     const renderItem = ({ item, index }) => {
         let renderStyle;
+        let isDuplicateURL = false;
+        if (inventory && inventory.all) {
+            isDuplicateURL = inventory.all.find(element => element.itemName === item.itemName) !== undefined;
+        }else{
+            isDuplicateURL = false
+        }
+        console.log(isDuplicateURL);
         if (item.itemType === 'กล่องสุ่ม') {
             renderStyle = (
                 <View style={mysteryStyles.viewTouchableBoxCategoryMysteryBox}>
@@ -300,7 +286,7 @@ export const PetShopScreen = ({navigation}) => {
                     </View>
             </View>
             )
-        } else if (item.itemType === 'ไอเทมกดใช้') {
+        } else if (item.itemType === 'forUse') {
            renderStyle = (
                 <View style={styles.ViewTouchableBoxCategoryHealthy}>
                     <TouchableOpacity
@@ -368,15 +354,15 @@ export const PetShopScreen = ({navigation}) => {
                                     if (!isDuplicate) {
                                         // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
                                         // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                        reportBuyItem(item);
                                         buyFur2Inventory(item);
+                                        reportBuyItem(item);
                                     } else {
                                         console.log('คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว ไม่สามารถซื้อสินค้าซ้ำได้');
                                         alert('คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว\nไม่สามารถซื้อสินค้าซ้ำได้');
                                     }
                                 })
                                 .catch(error => {
-                                    console.error('Error checking duplicate item:', error);
+                                    console.error('Error checking duplicate on press item:', error);
                                     // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
                                 });
                         }}
@@ -387,8 +373,14 @@ export const PetShopScreen = ({navigation}) => {
                                 <Image
                                     style={styles.ImageItemBox}
                                     source={{
+                                        /*
+                                        uri: checkDuplicateItem(userUID,item)
+                                            ? item.itemSoldoutURL
+                                            : item.itemPhotoURL
+                                        */
                                         ///*
-                                        uri: item.itemHave === true
+                                        
+                                        uri: isDuplicateURL === true
                                             ? item.itemSoldoutURL
                                             : item.itemPhotoURL
                                         //*/
@@ -704,122 +696,82 @@ const itemsMysteryBox = [
         itemName: "CardBoard",
         itemPrice:20,
         itemGuarantee:8,
-        itemLocation: null,
-        itemQuantity:null,
-        itemPhotoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1206324628419649566/image_7_box.png?ex=65db985b&is=65c9235b&hm=9be1bf2dd2ce56b8eb47d27a176c2a2b159ba320b64ed52f2c1ff1351237f4a4&",
-        itemSoldoutURL:null
+        itemPhotoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1206324628419649566/image_7_box.png?ex=65db985b&is=65c9235b&hm=9be1bf2dd2ce56b8eb47d27a176c2a2b159ba320b64ed52f2c1ff1351237f4a4&"
     }
 ]
 
 const UseItem = [
     {
-        itemType: "ไอเทมกดใช้",
+        itemType: "forUse",
         itemCurrencyType: 'ruby',
         itemName: "บัตรกันลดขั้น",
         itemPrice:20,
-        itemGuarantee:null,
-        itemLocation: null,
-        itemHave: false,
-        itemQuantity:1,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206567181060407296/image_5.png?ex=65dc7a40&is=65ca0540&hm=db2165be9862cfa9d8f5a5b73ef7c5ad94f94a0c50c219cc12cbd8a1d6ca9d9f&",
-        itemSoldoutURL:null
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206567181060407296/image_5.png?ex=65dc7a40&is=65ca0540&hm=db2165be9862cfa9d8f5a5b73ef7c5ad94f94a0c50c219cc12cbd8a1d6ca9d9f&"
      }
 ]
 
 const ItemsFurniture = [
     {
-        itemType: "ของตกแต่ง",
+        itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "ตุ๊กตา",
         itemPrice:700,
-        itemGuarantee:0,
-        itemLocation: "โต๊ะ",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206324627442245712/image_7.png?ex=65db985b&is=65c9235b&hm=56e75cfd84bdb8f87558692181e24b33f978a8dc0efe24ebbbc4cf5e53ca54c6&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618450104360/bearSoldout.png?ex=65facc4d&is=65e8574d&hm=f06e8a147fc2196316cf7e05b6248315bbcb3b6c3d7106a1684906e0cf7d2aa2&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "รูปกรอบสีขาว",
         itemPrice:299,
-        itemGuarantee:0,
-        itemLocation: "ผนัง",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732293790306314/18bit.png?ex=65f2e7f6&is=65e072f6&hm=c0f6b916de070ba9354ffe8efec6b16be305f2cac382bbea0f6897d38a0fc6cc&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1213057759226888252/WhiteborderSoldout.png?ex=65f41713&is=65e1a213&hm=196f75ce894902b500850cc3528daaaeedb68d9560d3eed6ff965ae2d81cbc99&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "รูปกรอบสีทอง",
         itemPrice:899,
-        itemGuarantee:0,
-        itemLocation: "ผนัง",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732291126788126/28bit.png?ex=65f2e7f5&is=65e072f5&hm=f4f622506c53800754b06a1c1c2351d27554e0e908350b276d7b4018a8efb212&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619473252434/GoldborderSoldout.png?ex=65facc4d&is=65e8574d&hm=72d402f623631779c2b2e3cd33ca715d9dd5ad7071c97a573d5f4657bcaf7408&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "หอคอย",
         itemPrice:999,
-        itemGuarantee:0,
-        itemLocation: "โต๊ะ",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732292187816016/vecteezy_eiffel-tower-in-pixel-art-style_22267390-removebg-preview.png?ex=65f2e7f5&is=65e072f5&hm=de7983c3d3f2d1d89918e90a116baba033cf4c81a71b70aff3b8e4378a5ad397&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619020275752/towerSoldout.png?ex=65facc4d&is=65e8574d&hm=000b4a2ce92ddce6a63d0222cc9ced492cddae3712b58ea8901c60d632527b5c&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "นาฬิกา",
         itemPrice:80,
-        itemGuarantee:0,
-        itemLocation: "ผนัง",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732291806400603/pngtree-new-year-wall-clock-in-pixel-style-png-image_2492384-removebg-preview.png?ex=65f2e7f5&is=65e072f5&hm=7525930320856e7bed0259bae37381f6bfa2a7f457bb7f74c48bf55664cba2e2&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618097651732/clockSoldout.png?ex=65facc4d&is=65e8574d&hm=37a7c4165aea919762612c0ff6f922410cc151214ec0f80dc67a608a2cc06324&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "โทรศัพท์",
         itemPrice:500,
-        itemGuarantee:0,
-        itemLocation: "โต๊ะ",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732293236662332/vecteezy_vector-pixel-art-retro-phone-for-game-development_7816880-removebg-preview.png?ex=65f2e7f6&is=65e072f6&hm=ce77499120775e3e4942a1c98f3dddbda326be0a99199685e9e92cadba6362e6&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901620131762176/phoneSoldout.png?ex=65facc4e&is=65e8574e&hm=293e7ec89a863c3e8ff45484ecde8813410fa2335225092b00f3f108af919770&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "นาฬิกาทราย",
         itemPrice:150,
-        itemGuarantee:0,
-        itemLocation: "โต๊ะ",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732292519174154/vecteezy_hourglass-pixel-art-vector-illustration-design-for-games_8081723-removebg-preview.png?ex=65f2e7f6&is=65e072f6&hm=725dd7101b3678b7c6568bf6603616350bc2489ce7cedc89320cb8e03b8980bb&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901617690939453/hourglassSoldout.png?ex=65facc4d&is=65e8574d&hm=6d9c9ff0f49710ffb9ea65b374b94a0d49748139141fc36d1f86c0c55bb76a39&'
     },
     {
-        itemType: "ของตกแต่ง",
+        itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "แจกัน",
         itemPrice:120,
-        itemGuarantee:0,
-        itemLocation: "โต๊ะ",
-        itemHave: false,
-        itemQuantity:1,
         itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732291420393522/images-removebg-preview.png?ex=66055cf5&is=65f2e7f5&hm=51ffc00d54e0668c1d39ecaba7d6d31306a16bc5df63b7611289081579cbe448&",
         itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618747772938/flowerSoldout.png?ex=660406cd&is=65f191cd&hm=b9f5744384bd38f681c2a885d7629291586f2bd61e9588cea7965eae2dccb379&'
     }

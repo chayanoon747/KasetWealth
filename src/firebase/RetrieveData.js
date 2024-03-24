@@ -414,3 +414,63 @@ export const retriveCalculateRiability = (userUID) => {
             return null;
         });
 };
+
+export const retrievePetCoin = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            const coin = data.data().Currency.Money;
+            return coin;
+        })
+}
+
+export const retrievePetRuby = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            const ruby = data.data().Currency.Ruby;
+            return ruby;
+        })
+}
+
+//ดึงข้อมูลใน Inventory
+export const retrieveInventory = (userUID)=>{
+    const inventory = {
+        all:[],
+        wall:[],
+        table:[],
+        forUse:[]
+    };
+    
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data){
+            const allData = data.data().inventory;
+            //console.log(allData);
+            if(allData){
+                allData.forEach(element => {
+                    if(element.itemType == 'wall'){
+                        inventory.wall.push(element)
+                    }
+                    if(element.itemType == 'table'){
+                        inventory.table.push(element)
+                    }
+                    if(element.itemType == 'ไอเทมกดใช้'){
+                        inventory.forUse.push(element)
+                    }
+    
+                    inventory.all.push(element)
+                });
+            }
+            //console.log(`AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: ${inventory.all}`)
+            return inventory
+        }
+    })
+}
