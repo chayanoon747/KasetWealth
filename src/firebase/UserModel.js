@@ -744,7 +744,10 @@ export const addPetName = (userUID, input) => {
             .collection('pets')
             .doc(userUID)
             .update({
-                petName: myPetName
+                petName: myPetName,
+                Money: 0,
+                Ruby: 0,
+                Guarantee: 8
             })
             .then(() => {
                 console.log("petName added successfully!");
