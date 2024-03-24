@@ -22,6 +22,7 @@ const TurquoiseHeader = ({ navigation }) => {
 
 export const ForgetPasswordScreen = ({navigation}) => {
   const [email,setEmail] = useState('')
+  const [phoneNumber,setPhoneNumber] = useState('')
 
   const success = (msg) => {
     Alert.alert(msg)
@@ -30,13 +31,24 @@ export const ForgetPasswordScreen = ({navigation}) => {
 
   const unsuccess = (msg) => {
     console.log(msg)
-    Alert.alert(msg)
   }
 
   function onSendPress() {
-    console.log(`Send email to ${email}`)
-    success(`Send email to ${email}`)
-    forgetPassword(email, success, unsuccess)
+    let validateEmail = true;
+    let validatePhoneNumber = true;
+    if(email == ''){
+      validateEmail = false;
+      Alert.alert('กรุณากรอก email');
+      return;
+    }
+    if(phoneNumber == ''){
+      validatePhoneNumber = false;
+      Alert.alert('กรุณากรอก phone number');
+      return;
+    }
+    if(validateEmail && validatePhoneNumber){
+      forgetPassword(email, phoneNumber, success, unsuccess)
+    }
   }
 
   return (
@@ -52,7 +64,8 @@ export const ForgetPasswordScreen = ({navigation}) => {
           </Text>
 
           <AuthInput placeholder='Email *' secureTextEntry={false} value={email} onChangeText={(text) => setEmail(text)} />
-
+          <AuthInput placeholder='Phone number *' secureTextEntry={true} value={phoneNumber} onChangeText={(text) => setPhoneNumber(text)} />
+          
           <TouchableOpacity style={ styles.button }
             onPress={onSendPress}
           >
@@ -90,6 +103,7 @@ const styles = StyleSheet.create({
     bottom: '50%'
   },
   button: {
+    marginTop:'5%',
     height: 50, 
     borderRadius: 16, 
     backgroundColor: '#0ABAB5', 

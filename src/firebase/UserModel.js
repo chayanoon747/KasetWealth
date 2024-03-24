@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
+import firebase from '@react-native-firebase/app';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt, retrieveInventory } from './RetrieveData';
@@ -454,12 +455,25 @@ export const addFinancials = (user,datecurrent)=>{
 }
 
 export const addPetsQuest = (user)=>{
+    const DownGradeCard = false
     const Quest = []
+    const PetImages = []
+    const PetName = ""
+    const PetImage = ""
+    const LastedDate = ""
+    const Inventory = []
     firestore()
     .collection('pets')
     .doc(user.uid)
     .set({
-        quest: Quest
+        downGradeCard: DownGradeCard,
+        quest: Quest,
+        petName: PetName,
+        petImage: PetImage,
+        petImages: PetImages,
+        lastedDate: LastedDate,
+        inventory: Inventory
+
     })
     .then(()=>{
         console.log("addPetsQuest success")
@@ -578,23 +592,6 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         });
 };
 
-/*export const RemoveCategoryIcon = (userUID, selectedItems) => {
-    console.log(selectedItems)
-    return firestore()
-        .collection('users')
-        .doc(userUID)
-        .update({
-            categories: firestore.FieldValue.arrayRemove(...selectedItems)
-        })
-        .then(() => {
-            console.log("Categories removed successfully!");
-        })
-        .catch((error) => {
-            console.error("Error removing categories:", error);
-            throw error;
-        });
-}*/
-
 export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
     console.log(selectedItems)
     let isLiabilityRemaining = false;
@@ -606,7 +603,15 @@ export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
             let matchingShort = itemsDataLiabilityRemaining.short.find(data => data.transactionId === item.transactionId);
             if (matchingShort) {
                 isLiabilityRemaining = true;
-                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ1")
+                Alert.alert(
+                    'แจ้งเตือน!',
+                    'ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ',
+                    [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')}
+                    ],
+                    {cancelable: false}
+                );
+                
                 return;
             }
 
@@ -614,7 +619,14 @@ export const RemoveCategoryIcon = async(userUID, selectedItems, success) => {
             //console.log(matchingLong)
             if (matchingLong) {
                 isLiabilityRemaining = true;
-                Alert.alert("ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ2")
+                Alert.alert(
+                    'แจ้งเตือน!',
+                    'ไม่สามารถลบได้เนื่องจาก มีหัวข้อสำหรับชำระหนี้ที่ยังชำระไม่ครบจำนวน กรุณาชำระให้ครบ ก่อนทำการลบหัวข้อ',
+                    [
+                    {text: 'OK', onPress: () => console.log('OK Pressed')}
+                    ],
+                    {cancelable: false}
+                );
                 return;
             }
         }
@@ -686,17 +698,19 @@ export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTra
         throw new Error("Value must not be 0!");
     }
 };
+
 export const addPersonalGoal = (userUID, itemData, input) => {
-    const transactionId = uuid.v4();;
+    const transactionId = uuid.v4();
     if (input.value !== 0) {
         const personalGoal = {
             transactionId: transactionId,
-            detail: input.detail,
+            category: itemData.category,
+            subCategory: itemData.subCategory,
             questPic: itemData.photoURL,
+            questType: itemData.questType,
             questState: false,
-            transactionType: itemData.category,
             rewardStatus: false,
-            questType: itemData.subCategory,
+            seen: false,
             value: input.value
         };
 
@@ -721,6 +735,155 @@ export const addPersonalGoal = (userUID, itemData, input) => {
         console.error("Value must not be 0!");
         throw new Error("Value must not be 0!");
     }
+};
+
+export const addPetName = (userUID, input) => {
+    const myPetName = input.value;
+    if (input.value !== 0) {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                petName: myPetName
+            })
+            .then(() => {
+                console.log("petName added successfully!");
+            })
+            .catch((error) => {
+                console.error("Error adding petName:", error);
+                throw error;
+            });
+    } else {
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+export const addLastedDate = (userUID, formattedDate) => {
+    const myLastedDate = formattedDate;
+    if (formattedDate !== 0) {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                lastedDate: myLastedDate
+            })
+            .then(() => {
+                console.log("petName added successfully!");
+            })
+            .catch((error) => {
+                console.error("Error adding petName:", error);
+                throw error;
+            });
+    } else {
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+export const addOnePetImage = (userUID, input) => {
+    const myPetImage = input;
+    if (input !== 0) {
+        return firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                petImage: myPetImage
+            })
+            .then(() => {
+                console.log("petImage random and added successfully!");
+            })
+            .catch((error) => {
+                console.error("Error adding petImage:", error);
+                throw error;
+            });
+    } else {
+        Alert.alert("Value must not be 0!")
+        console.error("Value must not be 0!");
+        throw new Error("Value must not be 0!");
+    }
+};
+
+export const addPetImages = (userUID, images) => {
+    if (!Array.isArray(images) || images.length === 0) {
+        Alert.alert("Images array must not be empty!");
+        console.error("Images array must not be empty!");
+        throw new Error("Images array must not be empty!");
+    }
+
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            petImages: images
+        })
+        .then(() => {
+            console.log("Pet images added successfully!");
+        })
+        .catch((error) => {
+            console.error("Error adding pet images:", error);
+            throw error;
+        });
+        //สร้าง field ขึ้นมาเพิ่ม
+};
+
+export const addDownGradeCardtoTrue = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                const downGradeCardValue = data.downGradeCard;
+                if (!downGradeCardValue) {
+                    return firestore()
+                        .collection('pets')
+                        .doc(userUID)
+                        .update({
+                            downGradeCard: true
+                        })
+                        .then(() => {
+                            console.log("downGradeCard updated successfully!");
+                            alert("Purchased Complete!");
+                        })
+                        .catch((error) => {
+                            console.error("Error updating downGradeCard:", error);
+                            throw error;
+                        });
+                } else {
+                    console.log("downGradeCard is already true. Cannot add more.");
+                    alert("คุณยังไม่ได้ใช้งานบัตรกันลดขั้น ไม่สามารถซื้อเพิ่มได้");
+                }
+            } else {
+                console.log("document doesn't exist");
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting document:", error);
+            throw error;
+        });
+};
+
+
+
+export const addDownGradeCardtoFalse = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            downGradeCard: false
+        })
+        .then(() => {
+            console.log("petImage random and added successfully!");
+        })
+        .catch((error) => {
+            console.error("Error addDownGradeCardtoFalse:", error);
+            throw error;
+        });
+    
 };
 
 export const addTransactionLiability = (userUID, itemData, input, selectedDate, categoryPlusIcon,categoryExpenses, subCategoryExpenses, isFirstTransaction) => {
@@ -937,7 +1100,7 @@ export const addTransactionExpenses = async(userUID, itemData, input, selectedDa
     }else{
         Alert.alert(
             'แจ้งเตือน!',
-            'ไม่สามารถชำระหนี้ก้อนนี้ได้เนื่องจากหนี้ก้อนนี้ไม้มีอยู่จริง',
+            'ไม่สามารถชำระหนี้ก้อนนี้ได้เนื่องจากหนี้ก้อนนี้ไม่มีอยู่จริง',
             [
               {text: 'OK', onPress: () => console.log('OK Pressed')}
             ],
@@ -1064,7 +1227,7 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
         }
     })
 }
-
+//เฉพาะ PersonalGoal
 export const  retrieveAllDataQuest = (userUID)=>{
     const QuestData = []
     return firestore()
@@ -1081,9 +1244,101 @@ export const  retrieveAllDataQuest = (userUID)=>{
             });
 
             return QuestData
+        }else{
+            return null
         }
     })
-}
+    .catch((error) => {
+        console.error("Error retrieving AllDataQuest:", error);
+        throw error;
+    });
+};
+// ของ Quest and Week แยกกันกับ Personal
+export const retrieveQuestDaliyAndWeek = async () => {
+    const QuestData = {
+        daily: [],
+        weekly: []
+    };
+
+    try {
+        const dailyData = await firestore()
+            .collection('quests')
+            .doc('daily')
+            .get();
+
+        if (dailyData.exists) {
+            const allData = dailyData.data().quest;
+            allData.forEach(element => {
+                QuestData.daily.push(element);
+            });
+        }
+
+        const weeklyData = await firestore()
+            .collection('quests')
+            .doc('weekly')
+            .get();
+
+        if (weeklyData.exists) {
+            const allData = weeklyData.data().quest;
+            allData.forEach(element => {
+                QuestData.weekly.push(element);
+            });
+        }
+    } catch (error) {
+        console.error('Error retrieving quest data:', error);
+    }
+
+    return QuestData;
+};
+
+export const retrieveAllDataPet = (userUID) => {
+    const PetData = {
+        petName: "",
+        lastedDate: "",
+        petImage: "",
+        petImages: [],
+        downGradeCard: false
+    };
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            if (data.exists) { 
+                PetData.petName = data.data().petName
+                PetData.lastedDate = data.data().lastedDate
+                PetData.petImage = data.data().petImage
+                PetData.petImages = data.data().petImages
+                PetData.downGradeCard = data.data().downGradeCard
+                return PetData;
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error("Error retrieving petName:", error);
+            throw error;
+        });
+};
+
+export const retrieveAllDataPetImage = (userUID) => {
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            if (data.exists) {
+                return data.data().petImages;
+            } else {
+                return null;
+            }
+        })
+        .catch((error) => {
+            console.error("Error retrieving petName:", error);
+            throw error;
+        });
+};
+
 
 export const editTransaction = async(userUID, itemData, input, success)=>{
     let resultRepayDebt = 0;
@@ -1374,6 +1629,36 @@ export const addFurniture2Inventory = (userUID, itemData) => {
         });
 };
 
+export const updateLocationItem = (userUID, item, newItem)=>{
+        firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            inventory: firestore.FieldValue.arrayUnion(newItem)
+        })
+        .then(() => {
+            return(
+                firestore()
+                .collection('pets')
+                .doc(userUID)
+                .update({
+                    inventory: firestore.FieldValue.arrayRemove(item)
+                })
+                .then(()=>{
+                    console.log(`update item successfully`)
+                })
+                .catch((error) => {
+                    console.error("Error remove locationItem:", error);
+                    throw error;
+                })
+            )
+            
+        })
+        .catch((error) => {
+            console.error("Error add newLocationItem:", error);
+            throw error;
+        });
+}
 
 
 // ตรวจสอบว่ามี itemName ที่ซ้ำกับ newItemName ใน Firebase หรือไม่

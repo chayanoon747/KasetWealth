@@ -9,12 +9,22 @@ const INIT_VARIABLES = {
     itemData: {},
     selectedDate: "",
     isUpdate: false,
-    status: false
+    status: false,
+    guageWealth: 0, 
+    guageRiability: 0, 
+    totalGuage: 0,
+    totalDifferenceDate: "",
+    editItemLocation: false,
+    isUpdateItemPet: false,
+    hasNotification: false,
+    cameFromNoti: false,
+    cameFrom: "",
+    totalDownGradeCardValue: false
 }
 
 const variableSlice = createSlice({
     name: 'variables',
-    initialState:INIT_VARIABLES,
+    initialState: INIT_VARIABLES,
     reducers: {
       
       setEditStatus(state, action) {
@@ -44,9 +54,40 @@ const variableSlice = createSlice({
       setStatus(state, action) {
         state.status = action.payload;
       },
+      setGuageValues(state, action) {
+        state.guageWealth = action.payload.guageWealth;
+        state.guageRiability = action.payload.guageRiability;
+      },
+      setTotalGuage(state, action) {
+        state.totalGuage = action.payload;
+      },
+      setTotalDifferenceDate(state, action) {
+        state.totalDifferenceDate = action.payload;
+      },
+      setEditItemLocation(state, action) {
+        state.editItemLocation = action.payload;
+      },
+      setIsUpdateItemPet(state, action) {
+        state.isUpdateItemPet = action.payload;
+      },
+      setHasNotification(state, action) {
+        state.hasNotification = action.payload;
+      },
+      setCameFromNoti(state, action) {
+        state.cameFromNoti = action.payload;
+      },
+      setCameFrom(state, action) {
+        state.cameFrom = action.payload;
+      },
+      setTotalDownGradeCardValue(state, action) {
+        state.totalDownGradeCardValue = action.payload;
+      }
     },
 });
 
 const { actions, reducer } = variableSlice;
-export const { setEditStatus, setSelectedItems, setItemTransactionType,setItemCategory, setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus} = actions;
+export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, 
+  setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, 
+  setTotalGuage, setTotalDifferenceDate,setEditItemLocation, setIsUpdateItemPet,
+  setTotalDownGradeCardValue, setHasNotification, setCameFromNoti, setCameFrom  } = actions;
 export default reducer;

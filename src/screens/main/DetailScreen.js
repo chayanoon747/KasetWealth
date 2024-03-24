@@ -7,8 +7,8 @@ import { useSelector, useDispatch} from 'react-redux'
 import { useState, useEffect } from "react";
 import { setIsUpdate } from "../../redux/variableSlice";
 
-export const DetailScreen = ({navigation,route})=>{
-    const {cameFrom} = route.params
+export const DetailScreen = ({navigation})=>{
+    const cameFrom = useSelector((state)=>state.variables.cameFrom);
     const dispatch = useDispatch()
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate); 
@@ -46,9 +46,11 @@ export const DetailScreen = ({navigation,route})=>{
      }
 
      const success = ()=>{
-        if (cameFrom === 'IncomeAndExpensesScreen') {
+        if (cameFrom === "IncomeAndExpenseScreen") {
+            dispatch(setIsUpdate(!isUpdate));
             navigation.navigate('IncomeAndExpensesScreen');
-        } else if (cameFrom === 'AssetLiabilityDetailScreen') {
+        } else if (cameFrom === "AssetLiabilityDetailScreen") {
+            dispatch(setIsUpdate(!isUpdate));
             navigation.navigate('AssetLiabilityDetailScreen');
         }
         
@@ -56,6 +58,7 @@ export const DetailScreen = ({navigation,route})=>{
  
      const handleEditTransaction = ()=>{
          //input มี 2 key คือ value กับ details
+         //console.log("success")
          if(input.value == ""){
              Alert.alert('กรุณาระบุจำนวนเงิน')
          }else{
@@ -63,7 +66,7 @@ export const DetailScreen = ({navigation,route})=>{
              //console.log(value)
              if(!isNaN(value)){
                 editTransaction(userUID,itemData, input, success)
-                dispatch(setIsUpdate(!isUpdate));
+                
              }else{
                  Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
              }
@@ -71,7 +74,6 @@ export const DetailScreen = ({navigation,route})=>{
      }
      const handleRemoveTransaction = ()=>{
         RemoveTransaction(userUID,itemData, success)
-        dispatch(setIsUpdate(!isUpdate));
      }
      
      

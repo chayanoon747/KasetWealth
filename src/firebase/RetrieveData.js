@@ -218,11 +218,14 @@ export const retrieveAllData = (userUID)=>{
         expensesFixed:[],  //ค่าใช้จ่ายคงที่
         expenseSavings:[],  //ค่าใช้จ่ายออม
         expenseInvest:[],  //ค่าใช้จ่ายลงทุน
+        expenseRepayDebt:[],//ค่าใช้จ่ายชำระหนี้
         assetLiquid:[],
         assetInvest:[],
         assetPersonal:[],
         liabilityShort:[],
         liabilityLong:[],
+        liabilityShortRemaining:[],
+        liabilityLongRemaining:[],
         currentDate: "",
         lastedDate: "",
         isFirstTransaction: true,
@@ -270,6 +273,14 @@ export const retrieveAllData = (userUID)=>{
                     dataFinancial.expenseInvest.push(element)
                     dataFinancial.transactionAll.push(element)
                 }
+                if(element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)'){
+                    dataFinancial.expenseRepayDebt.push(element)
+                    dataFinancial.transactionAll.push(element)
+                }
+                if(element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)'){
+                    dataFinancial.expenseRepayDebt.push(element)
+                    dataFinancial.transactionAll.push(element)
+                }
 
                 if(element.category == 'สินทรัพย์สภาพคล่อง'){
                     dataFinancial.assetLiquid.push(element)
@@ -297,6 +308,48 @@ export const retrieveAllData = (userUID)=>{
             dataFinancial.lastedDate = data.data().LastedDate
             dataFinancial.isFirstTransaction = data.data().IsFirstTransaction
             dataFinancial.guageRiability = data.data().GuageRiability
+
+            //ค่าใช้จ่ายชำระหนี้
+            dataFinancial.liabilityShort.forEach(liability => {
+                const matchingDebts = dataFinancial.expenseRepayDebt.filter(debt => debt.transactionId === liability.transactionId);
+                
+                const totalValue = matchingDebts.reduce((accumulator, debt) => accumulator + parseFloat(debt.value), 0);
+                //console.log(totalValue)
+                if (matchingDebts) {
+                    // แก้ไขค่า value ของ liabilityData โดยลบค่า value ของรายการที่ตรงกันใน repayDebtData
+                    if(liability.value - totalValue >= 0){
+                        liability.value -= totalValue; 
+                    }
+                    
+                }
+                if(liability.value > 0){
+                    // เพิ่มข้อมูลใหม่เข้าไปใน liabilityRemaining
+                    liability.value = liability.value + '';
+                    dataFinancial.liabilityShortRemaining.push(liability);
+                } 
+            });
+        
+            dataFinancial.liabilityLong.forEach(liability => {
+                const matchingDebts = dataFinancial.expenseRepayDebt.filter(debt => debt.transactionId === liability.transactionId);
+                //console.log(matchingDebts)
+                
+                const totalValue = matchingDebts.reduce((accumulator, debt) => accumulator + parseFloat(debt.value), 0);
+                //console.log(totalValue)
+                if (matchingDebts) {
+                    // แก้ไขค่า value ของ liabilityData โดยลบค่า value ของรายการที่ตรงกันใน repayDebtData
+                    if(liability.value - totalValue >= 0){
+                        liability.value -= totalValue; 
+                    }
+                    
+                }
+                if(liability.value > 0){
+                    // เพิ่มข้อมูลใหม่เข้าไปใน liabilityRemaining
+                    liability.value = liability.value + '';
+                    dataFinancial.liabilityLongRemaining.push(liability);
+                } 
+            });
+
+
             return dataFinancial
         }
     })
@@ -415,29 +468,6 @@ export const retriveCalculateRiability = (userUID) => {
         });
 };
 
-export const retrievePetCoin = (userUID) => {
-    return firestore()
-        .collection('pets')
-        .doc(userUID)
-        .get()
-        .then((data) => {
-            const coin = data.data().Currency.Money;
-            return coin;
-        })
-}
-
-export const retrievePetRuby = (userUID) => {
-    return firestore()
-        .collection('pets')
-        .doc(userUID)
-        .get()
-        .then((data) => {
-            const ruby = data.data().Currency.Ruby;
-            return ruby;
-        })
-}
-
-//ดึงข้อมูลใน Inventory
 export const retrieveInventory = (userUID)=>{
     const inventory = {
         all:[],

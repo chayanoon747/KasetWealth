@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     borderRadius:16,
     marginHorizontal:'8%',
     marginTop:'5%',
-    marginBottom:'8%',
     fontFamily: 'ZenOldMincho-Regular'
   }
 })

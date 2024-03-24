@@ -6,34 +6,65 @@ import { useSelector, useDispatch} from 'react-redux';
 import { setItemTransactionType } from "../../redux/variableSlice";
 import { AddGoalScreen } from "./AddGoalScreen";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
+import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { setItemCategory } from "../../redux/variableSlice";
+import { useFocusEffect } from '@react-navigation/native';
+import { setCameFromNoti } from "../../redux/variableSlice";
 
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
-
-
+    const [questDataSelected, setQuestDataSelected] = useState({})
+    const [petImageData, setPetImageData] = useState(null);
+    
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
+    const totalGuage = useSelector(state => state.variables.totalGuage);
+    console.log('Total Guage in GameQuest:', totalGuage);
+
+    const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
+    console.log('differenceDate in GameQuest:', totalDifferenceDate);
+
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
     
-    const [incomeAndExpensesDataSelected, setIncomeAndExpensesDataSelected] = useState({})
-    useEffect(()=>{
-      dispatch(setItemCategory(''))
-    },[])
     useEffect(() => {
       getQuestData()
+      dispatch(setCameFromNoti(false))
+      console.log("มาแล้ว")
     }, [isUpdate]);
-  const getQuestData = async()=>{
+
+    const getQuestData = async()=>{
       try{
-          const itemAllDataIncomeAndExpenses = await retrieveAllDataQuest(userUID)
-          setIncomeAndExpensesDataSelected(itemAllDataIncomeAndExpenses)
+          const itemAllDataQuest = await retrieveAllDataQuest(userUID)
+          setQuestDataSelected(itemAllDataQuest)
 
           
       }catch (error) {
           console.error('Error getQuestData:', error);
       }  
-  }
+    }
+
+    useEffect(() => {
+      getImageData()
+      dispatch(setCameFromNoti(false));
+    }, [isUpdate]);   
+
+    const getImageData = async()=>{
+        try{
+            const itemAllDataPet = await retrieveAllDataPet(userUID)
+            setPetImageData(itemAllDataPet)
+            
+        }catch (error) {
+            console.error('Error getImageData:', error);
+        }  
+    }
+
+    let selectedPetImageIndex = 0;
+    if (totalGuage > 7) {
+        selectedPetImageIndex = 2;
+    } else if (totalGuage > 4) {
+        selectedPetImageIndex = 1;
+    }
 
     const renderItem = ({ item })=>{
       return(
@@ -47,7 +78,7 @@ export const GameQuest = ({navigation})=>{
             </View>
 
             <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-              <Text style={styles.headerText}>    {item.questType} {item.value} บาท</Text>
+              <Text style={styles.headerText}>    {item.subCategory} {item.value} บาท</Text>
               <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Personal Goal</Text>
             </View>
             
@@ -66,7 +97,10 @@ export const GameQuest = ({navigation})=>{
     return(
         <ScrollView style={{flex:1, padding:30, backgroundColor:'#B3DBD8'}}>
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff',height: 300}}>
-              <Image source={require('../../assets/Dog.png')} style={{ width: 150, height: 200,alignSelf: 'center',transform: [{translateY: 90}] }}/>
+              {petImageData ? (
+                <Image source={{uri: petImageData.petImage}} 
+                style={{width: 150, height:200,alignSelf: 'center',transform: [{translateY: 90}]}} />
+              ) : null}
             </View>
 
             {/* Daliy Quest */}
@@ -156,7 +190,7 @@ export const GameQuest = ({navigation})=>{
                 <Text style={[styles.departmentPersonalGoal, styles.boldText, {color: '#2C6264'}]}>Personal Goal : เป้าหมายส่วนตัว</Text>
 
                 <FlatList 
-                    data={incomeAndExpensesDataSelected}
+                    data={questDataSelected}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                     scrollEnabled={false}
