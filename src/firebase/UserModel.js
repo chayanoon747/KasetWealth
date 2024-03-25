@@ -1594,6 +1594,7 @@ export const addItem2Inventory = (userUID, itemData) => {
         .collection('pets')
         .doc(userUID)
         .update({
+            downGradeCard: true,
             inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {

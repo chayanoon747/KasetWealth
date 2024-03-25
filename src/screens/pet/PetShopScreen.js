@@ -49,7 +49,7 @@ export const PetShopScreen = ({navigation}) => {
             if (item.itemName === 'CardBoard') {
                 if (mysteryBoxGuaranteeNormal === 1) {
                     const newRubyBalance = rubyBalance - item.itemPrice;
-                    const updatedMysteryBoxCount = mysteryBoxGuaranteeNormal - 1;
+                    const updatedMysteryBoxCount = item.itemGuarantee;
                     const newRandomMoney = randomMoney(item);
                     const newCoinBalance = coinBalance + newRandomMoney;
                     // อัปเดตยอดเงินใน Firebase และ เลขการันตี
@@ -67,7 +67,7 @@ export const PetShopScreen = ({navigation}) => {
                     updateMoneyBalance(userUID, newCoinBalance)
                         .then(() => {
                             console.log(`Item Purchased: ${item.itemName}`);
-                            alert('Purchased Complete!\nจำนวนเงินที่สุ่มได้คือ ' + newRandomMoney);
+                            alert('Congratulations! You have received many decorative items\n'+newRandomMoney);
                         })
                         .catch((error) => {
                             console.error("Error updating money balance:", error);
@@ -75,8 +75,6 @@ export const PetShopScreen = ({navigation}) => {
                             // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
                             setCoinBalance(coinBalance);
                         })
-                            alert('Congratulations! You have received many decorative items\n'+newRandomMoney);
-                            console.log(`Item Purchased: ${item.itemName}`);
                 }else {
                     if (item.itemCurrencyType === 'coin') {
                         if (coinBalance >= item.itemPrice) {
