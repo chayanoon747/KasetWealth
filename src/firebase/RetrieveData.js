@@ -492,7 +492,7 @@ export const retrieveInventory = (userUID)=>{
                     if(element.itemType == 'table'){
                         inventory.table.push(element)
                     }
-                    if(element.itemType == 'ไอเทมกดใช้'){
+                    if(element.itemType == 'forUse'){
                         inventory.forUse.push(element)
                     }
     

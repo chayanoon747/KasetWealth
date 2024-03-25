@@ -23,7 +23,7 @@ export const InventoryScreen=({navigation})=>{
         const inventoryData = await retrieveInventory(userUID);
         const itemNotPlace = [];
         inventoryData.all.forEach((element)=>{
-            if(element.itemLocation == '0'){
+            if(element.itemLocation == '0' || element.itemType == 'forUse'){
                 itemNotPlace.push(element)
             }
         })
@@ -36,21 +36,36 @@ export const InventoryScreen=({navigation})=>{
     };
 
     const renderItem = ({ item })=>{
-        return(
-            <View style={{height:100,width:'35%',flexDirection:'row', marginBottom:15}}>
-                <Shadow  startColor={'#D2DBD6'} offset={[10, 10]}>
-                    <View style={{height:'100%',width:'100%',backgroundColor:'#fffffa',borderColor:'black',borderWidth:1,borderRadius:15}}>
-                        <TouchableOpacity
-                            onPress={()=>{
-                                handleItemPress(item);
-                        }}>
+        if(item.itemType == 'forUse'){
+            return(
+                <View style={{height:100,width:'35%',flexDirection:'row', marginBottom:15}}>
+                    <Shadow  startColor={'#D2DBD6'} offset={[10, 10]}>
+                        <View style={{height:'100%',width:'100%',backgroundColor:'#fffffa',borderColor:'black',borderWidth:1,borderRadius:15}}>
                             <Image source={{uri: item.itemPhotoURL}}
-                            width={90} height={90} resizeMode="contain" style={{flex:1, margin:5}}></Image>
-                        </TouchableOpacity>
-                    </View>
-                </Shadow>
-            </View>
-        ) 
+                                width={90} height={90} resizeMode="contain" style={{flex:1, margin:5}}></Image>
+                        </View>
+                    </Shadow>
+                </View>
+            ) 
+        }
+        else{
+            return(
+                <View style={{height:100,width:'35%',flexDirection:'row', marginBottom:15}}>
+                    <Shadow  startColor={'#D2DBD6'} offset={[10, 10]}>
+                        <View style={{height:'100%',width:'100%',backgroundColor:'#fffffa',borderColor:'black',borderWidth:1,borderRadius:15}}>
+                            <TouchableOpacity
+                                onPress={()=>{
+                                    handleItemPress(item);
+                            }}>
+                                <Image source={{uri: item.itemPhotoURL}}
+                                width={90} height={90} resizeMode="contain" style={{flex:1, margin:5}}></Image>
+                            </TouchableOpacity>
+                        </View>
+                    </Shadow>
+                </View>
+            ) 
+        }
+        
     }
 
 
