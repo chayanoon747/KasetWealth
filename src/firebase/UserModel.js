@@ -1230,6 +1230,44 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
         }
     })
 }
+//retrieve มาทุก quest มี daily weekly personal
+export const  retrieveAllDataQuestNew = (userUID)=>{
+    const QuestData = {
+        daily:[],
+        weekly:[],
+        personal:[],
+        all:[]
+    }
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(element => {
+                if(element.questType == 'daily'){
+                    QuestData.daily.push(element)
+                    QuestData.all.push(element)
+                }else if(element.questType == 'weekly'){
+                    QuestData.weekly.push(element)
+                    QuestData.all.push(element)
+                }else if(element.questType == 'Personal Goal'){
+                    QuestData.personal.push(element)
+                    QuestData.all.push(element)
+                }
+            });
+
+            return QuestData
+        }else{
+            return null
+        }
+    })
+    .catch((error) => {
+        console.error("Error retrieving AllDataQuest:", error);
+        throw error;
+    });
+};
 //เฉพาะ PersonalGoal
 export const  retrieveAllDataQuest = (userUID)=>{
     const QuestData = []
@@ -1753,5 +1791,32 @@ export const updateGuarantee = async (userUID, newGuarantee) => {
     } catch (error) {
         console.error("Error updating Guarantee: ", error);
         throw error;
+    }
+};
+//update seen เป็น true ใน quest ที่มี rewardStatus เป็น true
+export const updateAllQuestSeenStatus = (userUID, questArray) => {
+    const firestore = firebase.firestore();
+    const docRef = firestore.collection('pets').doc(userUID);
+
+    // ตรวจสอบว่า questArray ไม่ใช่ค่า null หรือ undefined
+    if (questArray && questArray.length > 0) {
+        const updatedQuestArray = questArray.map((quest) => {
+            if (quest.rewardStatus) {
+                return { ...quest, seen: true };
+            } else {
+                return quest;
+            }
+        });
+
+        return docRef.update({ quest: updatedQuestArray })
+            .then(() => {
+                console.log('Seen status updated successfully for quests with rewardStatus = true');
+            })
+            .catch((error) => {
+                console.error('Error updating seen status:', error);
+                throw error;
+            });
+    } else {
+        return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
     }
 };
