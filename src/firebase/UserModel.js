@@ -2,7 +2,7 @@ import firestore from '@react-native-firebase/firestore';
 import firebase from '@react-native-firebase/app';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
-import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt } from './RetrieveData';
+import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt, retrieveInventory } from './RetrieveData';
 import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
 
 export const addUser = (user, profile, success, unsuccess)=>{
@@ -743,7 +743,10 @@ export const addPetName = (userUID, input) => {
             .collection('pets')
             .doc(userUID)
             .update({
-                petName: myPetName
+                petName: myPetName,
+                Money: 0,
+                Ruby: 0,
+                Guarantee: 8
             })
             .then(() => {
                 console.log("petName added successfully!");
@@ -1226,6 +1229,44 @@ export const  retrieveAllDataIncomeAndExpenses = (userUID)=>{
         }
     })
 }
+//retrieve มาทุก quest มี daily weekly personal
+export const  retrieveAllDataQuestNew = (userUID)=>{
+    const QuestData = {
+        daily:[],
+        weekly:[],
+        personal:[],
+        all:[]
+    }
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(element => {
+                if(element.questType == 'daily'){
+                    QuestData.daily.push(element)
+                    QuestData.all.push(element)
+                }else if(element.questType == 'weekly'){
+                    QuestData.weekly.push(element)
+                    QuestData.all.push(element)
+                }else if(element.questType == 'Personal Goal'){
+                    QuestData.personal.push(element)
+                    QuestData.all.push(element)
+                }
+            });
+
+            return QuestData
+        }else{
+            return null
+        }
+    })
+    .catch((error) => {
+        console.error("Error retrieving AllDataQuest:", error);
+        throw error;
+    });
+};
 //เฉพาะ PersonalGoal
 export const  retrieveAllDataQuest = (userUID)=>{
     const QuestData = []
@@ -1578,151 +1619,23 @@ export const updateGuageRiability = (userUID,newGuageRiability) =>{
     }
 }
 
-/*----------------------ส่วนที่ เค ทำยังไม่เรียบร้อยดี-------------------------------*/
-
-/*-------------------ระบบเงินยังไม่เรียบร้อย----------*/
-export const createPetCurrency = (userUID) => {
-    return firestore()
-    .collection('pets')
-    .doc(userUID)
-    .set({
-      Money: 0,
-      Ruby: 0
-    });
-}
-
-// ตัวอย่าง getPetMoney
-export const getPetMoney = (userUID) => {
-    return firestore()
-        .collection('pets')
-        .doc(userUID)
-        .get()
-        .then((documentSnapshot) => {
-            if (documentSnapshot.exists) {
-                const petData = documentSnapshot.data();
-                const money = petData && petData.Money ? petData.Money : 0;
-                return money;
-            } else {
-                // กรณีไม่พบเอกสาร
-                console.log("No such document!");
-                return 0;
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting document:", error);
-            throw error;
-        });
-}
-
-// ตัวอย่าง getPetRuby
-export const getPetRuby = (userUID) => {
-    return firestore()
-        .collection('pets')
-        .doc(userUID)
-        .get()
-        .then((documentSnapshot) => {
-            if (documentSnapshot.exists) {
-                const petData = documentSnapshot.data();
-                const ruby = petData && petData.Ruby ? petData.Ruby : 0;
-                return ruby;
-            } else {
-                // กรณีไม่พบเอกสาร
-                console.log("No such document!");
-                return 0;
-            }
-        })
-        .catch((error) => {
-            console.error("Error getting document:", error);
-            throw error;
-        });
-}
-
-
-export const updateMoney = (userUID, data) => {
-    return firestore()
-    .collection('pets')
-    .doc(userUID)
-    .update({
-      Money: data
-    });
-}
-  
-export const updateRuby = (userUID, allquest) => {
-    return firestore()
-    .collection('pets')
-    .doc(userUID)
-    .update({
-      Ruby: data
-    });
-}
-/*-----------------------------------------------*/
-
-//update seen เป็น true ใน quest ที่มี rewardStatus เป็น true
-export const updateAllQuestSeenStatus = (userUID, questArray) => {
-    const firestore = firebase.firestore();
-    const docRef = firestore.collection('pets').doc(userUID);
-
-    // ตรวจสอบว่า questArray ไม่ใช่ค่า null หรือ undefined
-    if (questArray && questArray.length > 0) {
-        const updatedQuestArray = questArray.map((quest) => {
-            if (quest.rewardStatus) {
-                return { ...quest, seen: true };
-            } else {
-                return quest;
-            }
-        });
-
-        return docRef.update({ quest: updatedQuestArray })
-            .then(() => {
-                console.log('Seen status updated successfully for quests with rewardStatus = true');
-            })
-            .catch((error) => {
-                console.error('Error updating seen status:', error);
-                throw error;
-            });
-    } else {
-        return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
-    }
-};
-// export const addInventory = (user)=>{
-//     const Items = []
-//     const isFirstItem = true
-//     firestore()
-//     .collection('items')
-//     .doc(user.uid)
-//     .set({
-//         Items: Items,
-//         isFirstItem: isFirstItem
-//     })
-//     .then(()=>{
-//         console.log("Item2Inventory added successfully!")
-//     })
-//     .catch((error) => {
-//         console.error("Error adding Item2Inventory:", error);
-//         throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
-//     });
-// }
-
-//ต้นแบบ addTransaction
-export const addItemFurniture2Inventory = (userUID, itemData/*, isFirstItem*/) => {
-    const newInventory = {
-        ItemType: itemData.category,
-        ItemName: itemData.subCategory,
-        ItemURl: itemData.photoURL,
-        ItemLocation: itemData.itemlocation,
-        ItemPurchased: itemData.purchased,
-        ItemPrice: itemData.price,
-        ItemQuatity: itemData.quatity
+//เพิ่มไอเท็มไปใน inventory
+export const addItem2Inventory = (userUID, itemData) => {
+    const newItem2Inventory = {
+        itemName: itemData.itemName,
+        itemType: itemData.itemType,
+        itemPhotoURL: itemData.itemPhotoURL,
     };
 
     return firestore()
-        .collection('inventory')
+        .collection('pets')
         .doc(userUID)
         .update({
-            Inventory: firestore.FieldValue.arrayUnion(newInventory),
+            downGradeCard: true,
+            inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {
-            console.log("Item2Inventory added successfully!");
+            console.log("add Item2Inventory successfully!");
         })
         // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
         .catch((error) => {
@@ -1731,50 +1644,28 @@ export const addItemFurniture2Inventory = (userUID, itemData/*, isFirstItem*/) =
         });
 };
 
-export const addUseIteme2Inventory = (userUID, itemData) => {
-    const newInventory = {
-        ItemType: itemData.category,
-        ItemName: itemData.subCategory,
-        ItemURl: itemData.photoURL,
-        ItemLocation: itemData.itemlocation,
-        ItemQuatity: itemData.quatity
+//เพิ่มของตกแต่งไปใน inventory
+export const addFurniture2Inventory = (userUID, itemData) => {
+    const newItem2Inventory = {
+        itemName: itemData.itemName,
+        itemType: itemData.itemType,
+        itemLocation: 0,
+        itemPhotoURL: itemData.itemPhotoURL,
+        itemSoldoutURL: itemData.itemSoldoutURL
     };
 
-    const inventoryRef = firestore().collection('inventory').doc(userUID);
-
-    return inventoryRef.get()
-        .then((doc) => {
-            if (doc.exists) {
-                const existsInventory = doc.data().Inventory || [];
-
-                const existingItemIndex = existsInventory.findIndex(oldItem => 
-                    oldItem.subCategory === newInventory.subCategory    
-                );
-
-                if (existingItemIndex !== -1) {
-                    // Item exists, update its quantity
-                    existsInventory[existingItemIndex].ItemQuatity = itemData.quatity;
-                } else {
-                    // Item doesn't exist, add it to the array
-                    existsInventory.push(newInventory);
-                }
-
-                // Update the entire inventory array
-                return inventoryRef.update({
-                    Inventory: existsInventory
-                });
-            } else {
-                // Document doesn't exist, create a new one with the item
-                return inventoryRef.set({
-                    Inventory: [newInventory]
-                });
-            }
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            inventory: firestore.FieldValue.arrayUnion(newItem2Inventory)
         })
         .then(() => {
-            console.log("Item2Inventory added successfully!");
+            console.log("add Furniture2Inventory successfully!");
         })
+        // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
         .catch((error) => {
-            console.error("Error adding Item2Inventory:", error);
+            console.error("Error adding Furniture2Inventory:", error);
             throw error;
         });
 };
@@ -1811,28 +1702,67 @@ export const updateLocationItem = (userUID, item, newItem)=>{
 }
 
 
-/*export const retrieveInventory = (userUID) => {
+// ตรวจสอบว่ามี itemName ที่ซ้ำกับ newItemName ใน Firebase หรือไม่
+export const checkDuplicateItem = async (userUID, newItemName) => {
+    try {
+        const inventory = await retrieveInventory(userUID);
+        const isDuplicate = inventory.all.some(item => item.itemName === newItemName.itemName);        
+        if (isDuplicate) {
+            // ใช้เมธอด some เพื่อตรวจสอบว่ามีชื่อสินค้าซ้ำหรือไม่
+            console.log('return: ' + isDuplicate)
+            return isDuplicate;
+        } else {
+            // กรณีไม่พบข้อมูลใน inventory
+            console.log("No inventory data found.");
+            return false;
+        }
+    } catch (error) {
+        console.error("Error checking duplicate item:", error);
+        throw error;
+    }
+};
+
+export const retrieveCurrencyPet = (userUID) => {
+    const CurrencyData = {
+        Money:0,
+        Ruby:0,
+        Guarantee:8
+    };
     return firestore()
-        .collection('inventory')
+        .collection('pets')
         .doc(userUID)
         .get()
-        .then((doc) => {
-            if (doc.exists) {
-                const ItemType = doc.data().ItemType;
-                return ItemType;
+        .then((data) => {
+            if (data.exists) { 
+                CurrencyData.Money = data.data().Money
+                CurrencyData.Ruby = data.data().Ruby
+                CurrencyData.Guarantee = data.data().Guarantee
+                return CurrencyData;
             } else {
-                // กรณีไม่พบเอกสาร
-                console.log("No such document555");
+                alert('field not have')
                 return null;
-            }        
+            }
         })
         .catch((error) => {
-            // กรณีเกิดข้อผิดพลาดในการดึงข้อมูล
-            console.error("Error getting document:", error);
-            throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+            console.error("Error retrieving CurrencyData:", error);
+            throw error;
         });
-}*/
+};
 
+export const updateMoneyBalance = async (userUID, newBalance) => {
+    try {
+        await firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                Money: newBalance
+            });
+        console.log("Money balance updated successfully!");
+    } catch (error) {
+        console.error("Error updating money balance: ", error);
+        throw error;
+    }
+};
 
 /*---------------------------------------------------------------------*/
 
@@ -2556,3 +2486,59 @@ export const finalReward = async (userUID, checkedQuest ) => {
     }
 };
 
+export const updateRubyBalance = async (userUID, newRuby) => {
+    try {
+        await firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                Ruby: newRuby
+            });
+        console.log("Ruby balance updated successfully!");
+    } catch (error) {
+        console.error("Error updating Ruby balance: ", error);
+        throw error;
+    }
+};
+
+export const updateGuarantee = async (userUID, newGuarantee) => {
+    try {
+        await firestore()
+            .collection('pets')
+            .doc(userUID)
+            .update({
+                Guarantee: newGuarantee
+            });
+        console.log("Guarantee balance updated successfully!");
+    } catch (error) {
+        console.error("Error updating Guarantee: ", error);
+        throw error;
+    }
+};
+//update seen เป็น true ใน quest ที่มี rewardStatus เป็น true
+export const updateAllQuestSeenStatus = (userUID, questArray) => {
+    const firestore = firebase.firestore();
+    const docRef = firestore.collection('pets').doc(userUID);
+
+    // ตรวจสอบว่า questArray ไม่ใช่ค่า null หรือ undefined
+    if (questArray && questArray.length > 0) {
+        const updatedQuestArray = questArray.map((quest) => {
+            if (quest.rewardStatus) {
+                return { ...quest, seen: true };
+            } else {
+                return quest;
+            }
+        });
+
+        return docRef.update({ quest: updatedQuestArray })
+            .then(() => {
+                console.log('Seen status updated successfully for quests with rewardStatus = true');
+            })
+            .catch((error) => {
+                console.error('Error updating seen status:', error);
+                throw error;
+            });
+    } else {
+        return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
+    }
+};

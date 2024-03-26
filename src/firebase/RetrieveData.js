@@ -472,7 +472,8 @@ export const retrieveInventory = (userUID)=>{
     const inventory = {
         all:[],
         wall:[],
-        table:[]
+        table:[],
+        forUse:[]
     };
     
     return firestore()
@@ -480,21 +481,25 @@ export const retrieveInventory = (userUID)=>{
     .doc(userUID)
     .get()
     .then((data)=>{
-        if(data.exists){
+        if(data){
             const allData = data.data().inventory;
             //console.log(allData);
-            allData.forEach(element => {
-                if(element.itemType == 'wall'){
-                    inventory.wall.push(element)
-                }
-                if(element.itemType == 'table'){
-                    inventory.table.push(element)
-                }
-
-                inventory.all.push(element)
-            });
-
-            //console.log(inventory)
+            if(allData){
+                allData.forEach(element => {
+                    if(element.itemType == 'wall'){
+                        inventory.wall.push(element)
+                    }
+                    if(element.itemType == 'table'){
+                        inventory.table.push(element)
+                    }
+                    if(element.itemType == 'ไอเทมกดใช้'){
+                        inventory.forUse.push(element)
+                    }
+    
+                    inventory.all.push(element)
+                });
+            }
+            //console.log(`AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: ${inventory.all}`)
             return inventory
         }
     })

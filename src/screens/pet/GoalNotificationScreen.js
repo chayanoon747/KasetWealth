@@ -2,11 +2,11 @@ import React, { useState,useEffect } from 'react';
 import { View,Touchable,Image,Text, ScrollView, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IconAntDesign from 'react-native-vector-icons/AntDesign'
-import { retrieveAllDataQuest } from "../../firebase/UserModel";
+import { retrieveAllDataQuest , retrieveAllDataQuestNew } from "../../firebase/UserModel";
 import { useSelector, useDispatch} from 'react-redux';
 import { retrieveQuestDaliyAndWeek } from "../../firebase/UserModel"
 import { setHasNotification,setCameFromNoti, setIsUpdate} from "../../redux/variableSlice";
-import { updateAllQuestSeenStatus} from '../../firebase/UserModel';
+import { updateAllQuestSeenStatus } from '../../firebase/UserModel';
 export const GoalNotificationScreen = ({navigation}) => {
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
@@ -15,6 +15,8 @@ export const GoalNotificationScreen = ({navigation}) => {
     const [questPersonalData, setQuestPersonalData] = useState([])
     const [questDaily, setQuestDaily] = useState([])
     const [questWeekly, setQuestWeekly] = useState([])
+    const [questAll, setQuestAll] = useState([])
+
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
     const hasNotification = useSelector(state => state.variables.hasNotification);
@@ -29,21 +31,12 @@ export const GoalNotificationScreen = ({navigation}) => {
 
     const getQuestData = async()=>{
         try{
-            const itemAllDataQuestPersonal = await retrieveAllDataQuest(userUID)
-            const itemAllDataQuestDailyAndWeek = await retrieveQuestDaliyAndWeek();
-            setQuestPersonalData(itemAllDataQuestPersonal)
-            // setQuestDailyAndWeekly(itemAllDataQuestDailyAndWeek)
-            setQuestDaily(itemAllDataQuestDailyAndWeek.daily)
-            //console.log(itemAllDataQuestDailyAndWeek.daily)
-            setQuestWeekly(itemAllDataQuestDailyAndWeek.weekly)
-            //console.log(itemAllDataQuestDailyAndWeek.weekly)
-            //console.log(itemAllDataQuestPersonal)
-            //console.log(itemAllDataQuestDailyAndWeek.weekly.length)
-            //console.log(itemAllDataQuestPersonal.length)
-            const combinedData = [...itemAllDataQuestPersonal, ...itemAllDataQuestDailyAndWeek.daily, ...itemAllDataQuestDailyAndWeek.weekly];
-            //console.log(checkNotiRed(combinedData))
-            setHasNotification(checkNotiRed(combinedData))
-            //console.log(hasNotification)
+            const itemAllDataQuest = await retrieveAllDataQuestNew(userUID)
+            setQuestPersonalData(itemAllDataQuest.personal)
+            setQuestDaily(itemAllDataQuest.daily)
+            setQuestWeekly(itemAllDataQuest.weekly)
+            setQuestAll(itemAllDataQuest.all)
+            setHasNotification(checkNotiRed(itemAllDataQuest.all))
             setFinish(true);
             console.log("successful retrieve")
         }catch (error) {
@@ -61,17 +54,8 @@ export const GoalNotificationScreen = ({navigation}) => {
             return true
        } 
     }
-    const renderItemPersonalGoal = ({ item }) => (
-        checkRewardAndSeen(item) ? (
-            <View style={styles.DetailQuestContainer}>
-                <View style={styles.BulletPoint}>
-                    <Text style={styles.BulletPoint}>{'\u2022'}</Text>
-                    <Text style={styles.DetailQuestText}>{item.subCategory} {item.value} บาท</Text>
-                </View>
-            </View>
-        ) : null
-    );
-    const renderItemQuestDailyAndWeekly = ({ item }) => (
+    //สร้างใหม่
+    const renderItemQuest = ({ item }) => (
         checkRewardAndSeen(item) ? (
             <View style={styles.DetailQuestContainer}>
                 <View style={styles.BulletPoint}>
@@ -102,7 +86,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                                 dispatch(setCameFromNoti(true));
                                 dispatch(setHasNotification(false))
                                 dispatch(setIsUpdate(!isUpdate))
-                                updateAllQuestSeenStatus(userUID,questPersonalData)
+                                updateAllQuestSeenStatus(userUID,questAll)
                                 navigation.navigate("PetQuestStackNav");
                             }
                             
@@ -114,7 +98,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                 <View>  
                     <FlatList
                         data={questDaily}
-                        renderItem={renderItemQuestDailyAndWeekly}
+                        renderItem={renderItemQuest}
                         keyExtractor={(item,index) => index.toString()}
                         scrollEnabled={false}
                     />
@@ -138,7 +122,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                                 dispatch(setCameFromNoti(true));
                                 dispatch(setHasNotification(false))
                                 dispatch(setIsUpdate(!isUpdate))
-                                updateAllQuestSeenStatus(userUID,questPersonalData)
+                                updateAllQuestSeenStatus(userUID,questAll)
                                 navigation.navigate("PetQuestStackNav");
                             }
                         
@@ -150,7 +134,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                 <View>
                     <FlatList
                         data={questWeekly}
-                        renderItem={renderItemQuestDailyAndWeekly}
+                        renderItem={renderItemQuest}
                         keyExtractor={(item,index) => index.toString()}
                         scrollEnabled={false}
                     />
@@ -174,7 +158,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                                 dispatch(setCameFromNoti(true));
                                 dispatch(setHasNotification(false))
                                 dispatch(setIsUpdate(!isUpdate))
-                                updateAllQuestSeenStatus(userUID,questPersonalData)
+                                updateAllQuestSeenStatus(userUID,questAll)
                                 navigation.navigate("PetQuestStackNav");
                             }
                         }}
@@ -185,7 +169,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                 <View>
                     <FlatList
                         data={questPersonalData}
-                        renderItem={renderItemPersonalGoal}
+                        renderItem={renderItemQuest}
                         keyExtractor={(item,index) => index.toString()}
                         scrollEnabled={false}
                     />
