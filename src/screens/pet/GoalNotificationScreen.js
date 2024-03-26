@@ -16,6 +16,7 @@ export const GoalNotificationScreen = ({navigation}) => {
     const [questDaily, setQuestDaily] = useState([])
     const [questWeekly, setQuestWeekly] = useState([])
     const [questAll, setQuestAll] = useState([])
+    const [questStateTrue, setQuestStateTrue] = useState([])
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
@@ -36,7 +37,10 @@ export const GoalNotificationScreen = ({navigation}) => {
             setQuestDaily(itemAllDataQuest.daily)
             setQuestWeekly(itemAllDataQuest.weekly)
             setQuestAll(itemAllDataQuest.all)
+            setQuestStateTrue(itemAllDataQuest.statetrue)
             setHasNotification(checkNotiRed(itemAllDataQuest.all))
+            //console.log("daily: "+checkNotiRed(questDaily))
+            //console.log("all: "+checkNotiRed(questAll))
             setFinish(true);
             console.log("successful retrieve")
         }catch (error) {
@@ -46,11 +50,11 @@ export const GoalNotificationScreen = ({navigation}) => {
 
     //ทำเพิ่ม
     function checkNotiRed(items) {
-        return items.some(item => item.rewardStatus && !item.seen);
+        return items.some(item => !item.rewardStatus && !item.seen && item.questState);
     }
     
     function checkRewardAndSeen(item){
-       if(item.rewardStatus == true && item.seen == false){
+       if(item.rewardStatus == false && item.seen == false && item.questState == true){
             return true
        } 
     }
@@ -72,7 +76,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                 <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         {checkNotiRed(questDaily) &&(
-                            <Image source={{uri: hasNotification
+                            <Image source={{uri: checkNotiRed(questDaily)
                             ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206157453813743616/RedCircle.png?ex=65dafcaa&is=65c887aa&hm=1c41bd2aece039fa0115029aeb50185b13c5fa0f621a2ca65e1ae082907ad0a2&'
                             : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206170460136546354/WhiteCircle.png?ex=65db08c7&is=65c893c7&hm=cfc79a0c4ce3b57c898a4da4464adaac60450080b905c9ab8fb800ff7589ab03&'
                             }} width={10} height={10} 
@@ -108,7 +112,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                 <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         {checkNotiRed(questWeekly) &&(
-                            <Image source={{uri: hasNotification
+                            <Image source={{uri: checkNotiRed(questWeekly)
                                 ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206157453813743616/RedCircle.png?ex=65dafcaa&is=65c887aa&hm=1c41bd2aece039fa0115029aeb50185b13c5fa0f621a2ca65e1ae082907ad0a2&'
                                 : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206170460136546354/WhiteCircle.png?ex=65db08c7&is=65c893c7&hm=cfc79a0c4ce3b57c898a4da4464adaac60450080b905c9ab8fb800ff7589ab03&'
                             }} width={10} height={10} 
@@ -144,7 +148,7 @@ export const GoalNotificationScreen = ({navigation}) => {
                 <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         {checkNotiRed(questPersonalData) &&(
-                            <Image source={{uri: hasNotification
+                            <Image source={{uri: checkNotiRed(questPersonalData)
                                 ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206157453813743616/RedCircle.png?ex=65dafcaa&is=65c887aa&hm=1c41bd2aece039fa0115029aeb50185b13c5fa0f621a2ca65e1ae082907ad0a2&'
                                 : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206170460136546354/WhiteCircle.png?ex=65db08c7&is=65c893c7&hm=cfc79a0c4ce3b57c898a4da4464adaac60450080b905c9ab8fb800ff7589ab03&'
                             }} width={10} height={10} 
