@@ -1,20 +1,39 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { AssetLiabilityDetailScreen } from "../main/AssetLiabilityDetailScreen";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
-import { setItemTransactionType } from "../../redux/variableSlice";
-import { AddGoalScreen } from "./AddGoalScreen";
-import { retrieveAllDataQuest } from "../../firebase/UserModel";
+import { changeFinished,changeRewards,finalReward, retrieveFinishedQuest } from "../../firebase/UserModel";
+import { retrievePersonalQuest,retrieveAllQuest,retrieveCurrentQuestTime,retrieveStampQuestTime } from "../../firebase/UserModel";
+import { precheckDailyQuest, precheckPersonalQuest, precheckWeeklyQuest} from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
-import { setItemCategory } from "../../redux/variableSlice";
-import { useFocusEffect } from '@react-navigation/native';
 import { setCameFromNoti } from "../../redux/variableSlice";
 
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
-    const [questDataSelected, setQuestDataSelected] = useState({})
+
     const [petImageData, setPetImageData] = useState(null);
+
+    const [allQuestSelected,setAllQuestSelected] = useState({})
+    const [personalQuestSelected, setPersonalQuestSelected] = useState({})
+    const [trackingFinishedQuest,setTrackingFinishedQuest] = useState({})
+
+    const [dailyProgression,setDailyProgression] = useState({})
+    const [weeklyProgression,setWeeklyProgression] = useState({})
+    const [personalProgression,setPersonalProgression] = useState({})
+
+    const [finish,setFinish] = useState(false)
+    const [finishDailyProgression,setFinishDailyProgression] = useState(false)
+    const [finishWeeklyProgression,setFinishWeeklyProgression] = useState(false)
+    const [finishPersonalProgression,setFinishPersonalProgression] = useState(false)
+    const [finishChangeButton,setFinishChangeButton] = useState(false)
+
+    const [stampTime,setStampTime] = useState({})
+    const [questRounds,setQuestRounds] = useState({})
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const formattedCurrentDate = `${year}-${month}-${day}`;
     
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
@@ -28,26 +47,74 @@ export const GameQuest = ({navigation})=>{
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
     
     useEffect(() => {
-      getQuestData()
+      getPQuestData()
+      getAllQuest()
+      if(finish){
+        getProgression() 
+        //console.log(dailyProgression)
+        }
+    if(finishDailyProgression){
+        const checked = checkDailyQuest()
+        handleChangedFinished(checked)
+    }
+    if(finishWeeklyProgression){
+        const checked = checkWeeklyQuest()
+        handleChangedFinished(checked)
+    }
+    if(finishPersonalProgression){
+        const checked = checkPersonalQuest()
+        handleChangedFinished(checked)
+    }
       dispatch(setCameFromNoti(false))
       console.log("มาแล้ว")
-    }, [isUpdate]);
+    }, [isUpdate,finish,finishDailyProgression,finishWeeklyProgression,finishPersonalProgression,finishChangeButton]);
 
-    const getQuestData = async()=>{
+    const getPQuestData = async()=>{
       try{
-          const itemAllDataQuest = await retrieveAllDataQuest(userUID)
-          setQuestDataSelected(itemAllDataQuest)
-
-          
+          const itemAllDataQuest = await retrievePersonalQuest(userUID)
+          setPersonalQuestSelected(itemAllDataQuest)  
       }catch (error) {
           console.error('Error getQuestData:', error);
       }  
     }
 
+    const getAllQuest = async()=>{
+      try{
+        const itemAllQuest = await retrieveAllQuest(userUID)
+        setAllQuestSelected(itemAllQuest)
+        const itemQuestFinished = await retrieveFinishedQuest(userUID)
+        setTrackingFinishedQuest(itemQuestFinished)
+        const itemTime = await retrieveStampQuestTime(userUID)
+        setStampTime(itemTime)
+        const itemTime2 = await retrieveCurrentQuestTime(userUID)
+        setQuestRounds(itemTime2)
+        setFinish(true)
+      }catch (error) {
+          console.error('Error getAllQuest:', error);
+      }
+    }
+
+    const getProgression = async()=>{
+      try{
+          //onsole.log(allQuestSelected.Daily) มีข้อมูลแล้ว
+          const itemDailyQuest = await precheckDailyQuest(userUID,allQuestSelected.Daily,formattedCurrentDate)
+          setDailyProgression(itemDailyQuest)
+          setFinishDailyProgression(true)
+          const itemWeeklyQuest = await precheckWeeklyQuest(userUID,allQuestSelected.Weekly,questRounds)
+          setWeeklyProgression(itemWeeklyQuest)
+          setFinishWeeklyProgression(true)
+          const itemPersonalQuest = await precheckPersonalQuest(userUID,allQuestSelected.Personal)
+          setPersonalProgression(itemPersonalQuest)
+          setFinishPersonalProgression(true)
+      }catch (error) {
+          console.error('Error getProgression:',error);
+      }
+    }
+
     useEffect(() => {
       getImageData()
       dispatch(setCameFromNoti(false));
-    }, [isUpdate]);   
+    }, [isUpdate,finishChangeButton]);   
 
     const getImageData = async()=>{
         try{
@@ -58,6 +125,259 @@ export const GameQuest = ({navigation})=>{
             console.error('Error getImageData:', error);
         }  
     }
+
+    const checkDailyQuest = ()=>{
+      const updatedQuest=[]
+      if(allQuestSelected.Daily != undefined){
+        allQuestSelected.Daily.forEach(element=>{
+          if(element.questState == false){
+            if(element.transactionType == 'รายได้'){
+              let incomeUnit =0
+              dailyProgression.Income.forEach(element1=>{
+                incomeUnit += element1.value
+              })
+              if(incomeUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("daily quest income finished")
+                console.log(element)
+              }
+            }
+            if(element.transactionType == 'สินทรัพย์'){
+              let assetUnit =0
+              dailyProgression.Assest.forEach(element1=>{
+                assetUnit += element1.value
+              })
+              if(assetUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("daily quest asset finished")
+                console.log(element)
+              }
+            }
+            if(element.transactionType == 'ค่าใช้จ่าย'){
+              let expenseUnit =0
+              dailyProgression.Expense.forEach(element1=>{
+                expenseUnit += element1.value
+              })
+              if(expenseUnit<element.value ){
+                const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
+                const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+
+                const stampTimeAsDateObject = new Date(stampTime)
+                const stampTimetimestamp = stampTimeAsDateObject.getTime()
+                const daydif = (formattedCurrentDatetimestamp-stampTimetimestamp)/86400000;
+                if(daydif >= 1){
+                  updatedQuest.push(element)
+                  console.log("daily quest asset finished")
+                  console.log(element)
+                }
+              }
+            }
+            if(element.transactionType == 'หนี้สิน'){
+              let debtUnit = 0
+              dailyProgression.Debt.forEach(element1=>{
+                debtUnit += element1.value
+              })
+              if(debtUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("daily quest debt finished")
+                console.log(element)
+              }
+            }
+          }
+        })
+        console.log(updatedQuest)
+        return updatedQuest
+      }
+    }
+
+    //แก้ให้เป็นรายสัปดาห์
+    const checkWeeklyQuest = ()=>{
+      const updatedQuest=[]
+      //console.log(allQuestSelected.Weekly)
+      if(allQuestSelected.Weekly != undefined){
+        allQuestSelected.Weekly.forEach(element=>{
+          if(element.questState == false){
+            if(element.transactionType == 'รายได้'){
+              let incomeUnit =0
+              weeklyProgression.Income.forEach(element1=>{
+                incomeUnit += element1.value
+              })
+              if(incomeUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("weekly quest income finished")
+                console.log(element)
+              }
+            }
+            if(element.transactionType == 'สินทรัพย์'){
+              let assetUnit =0
+              weeklyProgression.Assest.forEach(element1=>{
+                assetUnit += element1.value
+              })
+              if(assetUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("weekly quest asset finished")
+                console.log(element)
+              }
+            }
+            if(element.transactionType == 'ค่าใช้จ่าย'){
+              let expenseUnit =0
+              weeklyProgression.Expense.forEach(element1=>{
+                expenseUnit += element1.value
+              })
+              if(expenseUnit<element.value ){
+                const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
+                const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+
+                const questRoundsAsDateObject = new Date(questRounds)
+                const questRoundstimestamp = questRoundsAsDateObject.getTime()
+                const daydif = (formattedCurrentDatetimestamp-questRoundstimestamp)/86400000;
+                if(daydif >= 7){
+                  updatedQuest.push(element)
+                  console.log("weekly quest asset finished")
+                  console.log(element)
+                }
+              }
+            }
+            if(element.transactionType == 'หนี้สิน'){
+              let debtUnit = 0
+              weeklyProgression.Debt.forEach(element1=>{
+                debtUnit += element1.value
+              })
+              if(debtUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("weekly quest debt finished")
+                console.log(element)
+              }
+            }
+          }
+        })
+        console.log(updatedQuest)
+        return updatedQuest
+      }
+    }
+
+    const checkPersonalQuest = ()=>{
+      const updatedQuest=[]
+      //console.log(allQuestSelected.Weekly)
+      if(personalQuestSelected != undefined){
+        personalQuestSelected.forEach(element=>{
+          if(element.questState == false){
+            if(element.transactionType == 'รายได้'){
+              let incomeUnit =0
+              personalProgression.Income.forEach(element1=>{
+                incomeUnit += element1.value
+              })
+              if(incomeUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("Personal quest income finished")
+                console.log(element)
+              }
+            }
+            if(element.transactionType == 'สินทรัพย์'){
+              let assetUnit =0
+              personalProgression.Assest.forEach(element1=>{
+                assetUnit += element1.value
+              })
+              if(assetUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("Personal quest asset finished")
+                console.log(element)
+              }
+            }
+            if(element.transactionType == 'หนี้สิน'){
+              let debtUnit = 0
+              personalProgression.Debt.forEach(element1=>{
+                debtUnit += element1.value
+              })
+              if(debtUnit>=element.value){
+                updatedQuest.push(element)
+                console.log("Personal quest debt finished")
+                console.log(element)
+              }
+            }
+          }
+        })
+        console.log(updatedQuest)
+        return updatedQuest
+      }
+    }
+
+    const handleChangedFinished =async(checked)=>{
+      await changeFinished(allQuestSelected,checked,userUID)
+    }
+
+    const handleDailyQuestReward = (index)=>{
+      if((allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[index]&&allQuestSelected.Daily[index].questState) === false) {
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={true}>
+          <Image source={require('../../assets/Vector.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+          </TouchableOpacity>
+      }
+      if((allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[index]&&allQuestSelected.Daily[index].questState) === true && (allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[index]&&allQuestSelected.Daily[index].rewardStatus) === false){
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} 
+        onPress={()=>{handleButton()}}>
+          <Image source={require('../../assets/greenMark.png')} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+          </TouchableOpacity>
+      }
+      if((allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[index]&&allQuestSelected.Daily[index].questState) === true && (allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[index]&&allQuestSelected.Daily[index].rewardStatus) === true){
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={true}>
+          <Image source={require('../../assets/grayMark.png')} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+          </TouchableOpacity>
+      }
+    }
+
+    const handleWeeklyQuestReward = (index)=>{
+      if((allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[index]&&allQuestSelected.Weekly[index].questState) === false) {
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={true}>
+          <Image source={require('../../assets/Vector.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+          </TouchableOpacity>
+        }
+      if((allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[index]&&allQuestSelected.Weekly[index].questState) === true && (allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[index]&&allQuestSelected.Weekly[index].rewardStatus) === false){
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} 
+        onPress={()=>handleButton()}>
+          <Image source={require('../../assets/greenMark.png')} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+          </TouchableOpacity>
+        }
+      if((allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[index]&&allQuestSelected.Weekly[index].questState) === true && (allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[index]&&allQuestSelected.Weekly[index].rewardStatus) === true){
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={true}>
+          <Image source={require('../../assets/grayMark.png')} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+          </TouchableOpacity>
+        }
+    }
+
+    const handlePQuestReward = (index)=>{
+      if((personalQuestSelected[index]&&personalQuestSelected[index].questState) === false) {
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={true}>
+          <Image source={require('../../assets/Vector.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+          </TouchableOpacity>
+      }
+      if((personalQuestSelected[index]&&personalQuestSelected[index].questState) === true && (personalQuestSelected[index]&&personalQuestSelected[index].rewardStatus) === false){
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} 
+        onPress={()=>{handleButton()}}>
+          <Image source={require('../../assets/greenMark.png')} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+          </TouchableOpacity>
+      }
+      if((personalQuestSelected[index]&&personalQuestSelected[index].questState) === true && (personalQuestSelected[index]&&personalQuestSelected[index].rewardStatus) === true){
+        return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
+        backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={true}>
+          <Image source={require('../../assets/grayMark.png')} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+          </TouchableOpacity>
+      }
+    }
+
+  const handleButton=async()=>{
+    //console.log(trackingFinishedQuest)
+    await finalReward(userUID,trackingFinishedQuest)
+    await changeRewards(userUID,trackingFinishedQuest)
+    setFinishChangeButton(!finishChangeButton)
+  }
 
     let selectedPetImageIndex = 0;
     if (totalGuage > 7) {
@@ -78,22 +398,18 @@ export const GameQuest = ({navigation})=>{
             </View>
 
             <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-              <Text style={styles.headerText}>    {item.subCategory} {item.value} บาท</Text>
-              <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Personal Goal</Text>
-            </View>
-            
-            <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
-            backgroundColor: '#0ABAB5',alignSelf: 'center',transform: [{translateY: -5}] }}>
-              <Image source={require('../../assets/plus.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
-            </TouchableOpacity>
-
-        </View>
+              <Text style={styles.headerText}>    {item.detail} {item.value} บาท</Text>
+              <Text style={[styles.subHeaderText, {color: '#A9A9A9'}]}>    Personal Goal</Text>
+              </View>
+                    {/* //{handlePQuestReward()} */}
+              </View>
      
     </View>
 
       ) 
   }
 
+  //console.log(allQuestSelected.Weekly)
     return(
         <ScrollView style={{flex:1, padding:30, backgroundColor:'#B3DBD8'}}>
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff',height: 300}}>
@@ -110,29 +426,24 @@ export const GameQuest = ({navigation})=>{
 
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
                   <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/desktop.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+                    <Image source={{uri:allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[0] ?allQuestSelected.Daily[0].questPic:''}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
                   </View>
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-                    <Text style={styles.headerText}>    เก็บเงิน 100 บาท</Text>
-                    <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Daliy Quest</Text>
-                  </View>
-                  <View style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, backgroundColor: '#05E8B8',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/Group.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
-                  </View>
+                    <Text style={styles.headerText}>  {allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[0] ? allQuestSelected.Daily[0].detail:''} {allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[0]?allQuestSelected.Daily[0].value:''} บาท</Text>
+                    <Text style={[styles.subHeaderText, {color: '#A9A9A9'}]}>    Daliy Quest</Text>
+                    </View>
+                    {handleDailyQuestReward(0)}
                 </View>
 
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, marginVertical:10,backgroundColor:'#ffffff',transform: [{translateY: -10}],height: 60}}>
                   <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FFA656',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/barbell.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+                    <Image source={{uri:allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[1] ?allQuestSelected.Daily[1].questPic:''}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
                   </View>
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-                    <Text style={styles.headerText}>    บันทึกข้อมูลรายได้</Text>
-                    <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Daliy Quest</Text>
-                  </View>
-                  <View style={{flex:  0.75, flexDirection: 'column', alignItems: 'flex-end'}}>
-                    <Text style={[styles.bodyText, { transform: [{ translateY: -5 }] }]}>    ได้รับ 50 แต้ม</Text>
-                    <Image source={require('../../assets/Vector.png')} style={{ width: 15, height: 15,alignSelf: 'center',transform: [{ translateY: 3 }, { translateX: 50 }] }}/>
-                  </View>
+                    <Text style={styles.headerText}> {allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[1] ? allQuestSelected.Daily[1].detail:''} {allQuestSelected && allQuestSelected.Daily && allQuestSelected.Daily[1]?allQuestSelected.Daily[1].value:''} บาท</Text>
+                    <Text style={[styles.subHeaderText, {color: '#A9A9A9'}]}>    Daliy Quest</Text>
+                    </View>
+                    {handleDailyQuestReward(1)}
                 </View>
             
                 
@@ -140,46 +451,37 @@ export const GameQuest = ({navigation})=>{
             {/* Weekly Quest */}
             <View style={{flex:1, backgroundColor:'#B3DBD8',transform: [{translateY: 10}]}}>
                 
-                <Text style={[styles.department, styles.boldText, {color: '#2C6264'},{transform: [{ translateY: -10 }]}]}>Weekly Quest : ภารกิจรายสัปดาห์</Text>
+                <Text style={[styles.department, {color: '#2C6264'},{transform: [{ translateY: -10 }]}]}>Weekly Quest : ภารกิจรายสัปดาห์</Text>
 
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
-                  <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/desktop.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
-                  </View>
+                  <View style={{ width: 40, height: 40, borderRadius: 20,alignSelf: 'center',transform: [{translateY: -5}] }}>
+                    <Image source={{uri:allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[0] ?allQuestSelected.Weekly[0].questPic:''}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+                  </View> 
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-                    <Text style={styles.headerText}>    เก็บเงิน 100 บาท</Text>
-                    <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Weekly Quest</Text>
+                    <Text style={styles.headerText}> {allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[0] ? allQuestSelected.Weekly[0].detail:''} {allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[1]?allQuestSelected.Weekly[0].value:''} บาท</Text>
+                    <Text style={[styles.subHeaderText, {color: '#A9A9A9'}]}>    Weekly Quest</Text>
                   </View>
-                  <View style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, backgroundColor: '#05E8B8',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/Group.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
-                  </View>
+                    {handleWeeklyQuestReward(0)}
                 </View>
-
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, marginVertical:10,backgroundColor:'#ffffff',transform: [{translateY: -10}],height: 60}}>
-                  <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FFA656',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/barbell.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
-                  </View>
+                <View style={{ width: 40, height: 40, borderRadius: 20,alignSelf: 'center',transform: [{translateY: -5}] }}>
+                    <Image source={{uri:allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[1] ?allQuestSelected.Weekly[1].questPic:''}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+                  </View> 
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-                    <Text style={styles.headerText}>    ใช้จ่ายไม่เกิน 900 บาท</Text>
-                    <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Weekly Quest</Text>
-                  </View>
-                  <View style={{flex: 0.75, flexDirection: 'column', alignItems: 'flex-end'}}>
-                    <Text style={[styles.bodyText, { transform: [{ translateY: -5 }] }]}>    ได้รับ 50 แต้ม</Text>
-                    <Image source={require('../../assets/Vector.png')} style={{ width: 15, height: 15,alignSelf: 'center',transform: [{ translateY: 3 }, { translateX: 50 }] }}/>
-                  </View>
+                    <Text style={styles.headerText}>{allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[1] ? allQuestSelected.Weekly[1].detail:''} {allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[1]?allQuestSelected.Weekly[1].value:''} บาท</Text>
+                    <Text style={[styles.subHeaderText, {color: '#A9A9A9'}]}>    Weekly Quest</Text>
+                    </View>
+                    {handleWeeklyQuestReward(1)}
                 </View>
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, marginVertical:10,backgroundColor:'#ffffff',transform: [{translateY: -20}],height: 60}}>
-                  <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FD5B71',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/code-slash.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
-                  </View>
+                <View style={{ width: 40, height: 40, borderRadius: 20,alignSelf: 'center',transform: [{translateY: -5}] }}>
+                    <Image source={{uri:allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[2] ?allQuestSelected.Weekly[2].questPic:''}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+                  </View> 
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
-                    <Text style={styles.headerText}>    มีเงินเก็บ 5,000,000 บาท</Text>
-                    <Text style={[styles.subHeaderText,styles.boldText, {color: '#A9A9A9'}]}>    Weekly Quest</Text>
-                  </View>
-                  <View style={{flex: 0.75, flexDirection: 'column', alignItems: 'flex-end'}}>
-                    <Text style={[styles.bodyText, { transform: [{ translateY: -5 }] }]}>    ได้รับ 50 แต้ม</Text>
-                    <Image source={require('../../assets/Vector.png')} style={{ width: 15, height: 15,alignSelf: 'center',transform: [{ translateY: 3 }, { translateX: 50 }] }}/>
-                  </View>
+                    <Text style={styles.headerText}>{allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[2] ? allQuestSelected.Weekly[2].detail:''} {allQuestSelected && allQuestSelected.Weekly && allQuestSelected.Weekly[2]?allQuestSelected.Weekly[2].value:''} บาท</Text>
+                    <Text style={[styles.subHeaderText, {color: '#A9A9A9'}]}>    Weekly Quest</Text>
+                    </View>
+                    {handleWeeklyQuestReward(2)}
                 </View>
             
                 
@@ -190,7 +492,7 @@ export const GameQuest = ({navigation})=>{
                 <Text style={[styles.departmentPersonalGoal, styles.boldText, {color: '#2C6264'}]}>Personal Goal : เป้าหมายส่วนตัว</Text>
 
                 <FlatList 
-                    data={questDataSelected}
+                    data={personalQuestSelected}
                     renderItem={renderItem}
                     keyExtractor={(item, index) => index.toString()}
                     scrollEnabled={false}
@@ -199,7 +501,7 @@ export const GameQuest = ({navigation})=>{
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, 
                 marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
                   <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={require('../../assets/desktop.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
+                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1213008385612578856/game_questionMark.png?ex=65fd2397&is=65eaae97&hm=fb59b4103f2f12567a56b031641d19a35b22c74048858b56b0b9e71671ebcc8e&=&format=webp&quality=lossless&width=210&height=210'}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
                   </View>
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
                     <Text style={styles.headerText}>    ---</Text>
