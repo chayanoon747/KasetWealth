@@ -699,21 +699,20 @@ export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTra
     }
 };
 
-export const addPersonalGoal = (userUID, itemData, input) => {
-    const transactionId = uuid.v4();
+export const addPersonalGoal = (userUID, itemData, input, currentFormatedDate) => {
     if (input.value !== 0) {
         const personalGoal = {
-            transactionId: transactionId,
-            category: itemData.category,
-            subCategory: itemData.subCategory,
+            transactionType: itemData.category,
+            detail: itemData.subCategory,
             questPic: itemData.photoURL,
             questType: itemData.questType,
             questState: false,
             rewardStatus: false,
+            value: input.value,
             seen: false,
-            value: input.value
+            addDate: currentFormatedDate
         };
-
+        
         return firestore()
             .collection('pets')
             .doc(userUID)
@@ -1238,7 +1237,7 @@ export const  retrieveAllDataQuest = (userUID)=>{
         if(data.exists){
             const allData = data.data().quest;
             allData.forEach(element => {
-                if(element.category != ''){
+                if(element.questType != ''){
                     QuestData.push(element)
                 }
             });
@@ -1836,3 +1835,724 @@ export const updateLocationItem = (userUID, item, newItem)=>{
 
 
 /*---------------------------------------------------------------------*/
+
+export const addRandomQuest = async (userUID) => {
+    try {
+        const allQuest = await retrieveRandomQuest();
+        
+        // Add daily quests
+        for (const element of allQuest.daily) {
+            await addQuestToUser('pets', userUID, element);
+        }
+        
+        // Add weekly quests
+        for (const element of allQuest.weekly) {
+            await addQuestToUser('pets', userUID, element);
+        }
+
+        console.log("All quests added successfully!");
+    } catch (error) {
+        console.error("Error adding quests:", error);
+        throw error;
+    }
+}
+
+export const addRandomDailyQuest = async (userUID) => {
+    try {
+        const dailyQuests = await retrieveRandomDailyQuest();
+        await addQuestToUser('pets', userUID, dailyQuests[0]);
+        await addQuestToUser('pets', userUID, dailyQuests[1]);
+        console.log("Daily quests added successfully!");
+    } catch (error) {
+        console.error("Error adding daily quests:", error);
+        throw error;
+    }
+}
+
+export const addRandomWeeklyQuest = async (userUID) => {
+    try {
+        const weeklyQuests = await retrieveRandomWeeklyQuest();
+        await addQuestToUser('pets', userUID, weeklyQuests[0]);
+        await addQuestToUser('pets', userUID, weeklyQuests[1]);
+        await addQuestToUser('pets', userUID, weeklyQuests[2]);
+        console.log("Weekly quests added successfully!");
+    } catch (error) {
+        console.error("Error adding weekly quests:", error);
+        throw error;
+    }
+}
+
+const addQuestToUser = async (collection, userUID, element) => {
+    try {
+        await firestore().collection(collection).doc(userUID)
+            .update({
+                quest: firestore.FieldValue.arrayUnion(element)
+            });
+        console.log("Quest added successfully!");
+    } catch (error) {
+        console.error("Error adding quest:", error);
+        throw error;
+    }
+}
+
+export const retrieveRandomQuest = async () => {
+    try {
+        const allQuest = {
+            daily: [],
+            weekly: []
+        };
+
+        const dailyQuests = await retrieveRandomDailyQuest();
+        allQuest.daily = dailyQuests;
+
+        const weeklyQuests = await retrieveRandomWeeklyQuest();
+        allQuest.weekly = weeklyQuests;
+
+        return allQuest;
+    } catch (error) {
+        console.error("Error retrieving random quests:", error);
+        throw error;
+    }
+}
+
+export const retrieveRandomDailyQuest = async () => {
+    try {
+        const data = await firestore().collection('quests').doc('daily').get();
+        if (data.exists) {
+            const allData = data.data().quest;
+            const randomIndex1 = Math.floor(Math.random() * allData.length);
+            const randomIndex2 = Math.floor(Math.random() * allData.length);
+            return [allData[randomIndex1], allData[randomIndex2]];
+        } else {
+            throw new Error("No daily quests found");
+        }
+    } catch (error) {
+        console.error("Error retrieving random daily quests:", error);
+        throw error;
+    }
+}
+
+export const retrieveRandomWeeklyQuest = async () => {
+    try {
+        const data = await firestore().collection('quests').doc('weekly').get();
+        if (data.exists) {
+            const allData = data.data().quest;
+            const randomIndex1 = Math.floor(Math.random() * allData.length);
+            const randomIndex2 = Math.floor(Math.random() * allData.length);
+            const randomIndex3 = Math.floor(Math.random() * allData.length);
+            return [allData[randomIndex1], allData[randomIndex2], allData[randomIndex3]];
+        } else {
+            throw new Error("No weekly quests found");
+        }
+    } catch (error) {
+        console.error("Error retrieving random weekly quests:", error);
+        throw error;
+    }
+}
+
+export const  retrievePersonalQuest = (userUID)=>{
+    const QuestData = []
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(element => {
+                if(element.questType == 'Personal Goal'){
+                    QuestData.push(element)
+                }
+            });
+
+            return QuestData
+        }
+    })
+};
+
+export const newStampQuestTime = (userUID,formattedCurrentDate) => {
+    const newDate = formattedCurrentDate;
+    return firestore().collection('pets').doc(userUID)
+    .update({
+        stampQuestTime : newDate
+    })
+    .then(()=>{
+        console.log("Add Stamp Quest Time success")
+    })
+    .catch((error) => {
+        console.error("Error Stamp Quest Time:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
+
+export const newCurrentQuestTime = (userUID,formattedCurrentDate) => {
+    const newDate = formattedCurrentDate;
+    return firestore().collection('pets').doc(userUID)
+    .update({
+        currentQuestTime : newDate
+    })
+    .then(()=>{
+        console.log("Add Current Quest Time success")
+    })
+    .catch((error) => {
+        console.error("Error currentQuestTime:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
+
+export const retrieveAllQuest = (userUID)=>{
+    const allQuest ={
+        Personal:[],
+        Daily:[],
+        Weekly:[]
+    }
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(element=>{
+                if(element.questType == 'Personal'){
+                    allQuest.Personal.push(element)
+                }
+                if(element.questType == 'daily'){
+                    allQuest.Daily.push(element)
+                }
+                if(element.questType == 'weekly'){
+                    allQuest.Weekly.push(element)
+                }
+            });
+        return allQuest
+        }
+    })
+}
+
+export const retrieveFinishedQuest = (userUID)=>{
+    const finishedquest ={
+        Daily:[],
+        Weekly:[],
+        Personal:[]
+    }
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(element=>{
+                if(element.questType == 'daily' && element.questState == true && element.rewardStatus == false){
+                    finishedquest.Daily.push(element)
+                }
+                if(element.questType == 'weekly' && element.questState == true && element.rewardStatus == false){
+                    finishedquest.Weekly.push(element)
+                }
+                if(element.questType == 'Personal' && element.questState == true && element.rewardStatus == false){
+                    finishedquest.Personal.push(element)
+                }
+            });
+        return finishedquest
+        }
+    })
+}
+
+export const retrieveCurrentQuestTime = (userUID) => {
+    
+    return firestore().collection('pets').doc(userUID)
+    .get()
+    .then((doc) => {
+        if (doc.exists) {
+            const currentQuestTime = doc.data().currentQuestTime;
+            return currentQuestTime;
+        } else {
+            // กรณีไม่พบเอกสาร
+            console.log("No such document!");
+            return null;
+        }
+    })
+    .catch((error) => {
+        // กรณีเกิดข้อผิดพลาดในการดึงข้อมูล
+        console.error("Error getting document:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
+
+export const retrieveStampQuestTime = (userUID) => {
+    
+    return firestore().collection('pets').doc(userUID)
+    .get()
+    .then((doc) => {
+        if (doc.exists) {
+            const stampQuestTime = doc.data().stampQuestTime;
+            return stampQuestTime;
+        } else {
+            // กรณีไม่พบเอกสาร
+            console.log("No such document!");
+            return null;
+        }
+    })
+    .catch((error) => {
+        // กรณีเกิดข้อผิดพลาดในการดึงข้อมูล
+        console.error("Error getting document:", error);
+        throw error; // สามารถเลือกที่จะ throw ข้อผิดพลาดต่อหน้าไปหรือไม่ก็ได้
+    });
+}
+
+export const delDailyQuest = async (userUID) => {
+    try {
+        const questData = await retrieveAllDataQuest(userUID);
+        for (const element of questData) {
+            if (element.questType === 'daily') {
+                await firestore().collection('pets').doc(userUID).update({
+                    quest: firestore.FieldValue.arrayRemove(element)
+                });
+            }
+        }
+        console.log("Quests deleted successfully!");
+    } catch (error) {
+        console.error("Error deleting quests:", error);
+        throw error;
+    }
+}
+
+
+export const delWeeklyQuest = async(userUID)=>{
+    const questData = await retrieveAllDataQuest(userUID);
+    questData.forEach(element => {
+        if(element.questType == 'weekly'){
+            return firestore().collection('pets').doc(userUID)
+            .update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            })
+            .then(() => {
+                console.log("Quests deleted successfully!");
+            })
+            .catch((error) => {
+                console.error("Error deleting quests:", error);
+                throw error;
+            });
+        }
+    })
+}
+
+export const precheckDailyQuest = (userUID,dailyQuestSelected,formattedCurrentDate)=>{
+    const progression = {
+      Income:[],
+      Expense:[],
+      Assest:[],
+      Debt:[],
+    }
+    return firestore().collection('financials').doc(userUID).get()
+    .then((data)=>{
+      if (data.exists){
+        const allData = data.data().transactions;
+        allData.forEach(element=>{
+          if(element.date == formattedCurrentDate){
+            dailyQuestSelected.forEach(element1=>{
+              if(element1.transactionType == element.transactionType){
+                if(element.transactionType == 'รายได้'){
+                  progression.Income.push(element)
+                }
+                if(element.transactionType == 'สินทรัพย์'){
+                  progression.Assest.push(element)
+                }
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                  progression.Expense.push(element)
+                }
+                if(element.transactionType == 'ค่าใช้จ่าย' && (element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)')){
+                  progression.Debt.push(element)
+                }
+              }
+            })
+          }
+        })
+        
+        return progression
+      }
+    })
+    .catch((error) => {
+        console.error("Error precheckDailyQuest:", error);
+        throw error;
+    });
+}
+
+export const precheckWeeklyQuest = (userUID,QuestSelected,formattedCurrentDate)=>{
+    const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
+    const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+
+    const Day2 = formattedCurrentDatetimestamp+86400000
+    const Day3 = formattedCurrentDatetimestamp+172800000
+    const Day4 = formattedCurrentDatetimestamp+259200000
+    const Day5 = formattedCurrentDatetimestamp+345600000
+    const Day6 = formattedCurrentDatetimestamp+432000000
+    const Day7 = formattedCurrentDatetimestamp+518400000
+
+    const nDay1 = convertDate(formattedCurrentDate)
+    const nDay2 = convertDate(Day2)
+    const nDay3 = convertDate(Day3)
+    const nDay4 = convertDate(Day4)
+    const nDay5 = convertDate(Day5)
+    const nDay6 = convertDate(Day6)
+    const nDay7 = convertDate(Day7)
+
+    const progression = {
+      Income:[],
+      Expense:[],
+      Assest:[],
+      Debt:[],
+    }
+    return firestore().collection('financials').doc(userUID).get()
+    .then((data)=>{
+      if (data.exists){
+        const allData = data.data().transactions;
+        allData.forEach(element=>{
+          if(element.date == nDay1 || element.date == nDay2 || element.date == nDay3 || element.date == nDay4 || element.date == nDay5 || element.date == nDay6 || element.date == nDay7){
+            QuestSelected.forEach(element1=>{
+              if(element1.transactionType == element.transactionType){
+                if(element.transactionType == 'รายได้'){
+                  progression.Income.push(element)
+                }
+                if(element.transactionType == 'สินทรัพย์'){
+                  progression.Assest.push(element)
+                }
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                  progression.Expense.push(element)
+                }
+                if(element.transactionType == 'ค่าใช้จ่าย' && (element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)')){
+                  progression.Debt.push(element)
+                }
+              }
+            })
+          }
+        })
+        
+        return progression
+      }
+    })
+    .catch((error) => {
+        console.error("Error precheckDailyQuest:", error);
+        throw error;
+    });
+}
+
+export const precheckPersonalQuest = (userUID, QuestSelected) => {
+    const progression = {
+        Income: [],
+        Expense: [],
+        Assest: [],
+        Debt: [],
+    };
+
+    return firestore()
+        .collection('financials')
+        .doc(userUID)
+        .get()
+        .then((data) => {
+            if (data.exists) {
+                const allData = data.data().transactions;
+                allData.forEach((element) => {
+                    const elementDate = element.date;
+                    if (elementDate >= QuestSelected.addDate) {
+                        QuestSelected.forEach((element1) => {
+                            if (element1.transactionType === element.transactionType) {
+                                if (element.transactionType === 'รายได้') {
+                                    progression.Income.push(element);
+                                }
+                                if (element.transactionType === 'สินทรัพย์') {
+                                    progression.Assest.push(element);
+                                }
+                                if (element.transactionType === 'ค่าใช้จ่าย') {
+                                    progression.Expense.push(element);
+                                    if (
+                                        element.category === 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' ||
+                                        element.category === 'ค่าใช้จ่ายคงที่(ชำระหนี้)'
+                                    ) {
+                                        progression.Debt.push(element);
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+
+                return progression;
+            }
+        })
+        .catch((error) => {
+            console.error("Error precheckDailyQuest:", error);
+            throw error;
+        });
+};
+
+
+export const convertDate = (date) =>{
+    const nDate = new Date(date)
+    const year = nDate.getFullYear();
+    const month = (nDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+    const day = nDate.getDate().toString().padStart(2, '0');
+    const formattednDate = `${year}-${month}-${day}`;
+
+    return formattednDate
+}
+
+export const changeFinished = async (allQuestSelected, checked, userUID) => {
+    const filteredDailyQuests = allQuestSelected.Daily.filter(element1 => {
+        return checked.some(element => element.value == element1.value && element.transactionType == element1.transactionType);
+    }); 
+
+    const filteredWeeklyQuests = allQuestSelected.Weekly.filter(element1 => {
+      return checked.some(element => element.value == element1.value && element.transactionType == element1.transactionType);
+    });
+
+    const filteredPersonalQuests = allQuestSelected.Personal.filter(element1 => {
+        return checked.some(element => element.value == element1.value && element.transactionType == element1.transactionType);
+      });
+
+    const delDailypromises = filteredDailyQuests.map(async (element) => {
+        try {
+          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            });
+            console.log("Remove Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error;
+        }
+    });
+    const addDailypromises = filteredDailyQuests.map(async (element) => {
+      try {
+        element.questState = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+          await firestore().collection('pets').doc(userUID).update({
+              quest: firestore.FieldValue.arrayUnion(element)
+          });
+          console.log("Update Finished Quest successfully!");
+      } catch (error) {
+          console.error("Error Remove Finished Quest:", error);
+          throw error; 
+      }
+    });
+
+    const delWeeklypromises = filteredWeeklyQuests.map(async (element) => {
+      try {
+        //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+          await firestore().collection('pets').doc(userUID).update({
+              quest: firestore.FieldValue.arrayRemove(element)
+          });
+          console.log("Remove Finished Quest successfully!");
+      } catch (error) {
+          console.error("Error Remove Finished Quest:", error);
+          throw error;
+      }
+    });
+    const addWeeklypromises = filteredWeeklyQuests.map(async (element) => {
+        try {
+        element.questState = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayUnion(element)
+            });
+            console.log("Update Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error; 
+        }
+    });
+
+    const delPersonalpromises = filteredPersonalQuests.map(async (element) => {
+        try {
+          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            });
+            console.log("Remove Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error;
+        }
+    });
+    const addPersonalpromises = filteredPersonalQuests.map(async (element) => {
+      try {
+        element.questState = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+          await firestore().collection('pets').doc(userUID).update({
+              quest: firestore.FieldValue.arrayUnion(element)
+          });
+          console.log("Update Finished Quest successfully!");
+      } catch (error) {
+          console.error("Error Remove Finished Quest:", error);
+          throw error; 
+      }
+    });
+
+    await Promise.all(delDailypromises);
+    await Promise.all(addDailypromises);
+    await Promise.all(delWeeklypromises);
+    await Promise.all(addWeeklypromises);
+    await Promise.all(delPersonalpromises);
+    await Promise.all(addPersonalpromises);
+};
+
+export const changeRewards = async (userUID,checkedQuest) =>{
+    const trackingDailyQuest = checkedQuest.Daily
+    const trackingWeeklyQuest = checkedQuest.Weekly
+    const trackingPersonalQuest = checkedQuest.Personal
+
+    const delDailypromises = trackingDailyQuest.map(async (element) => {
+        try {
+          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            });
+            console.log("Remove Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error;
+        }
+    });
+    const addDailypromises = trackingDailyQuest.map(async (element) => {
+      try {
+        element.rewardStatus = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+          await firestore().collection('pets').doc(userUID).update({
+              quest: firestore.FieldValue.arrayUnion(element)
+          });
+          console.log("Update Finished Quest successfully!");
+      } catch (error) {
+          console.error("Error Remove Finished Quest:", error);
+          throw error; 
+      }
+    });
+
+    const delWeeklypromises = trackingWeeklyQuest.map(async (element) => {
+        try {
+          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            });
+            console.log("Remove Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error;
+        }
+    });
+    const addWeeklypromises = trackingWeeklyQuest.map(async (element) => {
+      try {
+        element.rewardStatus = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+          await firestore().collection('pets').doc(userUID).update({
+              quest: firestore.FieldValue.arrayUnion(element)
+          });
+          console.log("Update Finished Quest successfully!");
+      } catch (error) {
+          console.error("Error Remove Finished Quest:", error);
+          throw error; 
+      }
+    });
+
+    const delPersonalpromises = trackingPersonalQuest.map(async (element) => {
+        try {
+          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            });
+            console.log("Remove Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error;
+        }
+    });
+    const addPersonalpromises = trackingPersonalQuest.map(async (element) => {
+      try {
+        element.rewardStatus = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+          await firestore().collection('pets').doc(userUID).update({
+              quest: firestore.FieldValue.arrayUnion(element)
+          });
+          console.log("Update Finished Quest successfully!");
+      } catch (error) {
+          console.error("Error Remove Finished Quest:", error);
+          throw error; 
+      }
+    });
+
+    await Promise.all(delDailypromises);
+    await Promise.all(addDailypromises);
+    await Promise.all(delWeeklypromises);
+    await Promise.all(addWeeklypromises);
+    await Promise.all(delPersonalpromises);
+    await Promise.all(addPersonalpromises);
+}
+
+export const finalReward = async (userUID, checkedQuest ) => {
+    console.log(checkedQuest)
+
+    const rewards = {
+        Money: 0,
+        Ruby: 0
+    };
+
+    if (Object.keys(checkedQuest).length === 0 && checkedQuest.constructor === Object) {
+        console.log("test object is empty");
+      } else {
+        console.log("test object has values");
+        checkedQuest.Daily.forEach(element => {
+            console.log(element)
+            if (element.questType == 'daily') {
+                let moneyReward = element.value / 10;
+                rewards.Money += moneyReward;
+            }
+        })
+        console.log(checkedQuest.Weekly[0].questType)
+        checkedQuest.Weekly.forEach(element => {
+            if (element.questType == 'weekly') {
+                let moneyReward = element.value / 10;
+                let rubyReward = element.value / 30;
+                rewards.Money += moneyReward;
+                rewards.Ruby += rubyReward;
+            }
+        })
+        checkedQuest.Personal.forEach(element => {
+            if (element.questType == 'Personal') {
+                let moneyReward = element.value / 10;
+                rewards.Money += moneyReward;
+            }
+        })
+    }
+    
+    const newRewardAmount = async (rewards) => {
+        const oldValue = {
+            Money: 0,
+            Ruby: 0
+        };
+
+        const data = await firestore().collection('pets').doc(userUID).get();
+        if (data.exists) {
+            oldValue.Money = data.data().Money;
+            oldValue.Ruby = data.data().Ruby;
+        }
+
+        oldValue.Money += rewards.Money;
+        oldValue.Ruby += rewards.Ruby;
+
+        return oldValue;
+    };
+
+    const newReward = await newRewardAmount(rewards);
+
+    if (newReward.hasOwnProperty('Money')) {
+        await firestore().collection('pets').doc(userUID).update({
+            Money: newReward.Money
+        });
+    }
+
+    if (newReward.hasOwnProperty('Ruby')) {
+        await firestore().collection('pets').doc(userUID).update({
+            Ruby: newReward.Ruby
+        });
+    }
+};
+
