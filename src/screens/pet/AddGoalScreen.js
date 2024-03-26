@@ -18,6 +18,12 @@ export const AddGoalScreen = ({navigation})=>{
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const formattedCurrentDate = `${year}-${month}-${day}`;
+
     const setValue = (text) => {
         setInput(oldValue => ({
             ...oldValue,
@@ -33,7 +39,7 @@ export const AddGoalScreen = ({navigation})=>{
             const value = parseFloat(commaValue);
     
             if (!isNaN(value)) {
-                addPersonalGoal(userUID, itemData, input)
+                addPersonalGoal(userUID, itemData, input , formattedCurrentDate)
                     .then(() => {
                         dispatch(setIsUpdate(!isUpdate))
     

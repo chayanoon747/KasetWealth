@@ -4,7 +4,7 @@ import { TextInput } from "react-native-paper";
 import { Dimensions } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from "react";
-import { addPetName } from "../../firebase/UserModel";
+import { addPetName, addRandomQuest, newCurrentQuestTime } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
 import { retrieveAllDataPet, addLastedDate } from "../../firebase/UserModel";
 
@@ -51,6 +51,8 @@ export const EnterNameScreen = ({ navigation }) => {
             const value = input.value;
             addPetName(userUID, input)
             addLastedDate(userUID, formattedDate)
+            addRandomQuest(userUID)
+            newCurrentQuestTime(userUID,formattedDate)
                 .then(() => {
                     dispatch(setIsUpdate(!isUpdate));
                     setTimeout(() => {

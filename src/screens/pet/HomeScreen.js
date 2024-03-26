@@ -6,7 +6,7 @@ import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
 import { TextInput} from "react-native-paper";
 import { useSelector, useDispatch} from 'react-redux';
 import { useState, useEffect } from "react";
-import { addPetName } from "../../firebase/UserModel";
+import { addPetName, addRandomDailyQuest, addRandomWeeklyQuest, delDailyQuest, delWeeklyQuest, newCurrentQuestTime, newStampQuestTime, retrieveAllQuest, retrieveCurrentQuestTime, retrieveStampQuestTime } from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 import { setEditItemLocation } from "../../redux/variableSlice";
@@ -50,15 +50,30 @@ export const HomeScreen =({navigation})=>{
     const [questDaily, setQuestDaily] = useState([])
     const [questWeekly, setQuestWeekly] = useState([])
 
+    const [finish,setFinish] = useState(false)
+
+    const [stampTime,setStampTime] = useState({})
+    const [questRounds,setQuestRounds] = useState({})
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const formattedCurrentDate = `${year}-${month}-${day}`;
+
     const hasNotification = useSelector(state => state.variables.hasNotification);
     const cameFromNoti = useSelector(state => state.variables.cameFromNoti);
     useEffect(() => {
         findLocationItem();
         getImageData()
         getQuestData()
+        getAllQuest()
+        if(finish){
+            checkRandomQuest();
+        }
         console.log(hasNotification)
         handleTotalDownGradeCardValue()
-    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet]);    
+    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish]);    
 
     const getImageData = async()=>{
         try{
@@ -68,6 +83,49 @@ export const HomeScreen =({navigation})=>{
         }catch (error) {
             console.error('Error getImageData:', error);
         }  
+    }
+
+    const getAllQuest = async()=>{
+        try{
+          const itemTime = await retrieveStampQuestTime(userUID)
+          setStampTime(itemTime)
+          const itemTime2 = await retrieveCurrentQuestTime(userUID)
+          setQuestRounds(itemTime2)
+          setFinish(true)
+        }catch (error) {
+            console.error('Error getAllQuest:', error);
+        }
+    }
+
+    const checkRandomQuest= async()=>{
+        const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
+        const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+    
+        const questRoundsAsDateObject = new Date(questRounds)
+        const questRoundstimestamp = questRoundsAsDateObject.getTime()
+  
+        const stampTimeAsDateObject = new Date(stampTime)
+        const stampTimetimestamp = stampTimeAsDateObject.getTime()
+        //86400000 คือ จำนวนมิลลิวินาทีใน 1 วัน 
+        const rounddaydif = (formattedCurrentDatetimestamp-questRoundstimestamp)/86400000;
+        const daydif = (formattedCurrentDatetimestamp-stampTimetimestamp)/86400000;
+  
+        if(daydif >= 1){
+            await delDailyQuest(userUID)
+            await addRandomDailyQuest(userUID)
+            await newStampQuestTime(userUID,formattedCurrentDate)
+            if(rounddaydif >= 7) {
+                await delWeeklyQuest(userUID)
+                const moddaydif = (rounddaydif%7)
+                const newquestRounds = new Date(formattedCurrentDatetimestamp-(86400000*moddaydif))
+                const year = newquestRounds.getFullYear();
+                const month = (newquestRounds.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
+                const day = newquestRounds.getDate().toString().padStart(2, '0');
+                const formattednewquestRounds = `${year}-${month}-${day}`;
+                await newCurrentQuestTime(userUID,formattednewquestRounds)
+                await addRandomWeeklyQuest(userUID)
+            }
+        }
     }
 
     const findLocationItem = async()=>{
