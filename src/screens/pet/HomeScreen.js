@@ -11,7 +11,7 @@ import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 import { setEditItemLocation } from "../../redux/variableSlice";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
-import { retrieveQuestDaliyAndWeek } from "../../firebase/UserModel"
+import { retrieveQuestDaliyAndWeek,retrieveAllDataQuestNew } from "../../firebase/UserModel"
 import { setHasNotification } from "../../redux/variableSlice";
 import { addDownGradeCardtoFalse } from "../../firebase/UserModel";
 import { setTotalDownGradeCardValue } from "../../redux/variableSlice";
@@ -49,7 +49,9 @@ export const HomeScreen =({navigation})=>{
     const [questPersonalData, setQuestPersonalData] = useState([])
     const [questDaily, setQuestDaily] = useState([])
     const [questWeekly, setQuestWeekly] = useState([])
-
+    const [questAll , setQuestAll] = useState([])
+    const [questStateTrue, setQuestStateTrue] = useState([])
+    
     const [finish,setFinish] = useState(false)
 
     const [stampTime,setStampTime] = useState({})
@@ -209,20 +211,19 @@ export const HomeScreen =({navigation})=>{
     }
     const getQuestData = async()=>{
         try{
-            const itemAllDataQuestPersonal = await retrieveAllDataQuest(userUID)
-            const itemAllDataQuestDailyAndWeek = await retrieveQuestDaliyAndWeek();
-            setQuestPersonalData(itemAllDataQuestPersonal)
-            setQuestDaily(itemAllDataQuestDailyAndWeek.daily)
-            setQuestWeekly(itemAllDataQuestDailyAndWeek.weekly)
-            //เอา Quest ทั้งหมดมารวมเพื่อหาว่ามีแค่อันเดียวที่เสร็จแล้วยังไม่ได้ดูก็ขึ้น แจ้งเตือน
-            const combinedData = [...itemAllDataQuestPersonal, ...itemAllDataQuestDailyAndWeek.daily, ...itemAllDataQuestDailyAndWeek.weekly];
-            dispatch(setHasNotification(checkNotiRed(combinedData)))
+            const itemAllDataQuest = await retrieveAllDataQuestNew(userUID)
+            setQuestPersonalData(itemAllDataQuest.personal)
+            setQuestDaily(itemAllDataQuest.daily)
+            setQuestWeekly(itemAllDataQuest.weekly)
+            setQuestAll(itemAllDataQuest.all)
+            //setHasNotification(checkNotiRed(itemAllDataQuest.all))
+            dispatch(setHasNotification(checkNotiRed(itemAllDataQuest.all)))
         }catch (error) {
             console.error('Error getQuestData:', error);
         }  
     }
     function checkNotiRed(items) {
-        return items.some(item => item.rewardStatus && !item.seen);
+        return items.some(item => !item.rewardStatus && !item.seen && item.questState);
     }
     return(
         <View style={{flex:1}}>
