@@ -375,8 +375,8 @@ export const GameQuest = ({navigation})=>{
   const handleButton=async()=>{
     //console.log(trackingFinishedQuest)
     await finalReward(userUID,trackingFinishedQuest)
-    setFinishChangeButton(!finishChangeButton)
     await changeRewards(userUID,trackingFinishedQuest)
+    setFinishChangeButton(!finishChangeButton)
   }
 
     let selectedPetImageIndex = 0;
