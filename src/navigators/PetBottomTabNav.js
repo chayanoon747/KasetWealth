@@ -9,7 +9,7 @@ import { PetQuestStackNav } from './PetQuestStackNav';
 import { BottomTabNav } from './BottomTabNav';
 import { EditHomeScreen } from '../screens/pet/EditHomeScreen';
 import { PetHomeStackNav } from './PetHomeStackNav';
-import { setEditItemLocation } from '../redux/variableSlice';
+import { setEditItemLocation, setItemData } from '../redux/variableSlice';
 import { useSelector, useDispatch} from 'react-redux';
 import React, { useState,useEffect } from 'react';
 export const PetBottomTabNav = ({navigation})=>{
@@ -159,6 +159,7 @@ export const PetBottomTabNav = ({navigation})=>{
                   navigation.pop()
                   navigation.pop()
                   navigation.pop()
+                  dispatch(setItemData({}))
                 },
               })}
             />

@@ -5,6 +5,7 @@ import { Shadow } from 'react-native-shadow-2';
 import { retrieveInventory } from '../../firebase/RetrieveData';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEditItemLocation } from '../../redux/variableSlice';
+import { retrieveCurrencyPet } from '../../firebase/UserModel';
 
 export const InventoryScreen=({navigation})=>{
 
@@ -14,10 +15,13 @@ export const InventoryScreen=({navigation})=>{
     const dispatch = useDispatch()
 
     const [inventory, setInventory] = useState([])
+    const [coinBalance, setCoinBalance] = useState();
+    const [rubyBalance, setRubyBalance] = useState();
 
     useEffect(()=>{
         getDataInventory()
-    },[])
+        retrieveCurrency()
+    },[coinBalance, rubyBalance])
 
     const getDataInventory = async()=>{
         const inventoryData = await retrieveInventory(userUID);
@@ -29,6 +33,20 @@ export const InventoryScreen=({navigation})=>{
         })
         setInventory(itemNotPlace);
     }
+
+    const retrieveCurrency = async () => {
+        try {
+            const currencyData = await retrieveCurrencyPet(userUID);
+            if (currencyData) {
+                setCoinBalance(currencyData.Money);
+                setRubyBalance(currencyData.Ruby);
+            } else {
+                console.log("No currency data found.");
+            }
+        } catch (error) {
+            console.error("Error retrieving currency data:", error);
+        }
+    };
 
     const handleItemPress = (item) => {
         dispatch(setEditItemLocation(true))
@@ -71,14 +89,20 @@ export const InventoryScreen=({navigation})=>{
 
     return(
         <SafeAreaView style={{ flex:1,backgroundColor:'#2C6264',paddingHorizontal:15,paddingVertical:5}}>
-            <View style={{flexDirection:'row-reverse',height:30}}>
-                <View style={{width:'30%',height:'80%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa'}}>
-                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&=&format=webp&quality=lossless&width=27&height=27'}}
-                    width={20} height={20}>
-
+            <View style={{flexDirection:'row-reverse',height:35}}>
+                <View style={{flexDirection:'row', width:'30%',height:'80%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa', marginLeft:5}}>
+                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&=&format=webp&quality=lossless&width=26&height=26'}}
+                        width={25} height={25}>
                     </Image>
-                    {/* ใส่เงิน */}
+                    <Text style={{textAlignVertical:'center'}}>{rubyBalance}</Text>
                 </View>
+                <View style={{flexDirection:'row', width:'30%',height:'80%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa'}}>
+                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&=&format=webp&quality=lossless&width=27&height=27'}}
+                        width={25} height={25}>
+                    </Image>
+                    <Text style={{textAlignVertical:'center'}}>{coinBalance}</Text>
+                </View>
+                
             </View>
             <ScrollView style={{width:'100%',backgroundColor:'#FFFFFF',borderRadius:16}}>
                 <FlatList style={{margin:10}}

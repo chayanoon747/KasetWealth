@@ -70,8 +70,6 @@ export const CategoryAssetSelectionScreen = ({navigation})=>{
             setCategory1(items1);
             setCategory2(items2);
             setCategory3(items3);
-            //setCategory1([categoryData][0]);
-            //console.log(category1);
         } catch (error) {
             console.error('Error retrieving data:', error);
         }
@@ -117,7 +115,6 @@ export const CategoryAssetSelectionScreen = ({navigation})=>{
                 dispatch(setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item)));
             } else {
                 dispatch(setSelectedItems([...selectedItems, item]));
-                //console.log(selectedItems);
             }
         }
     };

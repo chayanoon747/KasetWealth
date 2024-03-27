@@ -11,7 +11,6 @@ export const AddGoalScreen = ({navigation})=>{
     const [input,setInput] = useState({value:''})
 
     const itemData = useSelector((state)=>state.variables.itemData); 
-    //console.log(itemData);
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
 
@@ -42,7 +41,7 @@ export const AddGoalScreen = ({navigation})=>{
                 addPersonalGoal(userUID, itemData, input , formattedCurrentDate)
                     .then(() => {
                         dispatch(setIsUpdate(!isUpdate))
-    
+                        dispatch(setItemData({}))
                         setTimeout(() => {
                             //setIsLoading(false);
                             navigation.navigate('GameQuest')

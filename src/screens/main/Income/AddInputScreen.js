@@ -81,6 +81,7 @@ export const AddInputScreen = ({ navigation })=>{
 
         let validateInput = true;
         let validateTypeInput = true;
+        let validateValueLimitInput = true;
 
         if(input.value == ""){
             validateInput = false
@@ -96,7 +97,14 @@ export const AddInputScreen = ({ navigation })=>{
             return;
         }
 
-        if(validateInput && validateTypeInput){
+        if(input.value >= 1000000){
+            validateValueLimitInput = false
+            Alert.alert('กรุณากรอกจำนวนเงินไม่เกิน 100,000,000')
+            setIsLoading(false)
+            return;
+        }
+
+        if(validateInput && validateTypeInput && validateValueLimitInput){
             if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
                 addTransaction(userUID,itemData, input, formattedDate,isFirstTransaction)
                 .then(()=>{

@@ -13,8 +13,8 @@ import { setEditItemLocation } from "../../redux/variableSlice";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
 import { retrieveQuestDaliyAndWeek,retrieveAllDataQuestNew } from "../../firebase/UserModel"
 import { setHasNotification } from "../../redux/variableSlice";
-import { addDownGradeCardtoFalse } from "../../firebase/UserModel";
-import { setTotalDownGradeCardValue } from "../../redux/variableSlice";
+import { addDownGradeCardtoFalse, retrieveCurrencyPet } from "../../firebase/UserModel";
+import { setTotalDownGradeCardValue, setItemData } from "../../redux/variableSlice";
 
 
 export const HomeScreen =({navigation})=>{
@@ -30,6 +30,8 @@ export const HomeScreen =({navigation})=>{
     const [itemTable3, setItemTable3] = useState();
     const [itemInventory, setItemInventory] = useState();
     const [modalVisible, setModalVisible] = useState(false);
+    const [coinBalance, setCoinBalance] = useState();
+    const [rubyBalance, setRubyBalance] = useState();
 
     const totalDifferenceDate = useSelector(state => state.variables.totalDifferenceDate);
     console.log('differenceDate in HomeScreen:', totalDifferenceDate);
@@ -56,6 +58,7 @@ export const HomeScreen =({navigation})=>{
 
     const [stampTime,setStampTime] = useState({})
     const [questRounds,setQuestRounds] = useState({})
+    
 
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -66,6 +69,8 @@ export const HomeScreen =({navigation})=>{
     const hasNotification = useSelector(state => state.variables.hasNotification);
     const cameFromNoti = useSelector(state => state.variables.cameFromNoti);
     useEffect(() => {
+        dispatch(setItemData({}))
+        retrieveCurrency()
         findLocationItem();
         getImageData()
         getQuestData()
@@ -76,6 +81,20 @@ export const HomeScreen =({navigation})=>{
         console.log(hasNotification)
         handleTotalDownGradeCardValue()
     }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish]);    
+
+    const retrieveCurrency = async () => {
+        try {
+            const currencyData = await retrieveCurrencyPet(userUID);
+            if (currencyData) {
+                setCoinBalance(currencyData.Money);
+                setRubyBalance(currencyData.Ruby);
+            } else {
+                console.log("No currency data found.");
+            }
+        } catch (error) {
+            console.error("Error retrieving currency data:", error);
+        }
+    };
 
     const getImageData = async()=>{
         try{
@@ -231,18 +250,18 @@ export const HomeScreen =({navigation})=>{
             resizeMode="cover" style={{flex: 1}}>
                 <View style={{flex:1,margin:5}}>
                     <View style={{flexDirection:'row', flex:1}}>
-                        <View style={{height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'center', marginRight:10}}>
+                        <View style={{flexDirection:'row', height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'flex-start', marginRight:10}}>
                             <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&=&format=webp&quality=lossless&width=27&height=27'}}
                                 height={25} width={25}>
                             </Image>
-                            {/* จำนวนเงิน */}
+                            <Text style={{textAlignVertical:'center'}}>{coinBalance}</Text>
                         </View>
 
-                        <View style={{height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'center'}}>
+                        <View style={{flexDirection:'row', height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'flex-start'}}>
                             <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&=&format=webp&quality=lossless&width=26&height=26'}}
                                 height={25} width={25}>
                             </Image>
-                            {/* จำนวนเงิน */}
+                            <Text style={{textAlignVertical:'center'}}>{rubyBalance}</Text>
                         </View>
 
                         <TouchableOpacity style={{flex:1, justifyContent:'center', alignItems:'flex-end'}}

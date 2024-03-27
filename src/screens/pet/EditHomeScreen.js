@@ -413,7 +413,8 @@ export const EditHomeScreen =({navigation, route})=>{
             itemLocation: 0,
             itemName: item.itemName,
             itemPhotoURL: item.itemPhotoURL,
-            itemType: item.itemType
+            itemType: item.itemType,
+            itemSoldoutURL: item.itemSoldoutURL
         };
         updateLocationItem(userUID,item, newItem);
         
@@ -451,13 +452,15 @@ export const EditHomeScreen =({navigation, route})=>{
             itemLocation: itemSelected.itemLocation,
             itemName: itemSelected.itemName,
             itemPhotoURL: itemSelected.itemPhotoURL,
-            itemType: itemSelected.itemType
+            itemType: itemSelected.itemType,
+            itemSoldoutURL: itemSelected.itemSoldoutURL
         };
         const previousItem = {
             itemLocation: 0,
             itemName: itemSelected.itemName,
             itemPhotoURL: itemSelected.itemPhotoURL,
-            itemType: itemSelected.itemType
+            itemType: itemSelected.itemType,
+            itemSoldoutURL: itemSelected.itemSoldoutURL
         };
         updateLocationItem(userUID,previousItem, newItem);
         if(itemSelected.itemType == 'table'){

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TextInput } from "react-native-paper";
 import { Dimensions } from 'react-native';
@@ -75,11 +75,11 @@ export const EnterNameScreen = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#2C6264' }}>
-            <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'row' }}>
+        <ScrollView style={{ height:1000, backgroundColor: '#2C6264' }}>
+            <View style={{ height: 250, justifyContent: 'center', alignContent: 'center', flexDirection: 'row'}}>
                 <Text style={{ fontFamily: 'ZenOldMincho-Bold', fontSize: 36, color: '#FFFFFF', textAlign: 'center', paddingHorizontal: 70, paddingTop: 80 }}>นี้คืออสูรเงินฝากของคุณ!</Text>
             </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'row' }}>
+            <View style={{ height: 250, justifyContent: 'center', alignContent: 'center', flexDirection: 'row'}}>
                 <View style={{
                     borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
                     borderWidth: 6, borderColor: '#0ABAB5',
@@ -102,7 +102,7 @@ export const EnterNameScreen = ({ navigation }) => {
                     ) : null}
                 </View>
             </View>
-            <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center', flexDirection: 'row', borderWidth: 1, borderColor: '#000000', backgroundColor: '#0ABAB5' }}>
+            <View style={{ height: 210, justifyContent: 'center', alignContent: 'center', flexDirection: 'row', borderWidth: 1, borderColor: '#000000', backgroundColor: '#0ABAB5' }}>
                 <View style={{ flex: 1, borderWidth: 1, borderColor: '#000000', borderRadius: 15, marginVertical: 12, marginHorizontal: 5, backgroundColor: '#ffffff' }}>
                     <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', paddingHorizontal: 10, paddingTop: 1 }}>
                         <Text style={{ flex: 1, fontFamily: 'ZenOldMincho-Regular', fontSize: 24, color: '#000000', textAlign: 'center', textAlignVertical: 'center' }}>อยากตั้งชื่ออะไรดีละ!</Text>
@@ -118,14 +118,14 @@ export const EnterNameScreen = ({ navigation }) => {
                                 onChangeText={(text) => { setValue(text) }}
                             />
                         </View>
-                        <View style={{ flex: 1 }}>
-                            <TouchableOpacity style={{ flex: 1 }} onPress={handleAddPetName}>
-                                <Text style={{ fontFamily: 'ZenOldMincho-Black', fontSize: 20, color: '#0ABAB5', textAlign: 'right', paddingTop: 20 }}>Confirm</Text>
+                        <View style={{ flex: 1}}>
+                            <TouchableOpacity style={{ flex: 1}} onPress={handleAddPetName}>
+                                <Text style={{ fontFamily: 'ZenOldMincho-Black', fontSize: 20, color: '#0ABAB5',paddingTop:5}}>Confirm</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             </View>
-        </SafeAreaView>
+        </ScrollView>
     )
 };
