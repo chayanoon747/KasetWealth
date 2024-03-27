@@ -1,11 +1,12 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList} from "react-native";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
-import { changeFinished,changeRewards,finalReward, retrieveFinishedQuest } from "../../firebase/UserModel";
+import { changeFinished,changeRewards,finalReward, retrieveFinishedQuest, retrieveAllDataQuestNew } from "../../firebase/UserModel";
 import { retrievePersonalQuest,retrieveAllQuest,retrieveCurrentQuestTime,retrieveStampQuestTime } from "../../firebase/UserModel";
 import { precheckDailyQuest, precheckPersonalQuest, precheckWeeklyQuest} from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { setCameFromNoti } from "../../redux/variableSlice";
+import { setHasNotification } from "../../redux/variableSlice";
 
 export const GameQuest = ({navigation})=>{
     const dispatch = useDispatch();
@@ -35,6 +36,8 @@ export const GameQuest = ({navigation})=>{
     const day = currentDate.getDate().toString().padStart(2, '0');
     const formattedCurrentDate = `${year}-${month}-${day}`;
     
+    const hasNotification = useSelector(state => state.variables.hasNotification);
+
     const user = useSelector((state)=>state.auths);
     const userUID = user[0].uid;
 
@@ -46,9 +49,16 @@ export const GameQuest = ({navigation})=>{
 
     const isUpdate = useSelector((state)=>state.variables.isUpdate);
     
+    const [questPersonalData, setQuestPersonalData] = useState([])
+    const [questDaily, setQuestDaily] = useState([])
+    const [questWeekly, setQuestWeekly] = useState([])
+    const [questAll, setQuestAll] = useState([])
+    const [questStateTrue, setQuestStateTrue] = useState([])
+
     useEffect(() => {
       getPQuestData()
       getAllQuest()
+      getQuestData()
       if(finish){
         getProgression() 
         //console.log(dailyProgression)
@@ -67,8 +77,28 @@ export const GameQuest = ({navigation})=>{
     }
       dispatch(setCameFromNoti(false))
       console.log("มาแล้ว")
-    }, [isUpdate,finish,finishDailyProgression,finishWeeklyProgression,finishPersonalProgression,finishChangeButton]);
+    }, [isUpdate,finish,finishDailyProgression,finishWeeklyProgression,finishPersonalProgression,finishChangeButton,hasNotification]);
 
+    const getQuestData = async()=>{
+      try{
+          const itemAllDataQuest = await retrieveAllDataQuestNew(userUID)
+          setQuestPersonalData(itemAllDataQuest.personal)
+          setQuestDaily(itemAllDataQuest.daily)
+          setQuestWeekly(itemAllDataQuest.weekly)
+          setQuestAll(itemAllDataQuest.all)
+          setQuestStateTrue(itemAllDataQuest.statetrue)
+          //setHasNotification(checkNotiRed(itemAllDataQuest.all))
+          //console.log("daily: "+checkNotiRed(questDaily))
+          //console.log("all: "+checkNotiRed(questAll))
+          dispatch(setHasNotification(checkNotiRed(itemAllDataQuest.all)))
+          console.log("successful retrieve")
+      }catch (error) {
+          console.error('Error getQuestData:', error);
+      }  
+    }
+    function checkNotiRed(items) {
+      return items.some(item => !item.rewardStatus && !item.seen && item.questState);
+    }
     const getPQuestData = async()=>{
       try{
           const itemAllDataQuest = await retrievePersonalQuest(userUID)
@@ -114,7 +144,8 @@ export const GameQuest = ({navigation})=>{
     useEffect(() => {
       getImageData()
       dispatch(setCameFromNoti(false));
-    }, [isUpdate,finishChangeButton]);   
+      getQuestData()
+    }, [isUpdate,finishChangeButton,hasNotification]);   
 
     const getImageData = async()=>{
         try{
