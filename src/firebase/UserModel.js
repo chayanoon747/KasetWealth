@@ -1235,6 +1235,7 @@ export const  retrieveAllDataQuestNew = (userUID)=>{
         daily:[],
         weekly:[],
         personal:[],
+        statetrue:[],
         all:[]
     }
     return firestore()
@@ -1248,12 +1249,21 @@ export const  retrieveAllDataQuestNew = (userUID)=>{
                 if(element.questType == 'daily'){
                     QuestData.daily.push(element)
                     QuestData.all.push(element)
+                    if(element.questState == true){
+                        QuestData.statetrue.push(element)
+                    }
                 }else if(element.questType == 'weekly'){
                     QuestData.weekly.push(element)
                     QuestData.all.push(element)
+                    if(element.questState == true){
+                        QuestData.statetrue.push(element)
+                    }
                 }else if(element.questType == 'Personal Goal'){
                     QuestData.personal.push(element)
                     QuestData.all.push(element)
+                    if(element.questState == true){
+                        QuestData.statetrue.push(element)
+                    }
                 }
             });
 
@@ -2436,7 +2446,7 @@ export const finalReward = async (userUID, checkedQuest ) => {
                 rewards.Money += moneyReward;
             }
         })
-        console.log(checkedQuest.Weekly[0].questType)
+        //console.log(checkedQuest.Weekly[0].questType)
         checkedQuest.Weekly.forEach(element => {
             if (element.questType == 'weekly') {
                 let moneyReward = element.value / 10;
@@ -2523,7 +2533,7 @@ export const updateAllQuestSeenStatus = (userUID, questArray) => {
     // ตรวจสอบว่า questArray ไม่ใช่ค่า null หรือ undefined
     if (questArray && questArray.length > 0) {
         const updatedQuestArray = questArray.map((quest) => {
-            if (quest.rewardStatus) {
+            if (quest.questState) {
                 return { ...quest, seen: true };
             } else {
                 return quest;
