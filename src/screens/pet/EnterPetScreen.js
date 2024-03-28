@@ -143,24 +143,24 @@ export const EnterPetScreen = ({ navigation }) => {
     dispatch(setTotalDifferenceDate(differenceDate ? differenceDate : 0));
     const allPetImages = [
         [
-            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777643217395752/1709219089933.png?ex=65f31232&is=65e09d32&hm=8f59fbde0a093d6ebd8c0d09bb0aca866d05ddd0436523f3cb9fdd14c13d7d70&",
-            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777643884281876/1709219087770.png?ex=65f31232&is=65e09d32&hm=c5ae60e774912a752c5f2148067f878d8a9cc777ca19820bb3d1ed076f484299&",
-            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777644178014218/1709219091612.png?ex=65f31232&is=65e09d32&hm=4c3c1004fdf3b24b61cbbbbab25f74b80e7608bd48dce323e8f69355198c5df7&"
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263385268264/Bear04-01.png?ex=660f95af&is=65fd20af&hm=88aed8e10d441173a2ab9a0c5ce3e49bf513d1750f958f2b85823704cd553ad4&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263146061875/Bear04-02.png?ex=660f95af&is=65fd20af&hm=3d71ed70ac03028973897dfa3ac85c65dae6b6f465999f5b4ab2634de5ecc019&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263611887656/Bear04-03.png?ex=660f95af&is=65fd20af&hm=9ec7f3cd612068017f8336817197d376199657567cb82b41fbfd64e066fca326&"
         ],
         [
-            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777755846910032/1709219127470.png?ex=65f3124d&is=65e09d4d&hm=8a6c919660d3cfba4710525a32569bb88f0c1f96cb5bb4fb93037895e2f4e728&",
-            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777756136570880/1709219131704.png?ex=65f3124d&is=65e09d4d&hm=b784e67186a60b396af0d949e339901b8d5e31575b69d42076815b22d3a65c37&",
-            "https://cdn.discordapp.com/attachments/1194490268959907870/1212777756425715812/1709219133893.png?ex=65f3124d&is=65e09d4d&hm=461dd465d5fb9a9d6b1aa186d791986dc02a9a98e36e36c6d79f5f8d0738b1b3&"
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005356423319572/Cat01-1.png?ex=660f95c5&is=65fd20c5&hm=a10d9512efcfbaa24503758a3e2a5ed371a5c6125c499e3d5a8aa6d5c682e467&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005356158943252/Cat01-2.png?ex=660f95c5&is=65fd20c5&hm=31befe5afd06708706837b8ad4954e9eccf8a4d247853ce3f883213439bfc8ec&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005356666720307/Cat01-3.png?ex=660f95c5&is=65fd20c5&hm=0b6c965f50ee6206a791f123ed239da1b46f56eb343f2152c5cab79f3414d12c&"
         ],
         [
-            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263385268264/Bear04-01.png?ex=65f3e62f&is=65e1712f&hm=1bc31960662fd06c8573e7cee5cb03d2398333f16f3b4ee12a51f21b9a382fad&",
-            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263146061875/Bear04-02.png?ex=65f3e62f&is=65e1712f&hm=a9f6fdb3949e8e13d153b464c5437c251779bda5af00b71372f7ef38971fa220&",
-            "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263611887656/Bear04-03.png?ex=65f3e62f&is=65e1712f&hm=6f35b25aa402cb7a3b128386a438df69fd4df9f95862ec256a65992aa069786d&"
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044624592916/Devil03-01.png?ex=660f9669&is=65fd2169&hm=712d911aeb4ca4ece77834000f1377cd0adca38a2868adbfb8685a6f8e84f8af&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044335177728/Devil03-02.png?ex=660f9669&is=65fd2169&hm=85337542817c8ff8d7d2f9b28219a5515c61c00040764e321a77816fd5b8843b&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534389272617/Devil03-03.png?ex=660f96de&is=65fd21de&hm=4dad23e13bba7be8648cd8f99ecac0ae8a95d36419c3aca475fc98e390d93c0e&"
         ],
         [
-            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044624592916/Devil03-01.png?ex=65f3e6e9&is=65e171e9&hm=c51323259f207777c3088fe7cfccf66bde0d3d67c491d65e7508afeb2c0123e5&",
-            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044335177728/Devil03-02.png?ex=65f3e6e9&is=65e171e9&hm=d65ea4cfca21cb322ec67d0134128b089741b655faa809a3e0eda0b3a8557061&",
-            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534389272617/Devil03-03.png?ex=65f3e75e&is=65e1725e&hm=fe7d759e8a0624db3b770cb612470f4f033bf3bf687824b346aec55324d84538&"
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534766764073/Pengu02-01.png?ex=660f96de&is=65fd21de&hm=0f25d067fbf4e8e5781f194a5514f3617b135f23454b907e409aa228731557d4&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006535089717319/Pengu02-02.png?ex=660f96de&is=65fd21de&hm=e81cd083c3dcdd9ab89cfea69ce3676cad7fcbf197c5a5ea8bed2e580e8597c9&",
+            "https://cdn.discordapp.com/attachments/1202281623585034250/1213006535509409812/Pengu02-03.png?ex=660f96de&is=65fd21de&hm=122d7a17c8526fbb321c0724f5d3f55aff330efbd5a5ceeadad164dfcb4400a7&"
         ],
     ];
 

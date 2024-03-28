@@ -473,8 +473,12 @@ export const retrieveInventory = (userUID)=>{
         all:[],
         wall:[],
         table:[],
-        forUse:[]
+        forUse:[],
+        totalPositionWall:0,
+        totalPositionTable:0
     };
+
+    
     
     return firestore()
     .collection('pets')
@@ -483,23 +487,25 @@ export const retrieveInventory = (userUID)=>{
     .then((data)=>{
         if(data){
             const allData = data.data().inventory;
-            //console.log(allData);
+            
             if(allData){
                 allData.forEach(element => {
                     if(element.itemType == 'wall'){
+                        inventory.totalPositionWall+=element.itemLocation
                         inventory.wall.push(element)
                     }
                     if(element.itemType == 'table'){
+                        inventory.totalPositionTable+=element.itemLocation
                         inventory.table.push(element)
                     }
-                    if(element.itemType == 'ไอเทมกดใช้'){
+                    if(element.itemType == 'forUse'){
                         inventory.forUse.push(element)
                     }
     
                     inventory.all.push(element)
                 });
             }
-            //console.log(`AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: ${inventory.all}`)
+            
             return inventory
         }
     })

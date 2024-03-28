@@ -1,9 +1,10 @@
-import { View,TouchableOpacity,Image,Text, FlatList, Alert } from "react-native";
+import { View,TouchableOpacity,Image,Text, FlatList, Alert, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState,useEffect} from "react";
 import { useDispatch,useSelector } from "react-redux";
 import { setIsUpdate } from "../../redux/variableSlice";
-import { addItem2Inventory, checkDuplicateItem, retrieveCurrencyPet, addFurniture2Inventory, updateMoneyBalance, updateRubyBalance, updateGuarantee} from "../../firebase/UserModel";
+import { addItem2Inventory, checkDuplicateItem, retrieveCurrencyPet, addFurniture2Inventory, 
+    updateMoneyBalance, updateRubyBalance, updateGuarantee, addPetImages, addOnePetImage} from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 
 export const PetShopScreen = ({navigation}) => {
@@ -16,6 +17,7 @@ export const PetShopScreen = ({navigation}) => {
     const [rubyBalance, setRubyBalance] = useState();//แทนด้วยเพชรทั้งหมด user
     const [mysteryBoxGuaranteeNormal, setmysteryBoxGuaranteeNormal] = useState();
     const [inventory, setInventory] = useState();
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         retrieveCurrency();
@@ -207,7 +209,7 @@ export const PetShopScreen = ({navigation}) => {
     }
     
     //ข้อความรายละเอียดการสุ่ม
-    const infoAlert = () => {
+    const infoModal = () => {
         alert('การสุ่มเงินจะสุ่มระหว่าง 100 ถึง 1,000\nเมื่อเปิดจนครบการันตีจะได้เงินมูลค่า 1,000 แน่นอน');
     }
 
@@ -223,6 +225,10 @@ export const PetShopScreen = ({navigation}) => {
             
         return randomAmount;
     }
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    };
 
     const randomPetCard = async () => { //บัตรสุ่มสัตว์เลี้ยง
         const allPetImages = [
@@ -245,14 +251,14 @@ export const PetShopScreen = ({navigation}) => {
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044624592916/Devil03-01.png?ex=65f3e6e9&is=65e171e9&hm=c51323259f207777c3088fe7cfccf66bde0d3d67c491d65e7508afeb2c0123e5&",
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044335177728/Devil03-02.png?ex=65f3e6e9&is=65e171e9&hm=d65ea4cfca21cb322ec67d0134128b089741b655faa809a3e0eda0b3a8557061&",
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534389272617/Devil03-03.png?ex=65f3e75e&is=65e1725e&hm=fe7d759e8a0624db3b770cb612470f4f033bf3bf687824b346aec55324d84538&"
-            ],
+            ]
         ];
     
         const randomIndex = Math.floor(Math.random() * allPetImages.length);
         const selectedPetImages = allPetImages[randomIndex];
         addPetImages(userUID, selectedPetImages);
         addOnePetImage(userUID, selectedPetImages[0])
-
+        toggleModal();
     };
 
     const renderItem = ({ item, index }) => {
@@ -315,14 +321,14 @@ export const PetShopScreen = ({navigation}) => {
                             <View style={mysteryStyles.viewResetTimeText}>
                                 <TouchableOpacity
                                     onPress={() =>{
-                                        infoAlert()
+                                        infoModal()
                                     }}
                                 >
                                     <Text style={mysteryStyles.textDetaillMysteryStyle}>รายละเอียดเพิ่มเติมคลิก</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() =>{
-                                        infoAlert()
+                                        infoModal()
                                     }}
                                 >
                                     <Image
@@ -346,24 +352,31 @@ export const PetShopScreen = ({navigation}) => {
                         style={styles.TouchableItemBox}
                         onPress={() => {
                             if (rubyBalance >= item.itemPrice) {
-                                checkDuplicateItem(userUID, item)
-                                .then(isDuplicate => {
-                                    // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                    // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                    if (!isDuplicate) {
-                                        // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                        // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                        reportBuyItem(item);
-                                        buyItem2Inventory(item);
-                                    } else {
-                                        console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
-                                        alert('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น\nใน Inventory เท่านั้น');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error checking duplicate item:', error);
-                                    // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
-                                });
+                                if (item.itemName === 'บัตรกันลดขั้น') {
+                                    checkDuplicateItem(userUID, item)
+                                    .then(isDuplicate => {
+                                        // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        if (!isDuplicate) {
+                                            // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            reportBuyItem(item);
+                                            buyItem2Inventory(item);
+                                        } else {
+                                            console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
+                                            alert('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น\nใน Inventory เท่านั้น');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error checking duplicate item:', error);
+                                        // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
+                                    });
+                                }else{
+                                    reportBuyItem(item)
+                                    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                                    randomPetCard();
+                                    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+                                }
                             }else{
                                 console.log('Insufficient rubies to buy this item');
                                 alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
@@ -437,20 +450,14 @@ export const PetShopScreen = ({navigation}) => {
                                 <Image
                                     style={styles.ImageItemBox}
                                     source={{
-                                        /*
-                                        uri: checkDuplicateItem(userUID,item)
-                                            ? item.itemSoldoutURL
-                                            : item.itemPhotoURL
-                                        */
-                                        ///*
-                                        
                                         uri: isDuplicateURL === true
                                             ? item.itemSoldoutURL
                                             : item.itemPhotoURL
-                                        //*/
+                                    
                                     }}
                                     width={150}
                                     height={150}
+                                    resizeMode="contain"
                                 />
                             </View>
                             <View style={styles.itemName}>
@@ -560,6 +567,23 @@ export const PetShopScreen = ({navigation}) => {
                 </View>
                 <View style={{flex:1}}></View>
             </View>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    toggleModal();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Downgrade card has been used.</Text>
+                        <TouchableOpacity onPress={toggleModal} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -606,7 +630,8 @@ const styles = {
         backgroundColor:'#0ABAB5'
     },
     ViewTouchableBoxCategoryHealthy:{
-        marginVertical:'2%'
+        marginVertical:'2%',
+        marginHorizontal:20
     },
     ViewTouchableBoxCategoryFurniture:{
         marginTop:'2%',
@@ -619,7 +644,7 @@ const styles = {
         borderRadius:12,
         borderWidth:1, 
         borderColor:'#000000',
-        //backgroundColor:'orange'
+        // backgroundColor:'orange'
     },
     viewImageItemBox:{
         alignItems:'center'
@@ -634,13 +659,13 @@ const styles = {
     itemName:{
         flexDirection:'row',
         justifyContent:'center',
-        //backgroundColor:'green'
+        // backgroundColor:'green'
     },
     itemPrice:{
         flexDirection:'row',
         justifyContent:'center',
         alignItems:'center',
-        //backgroundColor:'pink'
+        // backgroundColor:'pink'
     },
     viewImageAndNameItemBox:{
         width:'auto',
@@ -771,8 +796,15 @@ const UseItem = [
         itemType: "forUse",
         itemCurrencyType: 'ruby',
         itemName: "บัตรกันลดขั้น",
-        itemPrice:20,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206567181060407296/image_5.png?ex=65dc7a40&is=65ca0540&hm=db2165be9862cfa9d8f5a5b73ef7c5ad94f94a0c50c219cc12cbd8a1d6ca9d9f&"
+        itemPrice:200,
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1222869375200264234/Featherfallingcard.png?ex=6617c8da&is=660553da&hm=992aebb3d25042fe33471afc059ea2123fa04e89c7acd4cca016e2a312c46c82&"
+     },
+     {
+        itemType: "forUse",
+        itemCurrencyType: 'ruby',
+        itemName: 'บัตรเปลี่ยนสัตว์เลี้ยง',
+        itemPrice: 160,
+        itemPhotoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1222869375615369226/Petchangercard.png?ex=6617c8da&is=660553da&hm=e0c08dd21682b5731c4932be9a73f2e8dfa3ed69af78eae4436eec5cacaf70d2&"
      }
 ]
 
@@ -782,63 +814,63 @@ const ItemsFurniture = [
         itemCurrencyType: 'coin',
         itemName: "ตุ๊กตา",
         itemPrice:700,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206324627442245712/image_7.png?ex=65db985b&is=65c9235b&hm=56e75cfd84bdb8f87558692181e24b33f978a8dc0efe24ebbbc4cf5e53ca54c6&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618450104360/bearSoldout.png?ex=65facc4d&is=65e8574d&hm=f06e8a147fc2196316cf7e05b6248315bbcb3b6c3d7106a1684906e0cf7d2aa2&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213487950067666984/u8p1ou2w.png?ex=66115738&is=65fee238&hm=bfbc981224319e11a8a2d5fc45f2b428cbae7e2c5cee7c3be55c879e65c7f9ca&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618450104360/bearSoldout.png?ex=66167bcd&is=660406cd&hm=fbddcfecef49f386f8bbe31f60b81682ede320feafeb4c2987a7f75f24b0ffef&'
     },
     {
         itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "รูปกรอบสีขาว",
         itemPrice:299,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732293790306314/18bit.png?ex=65f2e7f6&is=65e072f6&hm=c0f6b916de070ba9354ffe8efec6b16be305f2cac382bbea0f6897d38a0fc6cc&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1213057759226888252/WhiteborderSoldout.png?ex=65f41713&is=65e1a213&hm=196f75ce894902b500850cc3528daaaeedb68d9560d3eed6ff965ae2d81cbc99&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213569742908948530/tebucjfk.png?ex=6611a365&is=65ff2e65&hm=18c4c673bf1f2adaf7723bffe79102f3e7eb37242d7c2258480c916cc05bc322&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1213057759226888252/WhiteborderSoldout.png?ex=660fc693&is=65fd5193&hm=1b20a57a59da92a8d28b936280efd20c338f98ac05313e3414fd1dd4777e0aed&'
     },
     {
         itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "รูปกรอบสีทอง",
         itemPrice:899,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732291126788126/28bit.png?ex=65f2e7f5&is=65e072f5&hm=f4f622506c53800754b06a1c1c2351d27554e0e908350b276d7b4018a8efb212&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619473252434/GoldborderSoldout.png?ex=65facc4d&is=65e8574d&hm=72d402f623631779c2b2e3cd33ca715d9dd5ad7071c97a573d5f4657bcaf7408&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213569742640779264/1vn4cbyn.png?ex=6611a365&is=65ff2e65&hm=90478abf590d47bb976d84ac59858519a8fa7e2f8306bca588b8dcd957493968&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619473252434/GoldborderSoldout.png?ex=66167bcd&is=660406cd&hm=c26d898321ec262d0971593dd592818bcec9d179c53139793612a7b4f4cc4c64&'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "หอคอย",
         itemPrice:999,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732292187816016/vecteezy_eiffel-tower-in-pixel-art-style_22267390-removebg-preview.png?ex=65f2e7f5&is=65e072f5&hm=de7983c3d3f2d1d89918e90a116baba033cf4c81a71b70aff3b8e4378a5ad397&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619020275752/towerSoldout.png?ex=65facc4d&is=65e8574d&hm=000b4a2ce92ddce6a63d0222cc9ced492cddae3712b58ea8901c60d632527b5c&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484456149655552/gopzjayv.png?ex=661153f7&is=65fedef7&hm=945391fb9014be49b7b28f0573f309a08e5c6a6146f4522e9675ce9331625819&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619020275752/towerSoldout.png?ex=66167bcd&is=660406cd&hm=82ac4d4e7f12a98ca4c2b5e17475723b9d4abdd90847b703029f987b8fcf730a&'
     },
     {
         itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "นาฬิกา",
         itemPrice:80,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732291806400603/pngtree-new-year-wall-clock-in-pixel-style-png-image_2492384-removebg-preview.png?ex=65f2e7f5&is=65e072f5&hm=7525930320856e7bed0259bae37381f6bfa2a7f457bb7f74c48bf55664cba2e2&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618097651732/clockSoldout.png?ex=65facc4d&is=65e8574d&hm=37a7c4165aea919762612c0ff6f922410cc151214ec0f80dc67a608a2cc06324&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213569742384664626/soo73iin.png?ex=6611a365&is=65ff2e65&hm=5ee5cc138a9d6e8644028bc6c08bb6f6402d0d7def1a3156513999b4bd18862e&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618097651732/clockSoldout.png?ex=66167bcd&is=660406cd&hm=e0a72348f8a1eeea6594cc11109018a0f9dc12567ec459b9275868df7446616f&'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "โทรศัพท์",
         itemPrice:500,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732293236662332/vecteezy_vector-pixel-art-retro-phone-for-game-development_7816880-removebg-preview.png?ex=65f2e7f6&is=65e072f6&hm=ce77499120775e3e4942a1c98f3dddbda326be0a99199685e9e92cadba6362e6&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901620131762176/phoneSoldout.png?ex=65facc4e&is=65e8574e&hm=293e7ec89a863c3e8ff45484ecde8813410fa2335225092b00f3f108af919770&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484457974173746/fh7levth.png?ex=661153f8&is=65fedef8&hm=924f4b1791abdfe5666eb7fb560d3609496a0066a15f0693dc596c18f862e385&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901620131762176/phoneSoldout.png?ex=66167bce&is=660406ce&hm=d8f184477a187217ab0f616d177cc295a8195f56ca7d14aeaa315f3347066796&'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "นาฬิกาทราย",
         itemPrice:150,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732292519174154/vecteezy_hourglass-pixel-art-vector-illustration-design-for-games_8081723-removebg-preview.png?ex=65f2e7f6&is=65e072f6&hm=725dd7101b3678b7c6568bf6603616350bc2489ce7cedc89320cb8e03b8980bb&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901617690939453/hourglassSoldout.png?ex=65facc4d&is=65e8574d&hm=6d9c9ff0f49710ffb9ea65b374b94a0d49748139141fc36d1f86c0c55bb76a39&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484458628616232/28xhd20g.png?ex=661153f8&is=65fedef8&hm=f155faea98ae8aa1188ddb3dad71359bac9277eec20d3fef1dea7e594e630804&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901617690939453/hourglassSoldout.png?ex=66167bcd&is=660406cd&hm=4c405fb6440b4f3e4e4a75e977ceea4eb885d887f13665dc8275884e3188c235&'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "แจกัน",
         itemPrice:120,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1212732291420393522/images-removebg-preview.png?ex=66055cf5&is=65f2e7f5&hm=51ffc00d54e0668c1d39ecaba7d6d31306a16bc5df63b7611289081579cbe448&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618747772938/flowerSoldout.png?ex=660406cd&is=65f191cd&hm=b9f5744384bd38f681c2a885d7629291586f2bd61e9588cea7965eae2dccb379&'
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484459488313404/55bmz04i.png?ex=661153f8&is=65fedef8&hm=6ef95f50de1970c4d16c872bdaa94c9ca6a84985a4f2f7c95d39d696a44e9ce6&",
+        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618747772938/flowerSoldout.png?ex=66167bcd&is=660406cd&hm=16754cdb06bdffa5846748315cfd49f7829199831427d361c41ea6a971a307f5&'
     }
 ]

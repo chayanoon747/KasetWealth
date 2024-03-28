@@ -4,6 +4,10 @@ import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt, retrieveInventory } from './RetrieveData';
 import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsUpdateItemPet } from '../redux/variableSlice';
+
+
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -1235,6 +1239,7 @@ export const  retrieveAllDataQuestNew = (userUID)=>{
         daily:[],
         weekly:[],
         personal:[],
+        statetrue:[],
         all:[]
     }
     return firestore()
@@ -1248,12 +1253,21 @@ export const  retrieveAllDataQuestNew = (userUID)=>{
                 if(element.questType == 'daily'){
                     QuestData.daily.push(element)
                     QuestData.all.push(element)
+                    if(element.questState == true){
+                        QuestData.statetrue.push(element)
+                    }
                 }else if(element.questType == 'weekly'){
                     QuestData.weekly.push(element)
                     QuestData.all.push(element)
+                    if(element.questState == true){
+                        QuestData.statetrue.push(element)
+                    }
                 }else if(element.questType == 'Personal Goal'){
                     QuestData.personal.push(element)
                     QuestData.all.push(element)
+                    if(element.questState == true){
+                        QuestData.statetrue.push(element)
+                    }
                 }
             });
 
@@ -1619,6 +1633,31 @@ export const updateGuageRiability = (userUID,newGuageRiability) =>{
     }
 }
 
+//ลบไอเท็มใน inventory
+export const removeCardDownGrade = (userUID) => {
+    const downGradeCard = {
+        itemType: "forUse",
+        itemName: "บัตรกันลดขั้น",
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1222869375200264234/Featherfallingcard.png?ex=6617c8da&is=660553da&hm=992aebb3d25042fe33471afc059ea2123fa04e89c7acd4cca016e2a312c46c82&"
+    }
+
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            downGradeCard: false,
+            inventory: firestore.FieldValue.arrayRemove(downGradeCard)
+        })
+        .then(() => {
+            console.log("add Item2Inventory successfully!");
+        })
+        // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+        .catch((error) => {
+            console.error("Error adding Item2Inventory:", error);
+            throw error;
+        });
+};
+
 //เพิ่มไอเท็มไปใน inventory
 export const addItem2Inventory = (userUID, itemData) => {
     const newItem2Inventory = {
@@ -1671,6 +1710,7 @@ export const addFurniture2Inventory = (userUID, itemData) => {
 };
 
 export const updateLocationItem = (userUID, item, newItem)=>{
+
         firestore()
         .collection('pets')
         .doc(userUID)
@@ -2593,7 +2633,7 @@ export const updateAllQuestSeenStatus = (userUID, questArray) => {
     // ตรวจสอบว่า questArray ไม่ใช่ค่า null หรือ undefined
     if (questArray && questArray.length > 0) {
         const updatedQuestArray = questArray.map((quest) => {
-            if (quest.rewardStatus) {
+            if (quest.questState) {
                 return { ...quest, seen: true };
             } else {
                 return quest;

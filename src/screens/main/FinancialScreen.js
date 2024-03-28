@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import { setItemTransactionType } from "../../redux/variableSlice";
 import { retrieveAllDataIncomeAndExpenses, retrieveDataLiabilityRemaining, retrieveDataAsset } from "../../firebase/RetrieveData";
+import { getNetWealth } from "../../Calculate/Calculate";
 
 export const FinancialScreen = ({navigation})=>{
     const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export const FinancialScreen = ({navigation})=>{
         getDataIncomeAndExpenses();
         getDataAsset();
         getDataLiabilityRemaining();
+        getNetWealth();
     }, [incomeValuesAll, expensesValuesAll, assetValuesAll, liabilityValuesAll, isUpdate]);
 
     const getIncomeValues = (itemData)=>{
@@ -102,10 +104,7 @@ export const FinancialScreen = ({navigation})=>{
         } catch (error){
             console.error('Error getDataLiability:', error);
         }
-    }
-
-    
-
+    }  
 
     return(
         <SafeAreaView style={{flex:1, padding:30, backgroundColor:'#fffffa'}}>
@@ -117,7 +116,9 @@ export const FinancialScreen = ({navigation})=>{
                 </View>
 
                 <View style={{flex:1, paddingLeft:10, paddingTop:5}}>
-                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>{incomeValuesAll-expensesValuesAll} THB</Text>
+                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>
+                        {isNaN(incomeValuesAll-expensesValuesAll) ? 0 : incomeValuesAll-expensesValuesAll} THB
+                    </Text>
                 </View>
 
                 <View style={{flex:1.5, flexDirection:'row', paddingHorizontal:10}}>
@@ -153,7 +154,9 @@ export const FinancialScreen = ({navigation})=>{
                 </View>
 
                 <View style={{flex:1, paddingLeft:10, paddingTop:5}}>
-                    <Text style={{flex:1, color:'#0ABAB5', fontFamily:'ZenOldMincho-Black', fontSize:16}}>{assetValuesAll-liabilityValuesAll} THB</Text>
+                    <Text style={{flex: 1, color: '#0ABAB5', fontFamily: 'ZenOldMincho-Black', fontSize: 16}}>
+                        {isNaN(assetValuesAll - liabilityValuesAll) ? 0 : assetValuesAll - liabilityValuesAll} THB
+                    </Text>
                 </View>
 
                 <View style={{flex:1.5, flexDirection:'row', paddingHorizontal:10}}>

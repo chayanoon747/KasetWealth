@@ -81,6 +81,9 @@ export const AddInputScreen = ({ navigation })=>{
 
         let validateInput = true;
         let validateTypeInput = true;
+        let validateValueMaxLimitInput = true;
+        let validateValueMinLimitInput = true;
+        let validateValueFixedDecimal = true;
 
         if(input.value == ""){
             validateInput = false
@@ -96,7 +99,30 @@ export const AddInputScreen = ({ navigation })=>{
             return;
         }
 
-        if(validateInput && validateTypeInput){
+        if(input.value >= 1000000){
+            validateValueMaxLimitInput = false
+            Alert.alert('กรุณากรอกจำนวนเงินไม่เกิน 100,000,000')
+            setIsLoading(false)
+            return;
+        }
+
+        if(input.value <= 0){
+            validateValueMinLimitInput = false
+            Alert.alert('กรุณากรอกเลขที่มากกว่า 0')
+            setIsLoading(false)
+            return;
+        }
+
+        if(input.value.toString().includes(".")){
+            let decimalPlaces = input.value.toString().split('.')[1].length;
+            if(decimalPlaces > 2){
+                validateValueFixedDecimal = false
+                Alert.alert('กรุณาป้อนทศนิยมไม่เกิน 2 ตำแหน่ง')
+                return;
+            }
+        }
+
+        if(validateInput && validateTypeInput && validateValueMaxLimitInput&& validateValueMinLimitInput && validateValueFixedDecimal){
             if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
                 addTransaction(userUID,itemData, input, formattedDate,isFirstTransaction)
                 .then(()=>{
