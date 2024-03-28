@@ -69,9 +69,9 @@ export const HomeScreen =({navigation})=>{
     const hasNotification = useSelector(state => state.variables.hasNotification);
     const cameFromNoti = useSelector(state => state.variables.cameFromNoti);
     useEffect(() => {
+        findLocationItem();
         dispatch(setItemData({}))
         retrieveCurrency()
-        findLocationItem();
         getImageData()
         getQuestData()
         getAllQuest()
@@ -181,6 +181,7 @@ export const HomeScreen =({navigation})=>{
                 setItemWall3(element);
             }
         })
+        
     }
 
     const showAlert = () => {

@@ -31,7 +31,71 @@ export const AddGoalScreen = ({navigation})=>{
     }
 
     const handleAddPersonalGoal = () => {
-        if (input.value == "") {
+        
+        let validateInput = true;
+        let validatePhoto = true;
+        let validateTypeInput = true;
+        let validateValueMaxLimitInput = true;
+        let validateValueMinLimitInput = true;
+        let validateValueFixedDecimal = true;
+
+        if(itemData.photoURL == undefined){
+            validatePhoto = false
+            Alert.alert('กรุณาเลือกหมวดหมู่')
+            return;
+        }
+
+        if(input.value == ""){
+            validateInput = false
+            Alert.alert('กรุณาระบุจำนวนเงิน')
+            return;
+        }
+        
+        if(isNaN(input.value)){
+            validateTypeInput = false
+            Alert.alert('กรุณากรอกเป็นตัวเลข')
+            return;
+        }
+
+        if(input.value > 100000000){
+            validateValueMaxLimitInput = false
+            Alert.alert('กรุณากรอกจำนวนเงินไม่เกิน 100,000,000')
+            return;
+        }
+
+        if(input.value <= 0){
+            validateValueMinLimitInput = false
+            Alert.alert('กรุณากรอกเลขที่มากกว่า 0')
+            return;
+        }
+
+        if(input.value.toString().includes(".")){
+            let decimalPlaces = input.value.toString().split('.')[1].length;
+            if(decimalPlaces > 2){
+                validateValueFixedDecimal = false
+                Alert.alert('กรุณาป้อนทศนิยมไม่เกิน 2 ตำแหน่ง')
+                return;
+            }
+        }
+        
+
+        if(validatePhoto){
+            addPersonalGoal(userUID, itemData, input , formattedCurrentDate)
+                    .then(() => {
+                        dispatch(setIsUpdate(!isUpdate))
+                        dispatch(setItemData({}))
+                        setTimeout(() => {
+                            //setIsLoading(false);
+                            navigation.navigate('GameQuest')
+                        }, 700);
+                    })
+        }
+
+
+
+
+
+        /*if (input.value == "") {
             Alert.alert('กรุณาระบุจำนวนเงิน')
         } else {
             const commaValue = input.value.replace(/,/g, '');
@@ -52,7 +116,7 @@ export const AddGoalScreen = ({navigation})=>{
             } else {
                 Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
             }
-        }
+        }*/
     };
     
 

@@ -442,7 +442,7 @@ export const EditHomeScreen =({navigation, route})=>{
         }
         setTimeout(() => {
             dispatch(setIsUpdateItemPet(!isUpdateItemPet))
-        }, 1000);
+        }, 2000);
         
     }
 
@@ -492,6 +492,9 @@ export const EditHomeScreen =({navigation, route})=>{
             }
         }
         dispatch(setEditItemLocation(false))
+        setTimeout(() => {
+            dispatch(setIsUpdateItemPet(!isUpdateItemPet))
+        }, 2000);
     }
 
     const componentItem = (item)=>{
@@ -507,7 +510,7 @@ export const EditHomeScreen =({navigation, route})=>{
         if(item.itemType == 'wall'){
             return(
                 <TouchableOpacity  style={{marginLeft:8}}
-                    onPress={()=>{handleItemPress(item)}}
+                    onPress={()=>{handleItemPress(item).then(()=>{dispatch(setIsUpdateItemPet(!isUpdateItemPet))})}}
                 >
                     <Image source={{uri:item.itemPhotoURL}}
                         width={90} height={90} resizeMode="contain">

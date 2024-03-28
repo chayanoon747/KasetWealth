@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, ScrollView, Image,TouchableOpacity, FlatList } from 'react-native';
+import { Text, View, ScrollView, Image,TouchableOpacity, FlatList, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Shadow } from 'react-native-shadow-2';
 import { retrieveInventory } from '../../firebase/RetrieveData';
@@ -28,7 +28,7 @@ export const InventoryScreen=({navigation})=>{
         const itemNotPlace = [];
         inventoryData.all.forEach((element)=>{
             if(element.itemLocation == '0' || element.itemType == 'forUse'){
-                itemNotPlace.push(element)
+                itemNotPlace.push(element) 
             }
         })
         setInventory(itemNotPlace);
@@ -49,8 +49,37 @@ export const InventoryScreen=({navigation})=>{
     };
 
     const handleItemPress = (item) => {
-        dispatch(setEditItemLocation(true))
-        navigation.navigate('EditHomeScreen', { itemSelected: item});
+        let validateItemWall = true;
+        let validateItemTable = true;
+
+        if(item.itemType == "wall"){
+            if(inventory.totalPositionWall == 6){
+                Alert.alert("พื้นที่เต็มไม่สามารถวางเพิ่มได้")
+                validateItemWall = false;
+                return;
+            }
+        }
+        if(item.itemType == "table"){
+            if(inventory.totalPositionTable == 6){
+                Alert.alert("พื้นที่เต็มไม่สามารถวางเพิ่มได้")
+                validateItemTable = false;
+                return;
+            }
+        }
+        
+        if(item.itemType == "wall"){
+            if(validateItemWall){
+                dispatch(setEditItemLocation(true))
+                navigation.navigate('EditHomeScreen', { itemSelected: item});
+            }
+        }
+        if(item.itemType == "table"){
+            if(validateItemTable){
+                dispatch(setEditItemLocation(true))
+                navigation.navigate('EditHomeScreen', { itemSelected: item});
+            }
+        }
+        
     };
 
     const renderItem = ({ item })=>{
