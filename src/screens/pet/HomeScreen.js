@@ -6,7 +6,7 @@ import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
 import { TextInput} from "react-native-paper";
 import { useSelector, useDispatch} from 'react-redux';
 import { useState, useEffect } from "react";
-import { addPetName, addRandomDailyQuest, addRandomWeeklyQuest, delDailyQuest, delWeeklyQuest, newCurrentQuestTime, newStampQuestTime, retrieveAllQuest, retrieveCurrentQuestTime, retrieveStampQuestTime } from "../../firebase/UserModel";
+import { addPetName, addRandomDailyQuest, addRandomWeeklyQuest, delDailyQuest, delWeeklyQuest, finalReward, newCurrentQuestTime, newStampQuestTime, precheckExpenseQuest, retrieveAllQuest, retrieveCheckExpenseQuest, retrieveCurrentQuestTime, retrieveRandomWeeklyQuest, retrieveStampQuestTime } from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 import { setEditItemLocation } from "../../redux/variableSlice";
@@ -55,6 +55,11 @@ export const HomeScreen =({navigation})=>{
     const [questStateTrue, setQuestStateTrue] = useState([])
     
     const [finish,setFinish] = useState(false)
+    const [finishChecked,setFinishChecked] = useState(false)
+    const [finishProgression,setFinishProgression] = useState(false)
+
+    const [expenseQuest,setExpenseQuest] = useState([]) 
+    const [progression,setProgression] = useState({})
 
     const [stampTime,setStampTime] = useState({})
     const [questRounds,setQuestRounds] = useState({})
@@ -76,11 +81,22 @@ export const HomeScreen =({navigation})=>{
         getQuestData()
         getAllQuest()
         if(finish){
+            getProgression()
+            console.log(progression)
+        }
+        if (finishProgression){
+            const checked = checkExpenseDailyQuest()
+            console.log('checked',checked)
+            sumReward(checked)
+            setFinishChecked(true)
+        }
+        
+        if(finishChecked){
             checkRandomQuest();
         }
         console.log(hasNotification)
         handleTotalDownGradeCardValue()
-    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish]);    
+    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish,finishProgression,finishChecked]);    
 
     const retrieveCurrency = async () => {
         try {
@@ -112,10 +128,94 @@ export const HomeScreen =({navigation})=>{
           setStampTime(itemTime)
           const itemTime2 = await retrieveCurrentQuestTime(userUID)
           setQuestRounds(itemTime2)
+          const expenseQuestItem = await retrieveCheckExpenseQuest(userUID)
+          setExpenseQuest(expenseQuestItem)
+          //console.log(expenseQuestItem)
           setFinish(true)
         }catch (error) {
             console.error('Error getAllQuest:', error);
         }
+    }
+
+    const getProgression = async()=>{
+
+        try{
+            const itemProgression = await precheckExpenseQuest(userUID,expenseQuest,formattedCurrentDate,questRounds)
+            setProgression(itemProgression)
+            setFinishProgression(true)
+        }
+        catch (error) {
+            console.error('Error getProgression:',error);
+        }
+    }
+    
+
+    const checkExpenseDailyQuest = ()=>{
+        const updatedQuest=[]
+        if(expenseQuest != undefined){
+            console.log('undefined check',expenseQuest)
+            expenseQuest.forEach(element=>{
+            console.log('forEach check',progression)
+            if(element.questState == false){
+              if(element.questType == 'daily'){
+                let expenseUnit =0
+                progression.Daily.forEach(element1=>{
+                  expenseUnit += element1.value 
+                })
+                if(expenseUnit<element.value ){
+                  const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
+                  const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+  
+                  const stampTimeAsDateObject = new Date(stampTime)
+                  const stampTimetimestamp = stampTimeAsDateObject.getTime()
+                  const daydif = (formattedCurrentDatetimestamp-stampTimetimestamp)/86400000;
+                  if(daydif >= 1){
+                    updatedQuest.push(element)
+                    console.log("daily quest expense finished")
+                  }
+                }
+              }
+              if(element.questType == 'weekly'){
+                let expenseUnit =0
+                progression.Expense.forEach(element1=>{
+                    expenseUnit += element1.value
+                })
+                if(expenseUnit<element.value ){
+                    const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
+                    const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+    
+                    const questRoundsAsDateObject = new Date(questRounds)
+                    const questRoundstimestamp = questRoundsAsDateObject.getTime()
+                    const daydif = (formattedCurrentDatetimestamp-questRoundstimestamp)/86400000;
+                    if(daydif >= 7){
+                    updatedQuest.push(element)
+                    console.log("weekly quest expense finished")
+                    }
+                }
+                }
+            }
+          })
+          //console.log(updatedQuest)
+          return updatedQuest
+        }
+    }
+
+    const sumReward = async(checkedQuest) =>{
+        const prepare = {
+            Daily:[],
+            Weekly:[],
+            Personal:[]
+        }
+        checkedQuest.forEach(quest => {
+            if(quest.questType == 'daily'){
+                prepare.Daily.push(quest)
+            }
+            if(quest.questType == 'weekly'){
+                prepare.Weekly.push(quest)
+            }
+        }) 
+
+        await finalReward(userUID, prepare);
     }
 
     const checkRandomQuest= async()=>{
@@ -267,7 +367,7 @@ export const HomeScreen =({navigation})=>{
                         </View>
 
                         <TouchableOpacity style={{flex:1, justifyContent:'center', alignItems:'flex-end'}}
-                            onPress={()=>{
+                            onPress={async()=>{
                                 navigation.navigate('EditHomeScreen')
                         }}
                         >

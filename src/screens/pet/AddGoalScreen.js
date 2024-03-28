@@ -102,7 +102,7 @@ export const AddGoalScreen = ({navigation})=>{
             const value = parseFloat(commaValue);
     
             if (!isNaN(value)) {
-                addPersonalGoal(userUID, itemData, input , formattedCurrentDate)
+                addPersonalGoal(userUID, itemData, value , formattedCurrentDate)
                     .then(() => {
                         dispatch(setIsUpdate(!isUpdate))
                         dispatch(setItemData({}))
