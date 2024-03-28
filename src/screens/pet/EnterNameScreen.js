@@ -45,10 +45,10 @@ export const EnterNameScreen = ({ navigation }) => {
     };
 
     const handleAddPetName = () => {
-        if (input.value === "") {
+        if (input.value.trim() === "") {
             Alert.alert('กรุณาระบุชื่อ');
         } else {
-            const value = input.value;
+            input.value = input.value.trim();
             addPetName(userUID, input)
             addLastedDate(userUID, formattedDate)
             addRandomQuest(userUID)
@@ -57,8 +57,6 @@ export const EnterNameScreen = ({ navigation }) => {
                     dispatch(setIsUpdate(!isUpdate));
                     setTimeout(() => {
                         navigation.navigate('ExpainingScreen');
-                        console.log(`pet name: ${value}`);
-                        console.log(`userUID: ${userUID}`);
                     }, 700);
                 })
                 .catch(error => {
