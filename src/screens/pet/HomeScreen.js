@@ -11,7 +11,7 @@ import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 import { setEditItemLocation } from "../../redux/variableSlice";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
-import { retrieveQuestDaliyAndWeek,retrieveAllDataQuestNew } from "../../firebase/UserModel"
+import { retrieveQuestDaliyAndWeek,retrieveAllDataQuestNew, removeCardDownGrade } from "../../firebase/UserModel"
 import { setHasNotification } from "../../redux/variableSlice";
 import { addDownGradeCardtoFalse } from "../../firebase/UserModel";
 import { setTotalDownGradeCardValue } from "../../redux/variableSlice";
@@ -183,6 +183,7 @@ export const HomeScreen =({navigation})=>{
         if (totalDownGradeCardValue) {
             addDownGradeCardtoFalse(userUID);
             dispatch(setTotalDownGradeCardValue(false));
+            removeCardDownGrade(userUID)
             //showAlert();
             toggleModal();
         }
