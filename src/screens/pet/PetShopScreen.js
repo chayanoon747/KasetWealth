@@ -1,9 +1,10 @@
-import { View,TouchableOpacity,Image,Text, FlatList, Alert } from "react-native";
+import { View,TouchableOpacity,Image,Text, FlatList, Alert, Modal } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState,useEffect} from "react";
 import { useDispatch,useSelector } from "react-redux";
 import { setIsUpdate } from "../../redux/variableSlice";
-import { addItem2Inventory, checkDuplicateItem, retrieveCurrencyPet, addFurniture2Inventory, updateMoneyBalance, updateRubyBalance, updateGuarantee} from "../../firebase/UserModel";
+import { addItem2Inventory, checkDuplicateItem, retrieveCurrencyPet, addFurniture2Inventory, 
+    updateMoneyBalance, updateRubyBalance, updateGuarantee, addPetImages, addOnePetImage} from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 
 export const PetShopScreen = ({navigation}) => {
@@ -16,6 +17,7 @@ export const PetShopScreen = ({navigation}) => {
     const [rubyBalance, setRubyBalance] = useState();//แทนด้วยเพชรทั้งหมด user
     const [mysteryBoxGuaranteeNormal, setmysteryBoxGuaranteeNormal] = useState();
     const [inventory, setInventory] = useState();
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         retrieveCurrency();
@@ -207,7 +209,7 @@ export const PetShopScreen = ({navigation}) => {
     }
     
     //ข้อความรายละเอียดการสุ่ม
-    const infoAlert = () => {
+    const infoModal = () => {
         alert('การสุ่มเงินจะสุ่มระหว่าง 100 ถึง 1,000\nเมื่อเปิดจนครบการันตีจะได้เงินมูลค่า 1,000 แน่นอน');
     }
 
@@ -223,6 +225,10 @@ export const PetShopScreen = ({navigation}) => {
             
         return randomAmount;
     }
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible);
+    };
 
     const randomPetCard = async () => { //บัตรสุ่มสัตว์เลี้ยง
         const allPetImages = [
@@ -245,14 +251,14 @@ export const PetShopScreen = ({navigation}) => {
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044624592916/Devil03-01.png?ex=65f3e6e9&is=65e171e9&hm=c51323259f207777c3088fe7cfccf66bde0d3d67c491d65e7508afeb2c0123e5&",
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044335177728/Devil03-02.png?ex=65f3e6e9&is=65e171e9&hm=d65ea4cfca21cb322ec67d0134128b089741b655faa809a3e0eda0b3a8557061&",
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534389272617/Devil03-03.png?ex=65f3e75e&is=65e1725e&hm=fe7d759e8a0624db3b770cb612470f4f033bf3bf687824b346aec55324d84538&"
-            ],
+            ]
         ];
     
         const randomIndex = Math.floor(Math.random() * allPetImages.length);
         const selectedPetImages = allPetImages[randomIndex];
         addPetImages(userUID, selectedPetImages);
         addOnePetImage(userUID, selectedPetImages[0])
-
+        toggleModal();
     };
 
     const renderItem = ({ item, index }) => {
@@ -315,14 +321,14 @@ export const PetShopScreen = ({navigation}) => {
                             <View style={mysteryStyles.viewResetTimeText}>
                                 <TouchableOpacity
                                     onPress={() =>{
-                                        infoAlert()
+                                        infoModal()
                                     }}
                                 >
                                     <Text style={mysteryStyles.textDetaillMysteryStyle}>รายละเอียดเพิ่มเติมคลิก</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() =>{
-                                        infoAlert()
+                                        infoModal()
                                     }}
                                 >
                                     <Image
@@ -346,24 +352,31 @@ export const PetShopScreen = ({navigation}) => {
                         style={styles.TouchableItemBox}
                         onPress={() => {
                             if (rubyBalance >= item.itemPrice) {
-                                checkDuplicateItem(userUID, item)
-                                .then(isDuplicate => {
-                                    // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                    // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                    if (!isDuplicate) {
-                                        // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                        // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                        reportBuyItem(item);
-                                        buyItem2Inventory(item);
-                                    } else {
-                                        console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
-                                        alert('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น\nใน Inventory เท่านั้น');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error checking duplicate item:', error);
-                                    // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
-                                });
+                                if (item.itemName === 'บัตรกันลดขั้น') {
+                                    checkDuplicateItem(userUID, item)
+                                    .then(isDuplicate => {
+                                        // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        if (!isDuplicate) {
+                                            // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            reportBuyItem(item);
+                                            buyItem2Inventory(item);
+                                        } else {
+                                            console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
+                                            alert('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น\nใน Inventory เท่านั้น');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error checking duplicate item:', error);
+                                        // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
+                                    });
+                                }else{
+                                    reportBuyItem(item)
+                                    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                                    randomPetCard();
+                                    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+                                }
                             }else{
                                 console.log('Insufficient rubies to buy this item');
                                 alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
@@ -554,6 +567,23 @@ export const PetShopScreen = ({navigation}) => {
                 </View>
                 <View style={{flex:1}}></View>
             </View>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    toggleModal();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Downgrade card has been used.</Text>
+                        <TouchableOpacity onPress={toggleModal} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     )
 }
@@ -600,7 +630,8 @@ const styles = {
         backgroundColor:'#0ABAB5'
     },
     ViewTouchableBoxCategoryHealthy:{
-        marginVertical:'2%'
+        marginVertical:'2%',
+        marginHorizontal:20
     },
     ViewTouchableBoxCategoryFurniture:{
         marginTop:'2%',
@@ -613,7 +644,7 @@ const styles = {
         borderRadius:12,
         borderWidth:1, 
         borderColor:'#000000',
-        //backgroundColor:'orange'
+        // backgroundColor:'orange'
     },
     viewImageItemBox:{
         alignItems:'center'
@@ -628,13 +659,13 @@ const styles = {
     itemName:{
         flexDirection:'row',
         justifyContent:'center',
-        //backgroundColor:'green'
+        // backgroundColor:'green'
     },
     itemPrice:{
         flexDirection:'row',
         justifyContent:'center',
         alignItems:'center',
-        //backgroundColor:'pink'
+        // backgroundColor:'pink'
     },
     viewImageAndNameItemBox:{
         width:'auto',
@@ -765,8 +796,15 @@ const UseItem = [
         itemType: "forUse",
         itemCurrencyType: 'ruby',
         itemName: "บัตรกันลดขั้น",
-        itemPrice:20,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1206567181060407296/image_5.png?ex=6613d940&is=66016440&hm=38d0f009923d304112e4378b2d954242970ebb1bd6ee2cf99ee03053e4731f09&"
+        itemPrice:200,
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1222869375200264234/Featherfallingcard.png?ex=6617c8da&is=660553da&hm=992aebb3d25042fe33471afc059ea2123fa04e89c7acd4cca016e2a312c46c82&"
+     },
+     {
+        itemType: "forUse",
+        itemCurrencyType: 'ruby',
+        itemName: 'บัตรเปลี่ยนสัตว์เลี้ยง',
+        itemPrice: 160,
+        itemPhotoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1222869375615369226/Petchangercard.png?ex=6617c8da&is=660553da&hm=e0c08dd21682b5731c4932be9a73f2e8dfa3ed69af78eae4436eec5cacaf70d2&"
      }
 ]
 

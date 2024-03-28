@@ -1633,6 +1633,31 @@ export const updateGuageRiability = (userUID,newGuageRiability) =>{
     }
 }
 
+//ลบไอเท็มใน inventory
+export const removeCardDownGrade = (userUID) => {
+    const downGradeCard = {
+        itemType: "forUse",
+        itemName: "บัตรกันลดขั้น",
+        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1222869375200264234/Featherfallingcard.png?ex=6617c8da&is=660553da&hm=992aebb3d25042fe33471afc059ea2123fa04e89c7acd4cca016e2a312c46c82&"
+    }
+
+    return firestore()
+        .collection('pets')
+        .doc(userUID)
+        .update({
+            downGradeCard: false,
+            inventory: firestore.FieldValue.arrayRemove(downGradeCard)
+        })
+        .then(() => {
+            console.log("add Item2Inventory successfully!");
+        })
+        // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+        .catch((error) => {
+            console.error("Error adding Item2Inventory:", error);
+            throw error;
+        });
+};
+
 //เพิ่มไอเท็มไปใน inventory
 export const addItem2Inventory = (userUID, itemData) => {
     const newItem2Inventory = {
