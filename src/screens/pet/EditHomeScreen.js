@@ -413,7 +413,8 @@ export const EditHomeScreen =({navigation, route})=>{
             itemLocation: 0,
             itemName: item.itemName,
             itemPhotoURL: item.itemPhotoURL,
-            itemType: item.itemType
+            itemType: item.itemType,
+            itemSoldoutURL: item.itemSoldoutURL
         };
         updateLocationItem(userUID,item, newItem);
         
@@ -441,7 +442,7 @@ export const EditHomeScreen =({navigation, route})=>{
         }
         setTimeout(() => {
             dispatch(setIsUpdateItemPet(!isUpdateItemPet))
-        }, 1000);
+        }, 2000);
         
     }
 
@@ -451,13 +452,15 @@ export const EditHomeScreen =({navigation, route})=>{
             itemLocation: itemSelected.itemLocation,
             itemName: itemSelected.itemName,
             itemPhotoURL: itemSelected.itemPhotoURL,
-            itemType: itemSelected.itemType
+            itemType: itemSelected.itemType,
+            itemSoldoutURL: itemSelected.itemSoldoutURL
         };
         const previousItem = {
             itemLocation: 0,
             itemName: itemSelected.itemName,
             itemPhotoURL: itemSelected.itemPhotoURL,
-            itemType: itemSelected.itemType
+            itemType: itemSelected.itemType,
+            itemSoldoutURL: itemSelected.itemSoldoutURL
         };
         updateLocationItem(userUID,previousItem, newItem);
         if(itemSelected.itemType == 'table'){
@@ -489,6 +492,9 @@ export const EditHomeScreen =({navigation, route})=>{
             }
         }
         dispatch(setEditItemLocation(false))
+        setTimeout(() => {
+            dispatch(setIsUpdateItemPet(!isUpdateItemPet))
+        }, 2000);
     }
 
     const componentItem = (item)=>{
@@ -504,7 +510,7 @@ export const EditHomeScreen =({navigation, route})=>{
         if(item.itemType == 'wall'){
             return(
                 <TouchableOpacity  style={{marginLeft:8}}
-                    onPress={()=>{handleItemPress(item)}}
+                    onPress={()=>{handleItemPress(item).then(()=>{dispatch(setIsUpdateItemPet(!isUpdateItemPet))})}}
                 >
                     <Image source={{uri:item.itemPhotoURL}}
                         width={90} height={90} resizeMode="contain">

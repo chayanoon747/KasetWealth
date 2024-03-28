@@ -4,6 +4,10 @@ import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt, retrieveInventory } from './RetrieveData';
 import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsUpdateItemPet } from '../redux/variableSlice';
+
+
 
 export const addUser = (user, profile, success, unsuccess)=>{
     console.log(`addUser in UserModel user id: ${user.uid}`)
@@ -1681,6 +1685,7 @@ export const addFurniture2Inventory = (userUID, itemData) => {
 };
 
 export const updateLocationItem = (userUID, item, newItem)=>{
+
         firestore()
         .collection('pets')
         .doc(userUID)
