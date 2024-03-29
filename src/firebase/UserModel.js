@@ -2369,9 +2369,6 @@ export const changeFinished = async (allQuestSelected, checked, userUID) => {
         return checked.some(element => element.value == element1.value && element.transactionType == element1.transactionType);
     });
 
-    console.log('filter : ',filteredPersonalQuests)
-
-
     const addPersonalQuestReward = filteredPersonalQuests ? filteredPersonalQuests.map(async(element) => { 
         try {
             const prepare = {
@@ -2569,10 +2566,8 @@ export const finalReward = async (userUID, checkedQuest ) => {
 
         const data = await firestore().collection('pets').doc(userUID).get()
         if (data.exists) {
-            console.log('อันนี้ได้มั้ย',oldValue.Money)
             oldValue.Money = data.data().Money;
             oldValue.Ruby = data.data().Ruby;
-            
         }
 
         oldValue.Money += rewards.Money;

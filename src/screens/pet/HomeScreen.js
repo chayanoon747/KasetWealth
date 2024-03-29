@@ -54,6 +54,7 @@ export const HomeScreen =({navigation})=>{
     const [questAll , setQuestAll] = useState([])
     const [questStateTrue, setQuestStateTrue] = useState([])
     
+    const [step,setStep] = useState('0')
     const [finish,setFinish] = useState(false)
     const [finishChecked,setFinishChecked] = useState(false)
     const [finishProgression,setFinishProgression] = useState(false)
@@ -78,25 +79,28 @@ export const HomeScreen =({navigation})=>{
         dispatch(setItemData({}))
         retrieveCurrency()
         getImageData()
-        getQuestData()
-        getAllQuest()
-        if(finish){
+        if(step == '0'){
+            getQuestData()
+            getAllQuest()
+        }
+        if(step == '1'){
             getProgression()
             console.log(progression)
         }
-        if (finishProgression){
+        if (step == '2'){
             const checked = checkExpenseDailyQuest()
             console.log('checked',checked)
             sumReward(checked)
+            setStep('3')
             setFinishChecked(true)
         }
-        
-        if(finishChecked){
+        if(step == '3'){
             checkRandomQuest();
+            setStep('4')
         }
         console.log(hasNotification)
         handleTotalDownGradeCardValue()
-    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish,finishProgression,finishChecked]);    
+    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish,finishChecked,finishProgression]);    
 
     const retrieveCurrency = async () => {
         try {
@@ -131,6 +135,7 @@ export const HomeScreen =({navigation})=>{
           const expenseQuestItem = await retrieveCheckExpenseQuest(userUID)
           setExpenseQuest(expenseQuestItem)
           //console.log(expenseQuestItem)
+          setStep('1')
           setFinish(true)
         }catch (error) {
             console.error('Error getAllQuest:', error);
@@ -142,6 +147,7 @@ export const HomeScreen =({navigation})=>{
         try{
             const itemProgression = await precheckExpenseQuest(userUID,expenseQuest,formattedCurrentDate,questRounds)
             setProgression(itemProgression)
+            setStep('2')
             setFinishProgression(true)
         }
         catch (error) {
