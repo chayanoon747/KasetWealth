@@ -17,7 +17,19 @@ export const PetShopScreen = ({navigation}) => {
     const [rubyBalance, setRubyBalance] = useState();//แทนด้วยเพชรทั้งหมด user
     const [mysteryBoxGuaranteeNormal, setmysteryBoxGuaranteeNormal] = useState();
     const [inventory, setInventory] = useState();
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalChangePetCardVisible, setModalChangePetCardVisible] = useState(false);
+    const [modalInfoVisible, setModalInfoVisible] = useState(false);
+    const [modalInfoForUseVisible, setModalInfoForUseVisible] = useState(false);
+    const [modalPurchasedIncomplete, setModalPurchasedIncomplete] = useState(false);
+    const [modalPurchasedComplete, setModalPurchasedComplete] = useState(false);
+    const [modalRandomCoin, setModalRandomCoin] = useState(false);
+    const [modalGuaranteCoin, setModalGuaranteCoin] = useState(false);
+    const [modalInsufficientCoins, setModalInsufficientCoins] = useState(false);
+    const [modalInsufficientRubies, setModalInsufficientRubies] = useState(false);
+    const [modalOneItemInInventory, setModalOneItemInInventory] = useState(false);
+    const [modalDuplicateItem, setModalDuplicateItem] = useState(false);
+    const [newPetImage, setNewPetImage] = useState(null);
+    const [randomCoinValue, setRandomCoinValue] = useState(null);
 
     useEffect(() => {
         retrieveCurrency();
@@ -58,10 +70,11 @@ export const PetShopScreen = ({navigation}) => {
                     setRubyBalance(newRubyBalance);
                     setmysteryBoxGuaranteeNormal(updatedMysteryBoxCount);
                     updateGuarantee(userUID, updatedMysteryBoxCount)
+                    setRandomCoinValue(newRandomMoney)
                     updateRubyBalance(userUID, newRubyBalance)
                         .catch((error) => {
                             console.error("Error updating ruby balance:", error);
-                            alert('Purchased Incomplete!');
+                            togglePurchasedIncomplete();
                             // คืนค่าเพชรกลับไปเป็นค่าเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตค่า
                             setRubyBalance(rubyBalance);
                     })
@@ -69,11 +82,11 @@ export const PetShopScreen = ({navigation}) => {
                     updateMoneyBalance(userUID, newCoinBalance)
                         .then(() => {
                             console.log(`Item Purchased: ${item.itemName}`);
-                            alert('Congratulations! You have received many decorative items\n'+newRandomMoney);
+                            toggleGuaranteCoin();
                         })
                         .catch((error) => {
                             console.error("Error updating money balance:", error);
-                            alert('Purchased Incomplete!');
+                            togglePurchasedIncomplete();
                             // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
                             setCoinBalance(coinBalance);
                         })
@@ -89,21 +102,22 @@ export const PetShopScreen = ({navigation}) => {
                             setCoinBalance(newCoinBalance);
                             setmysteryBoxGuaranteeNormal(updatedMysteryBoxCount);
                             setCoinBalance(newCoinBalance1);
+                            setRandomCoinValue(newRandomMoney);
                             updateMoneyBalance(userUID, newCoinBalance1)
                                 .then(() => {
                                     console.log(`Item Purchased: ${item.itemName}`);
-                                    alert('Purchased Complete!\nจำนวนเงินที่สุ่มได้คือ ' + newRandomMoney);
+                                    toggleRandomCoin();
                                 })
                                 .catch((error) => {
                                 console.error("Error updating money balance:", error);
-                                alert('Purchased Incomplete!');
+                                togglePurchasedIncomplete();
                                 // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
                                 setCoinBalance(coinBalance);
                             })
                             updateGuarantee(userUID, updatedMysteryBoxCount);
                         } else {
                             console.log('Insufficient coins to buy this item');
-                            alert('Purchased Incomplete!\nInsufficient coins to buy this item');
+                            toggleInsufficientCoins();
                         }
                     }else if (item.itemCurrencyType === 'ruby') {
                         if (rubyBalance >= item.itemPrice) {
@@ -115,71 +129,122 @@ export const PetShopScreen = ({navigation}) => {
                             // อัปเดตยอดเงินใน Firebase และ เลขการันตี
                             setRubyBalance(newRubyBalance);
                             setmysteryBoxGuaranteeNormal(updatedMysteryBoxCount);
-                            updateGuarantee(userUID, updatedMysteryBoxCount)
+                            updateGuarantee(userUID, updatedMysteryBoxCount);
+                            setRandomCoinValue(newRandomMoney);
                             updateRubyBalance(userUID, newRubyBalance)
                                 .catch((error) => {
                                     console.error("Error updating ruby balance:", error);
-                                    alert('Purchased Incomplete!');
+                                    togglePurchasedIncomplete();
                                     // คืนค่าเพชรกลับไปเป็นค่าเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตค่า
                                     setRubyBalance(rubyBalance);
-                            })
+                            });
                             setCoinBalance(newCoinBalance);
                             updateMoneyBalance(userUID, newCoinBalance)
                                 .then(() => {
                                     console.log(`Item Purchased: ${item.itemName}`);
-                                    alert('Purchased Complete!\nจำนวนเงินที่สุ่มได้คือ ' + newRandomMoney);
+                                    toggleRandomCoin();
                                 })
                                 .catch((error) => {
                                     console.error("Error updating money balance:", error);
-                                    alert('Purchased Incomplete!');
+                                    togglePurchasedIncomplete();
                                     // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
                                     setCoinBalance(coinBalance);
-                                })
+                                });
                         } else {
                             console.log('Insufficient rubies to buy this item');
-                            alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+                            toggleInsufficientRubies();
                         }
                     }   
                 }
             }
         } else {
-            if (item.itemCurrencyType === 'coin') {
-                if (coinBalance >= item.itemPrice) {
-                    const newCoinBalance = coinBalance - item.itemPrice;
-                    setCoinBalance(newCoinBalance);//ในแอป
-                    updateMoneyBalance(userUID, newCoinBalance)//ในฐานข้อมูล
-                        .then(() => {
-                            console.log(`Item itemPurchesed: ${item.itemName}`);
-                            alert('Purchased Complete!');
-                        })
+            if (item.itemName === 'บัตรเปลี่ยนสัตว์เลี้ยง') {
+                if (item.itemCurrencyType === 'coin') {
+                    if (coinBalance >= item.itemPrice) {
+                        const newCoinBalance = coinBalance - item.itemPrice;
+                        setCoinBalance(newCoinBalance);//ในแอป
+                        updateMoneyBalance(userUID, newCoinBalance)//ในฐานข้อมูล
+                            .then(() => {
+                                console.log(`Item itemPurchesed: ${item.itemName}`);
+                                console.log('Purchased Complete!');
+                            })
+                            .catch((error) => {
+                                console.error("Error updating money balance:", error);
+                                console.log('Purchased Incomplete!');
+                                togglePurchasedIncomplete();
+                                // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
+                                setCoinBalance(coinBalance);
+                            });
+                    } else {
+                        console.log('Insufficient coins to buy this item');
+                        toggleInsufficientCoins();
+                    }
+                } else if (item.itemCurrencyType === 'ruby') {
+                    if (rubyBalance >= item.itemPrice) {
+                        const newRubyBalance = rubyBalance - item.itemPrice;
+                        setRubyBalance(newRubyBalance);
+                        updateRubyBalance(userUID, newRubyBalance)
+                            .then(() => {
+                                console.log(`Item itemPurchesed: ${item.itemName}`);
+                                console.log('Purchased Complete!');
+                            })
                         .catch((error) => {
-                            console.error("Error updating money balance:", error);
-                            alert('Purchased Incomplete!');
-                            // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
-                            setCoinBalance(coinBalance);
-                        });
-                } else {
-                    console.log('Insufficient coins to buy this item');
-                    alert('Purchased Incomplete!\nInsufficient coins to buy this item');
-                }
-            } else if (item.itemCurrencyType === 'ruby') {
-                if (rubyBalance >= item.itemPrice) {
-                    const newRubyBalance = rubyBalance - item.itemPrice;
-                    setRubyBalance(newRubyBalance);
-                    updateRubyBalance(userUID, newRubyBalance)
-                        .then(() => {
-                            console.log(`Item itemPurchesed: ${item.itemName}`);
-                            alert('Purchased Complete!');
+                            console.error("Error updating ruby balance:", error);
+                            console.log('Purchased Incomplete!');
+                            togglePurchasedIncomplete();
+                            // คืนค่าเพชรกลับไปเป็นค่าเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตค่า
+                            setRubyBalance(rubyBalance);
                         })
-                    .catch((error) => {
-                        console.error("Error updating ruby balance:", error);
-                        alert('Purchased Incomplete!');
-                        // คืนค่าเพชรกลับไปเป็นค่าเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตค่า
-                        setRubyBalance(rubyBalance);
-                    })
-                } else {
-                    console.log('Insufficient rubies to buy this item');
-                    alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+                    } else {
+                        console.log('Insufficient rubies to buy this item');
+                        toggleInsufficientRubies();
+                    }
+                }
+            }else{
+                if (item.itemCurrencyType === 'coin') {
+                    if (coinBalance >= item.itemPrice) {
+                        const newCoinBalance = coinBalance - item.itemPrice;
+                        setCoinBalance(newCoinBalance);//ในแอป
+                        updateMoneyBalance(userUID, newCoinBalance)//ในฐานข้อมูล
+                            .then(() => {
+                                console.log(`Item itemPurchesed: ${item.itemName}`);
+                                console.log('Purchased Complete!');
+                                togglePurchasedComplete();
+                            })
+                            .catch((error) => {
+                                console.error("Error updating money balance:", error);
+                                console.log('Purchased Incomplete!');
+                                togglePurchasedIncomplete();
+                                // คืนค่าเงินกลับไปเป็นเงินเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตเงิน
+                                setCoinBalance(coinBalance);
+                            });
+                    } else {
+                        console.log('Insufficient coins to buy this item');
+                        console.log('Purchased Incomplete!\nInsufficient coins to buy this item');
+                        toggleInsufficientCoins();
+                    }
+                } else if (item.itemCurrencyType === 'ruby') {
+                    if (rubyBalance >= item.itemPrice) {
+                        const newRubyBalance = rubyBalance - item.itemPrice;
+                        setRubyBalance(newRubyBalance);
+                        updateRubyBalance(userUID, newRubyBalance)
+                            .then(() => {
+                                console.log(`Item itemPurchesed: ${item.itemName}`);
+                                console.log('Purchased Complete!');
+                                togglePurchasedComplete();
+                            })
+                        .catch((error) => {
+                            console.error("Error updating ruby balance:", error);
+                            console.log('Purchased Incomplete!');
+                            togglePurchasedIncomplete();
+                            // คืนค่าเพชรกลับไปเป็นค่าเดิมเนื่องจากมีข้อผิดพลาดในการอัปเดตค่า
+                            setRubyBalance(rubyBalance);
+                        })
+                    } else {
+                        console.log('Insufficient rubies to buy this item');
+                        console.log('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+                        toggleInsufficientRubies();
+                    }
                 }
             }
         }
@@ -209,8 +274,13 @@ export const PetShopScreen = ({navigation}) => {
     }
     
     //ข้อความรายละเอียดการสุ่ม
-    const infoModal = () => {
-        alert('การสุ่มเงินจะสุ่มระหว่าง 100 ถึง 1,000\nเมื่อเปิดจนครบการันตีจะได้เงินมูลค่า 1,000 แน่นอน');
+    const toggleRandomInfo = () => {
+        setModalInfoVisible(!modalInfoVisible);
+    }
+
+    //ข้อความรายละเอียดของไอเทมกดใช้
+    const toggleInfoForUse = () => {
+        setModalInfoForUseVisible(!modalInfoForUseVisible)
     }
 
     //สุ่มเงินขั้นต่ำ 100 สูงสุด 1000 การันตี 1000
@@ -222,13 +292,44 @@ export const PetShopScreen = ({navigation}) => {
                 // สุ่มตัวเลขในช่วง 100 ถึง 1000
                 randomAmount = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
             }
-            
         return randomAmount;
     }
 
-    const toggleModal = () => {
-        setModalVisible(!modalVisible);
+    const toggleModalChangePetCardVisible = () => {
+        setModalChangePetCardVisible(!modalChangePetCardVisible);
     };
+
+    const togglePurchasedIncomplete = () => {
+        setModalPurchasedIncomplete(!modalPurchasedIncomplete);
+    }
+
+    const togglePurchasedComplete = () => {
+        setModalPurchasedComplete(!modalPurchasedComplete);
+    }
+
+    const toggleRandomCoin = () => {
+        setModalRandomCoin(!modalRandomCoin);
+    }
+
+    const toggleGuaranteCoin = () => {
+        setModalGuaranteCoin(!modalGuaranteCoin);
+    }
+
+    const toggleInsufficientCoins = () => {
+        setModalInsufficientCoins(!modalInsufficientCoins);
+    }
+
+    const toggleInsufficientRubies = () => {
+        setModalInsufficientRubies(!modalInsufficientRubies);
+    }
+
+    const toggle1stItemInInventory = () => {
+        setModalOneItemInInventory(!modalOneItemInInventory);
+    }
+
+    const toggleDuplicateItem = () => {
+        setModalDuplicateItem(!modalDuplicateItem);
+    }
 
     const randomPetCard = async () => { //บัตรสุ่มสัตว์เลี้ยง
         const allPetImages = [
@@ -253,12 +354,14 @@ export const PetShopScreen = ({navigation}) => {
                 "https://cdn.discordapp.com/attachments/1202281623585034250/1213006535509409812/Pengu02-03.png?ex=660f96de&is=65fd21de&hm=122d7a17c8526fbb321c0724f5d3f55aff330efbd5a5ceeadad164dfcb4400a7&"
             ],
         ];
-    
+        
         const randomIndex = Math.floor(Math.random() * allPetImages.length);
         const selectedPetImages = allPetImages[randomIndex];
         addPetImages(userUID, selectedPetImages);
         addOnePetImage(userUID, selectedPetImages[0])
-        toggleModal();
+        setNewPetImage(selectedPetImages[0]);
+        console.log(newPetImage);
+        toggleModalChangePetCardVisible();
     };
 
     const renderItem = ({ item, index }) => {
@@ -299,7 +402,7 @@ export const PetShopScreen = ({navigation}) => {
                                 <TouchableOpacity
                                     style={mysteryStyles.touchableMysteryItemBox}
                                     onPress={() => {
-                                        reportBuyItem(item)
+                                        reportBuyItem(item);
                                     }}
                                 >
                                     <View style={mysteryStyles.viewTextPriceButton}>
@@ -321,14 +424,14 @@ export const PetShopScreen = ({navigation}) => {
                             <View style={mysteryStyles.viewResetTimeText}>
                                 <TouchableOpacity
                                     onPress={() =>{
-                                        infoModal()
+                                        toggleRandomInfo()
                                     }}
                                 >
                                     <Text style={mysteryStyles.textDetaillMysteryStyle}>รายละเอียดเพิ่มเติมคลิก</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={() =>{
-                                        infoModal()
+                                        toggleRandomInfo()
                                     }}
                                 >
                                     <Image
@@ -349,7 +452,7 @@ export const PetShopScreen = ({navigation}) => {
            renderStyle = (
                 <View style={styles.ViewTouchableBoxCategoryHealthy}>
                     <TouchableOpacity
-                        style={styles.TouchableItemBox}
+                        style={styles.TouchableItemBox} 
                         onPress={() => {
                             if (rubyBalance >= item.itemPrice) {
                                 if (item.itemName === 'บัตรกันลดขั้น') {
@@ -364,7 +467,7 @@ export const PetShopScreen = ({navigation}) => {
                                             buyItem2Inventory(item);
                                         } else {
                                             console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
-                                            alert('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น\nใน Inventory เท่านั้น');
+                                            toggle1stItemInInventory();
                                         }
                                     })
                                     .catch(error => {
@@ -378,11 +481,15 @@ export const PetShopScreen = ({navigation}) => {
                                     console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
                                 }
                             }else{
-                                console.log('Insufficient rubies to buy this item');
-                                alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
+                                if (item.itemCurrencyType === 'ruby') {
+                                    console.log('Insufficient rubies to buy this item');
+                                    toggleInsufficientRubies();
+                                }else{
+                                    console.log('Insufficient coins to buy this item');
+                                    toggleInsufficientRubies();
+                                }
                             }
                         }}
-                        
                     >
                         <View style={styles.viewImageAndNameItemBox}>
                             <View style={styles.viewImageItemBox}>
@@ -430,7 +537,7 @@ export const PetShopScreen = ({navigation}) => {
                                         reportBuyItem(item);
                                     } else {
                                         console.log('คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว ไม่สามารถซื้อสินค้าซ้ำได้');
-                                        alert('คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว\nไม่สามารถซื้อสินค้าซ้ำได้');
+                                        toggleDuplicateItem();
                                     }
                                 })
                                 .catch(error => {
@@ -438,12 +545,15 @@ export const PetShopScreen = ({navigation}) => {
                                     // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
                                 });
                             }else{
-                                console.log('Insufficient coins to buy this item');
-                                alert('Purchased Incomplete!\nInsufficient coins to buy this item');
+                                if (item.itemCurrencyType === 'coin') {
+                                    console.log('Insufficient coins to buy this item');
+                                    toggleInsufficientRubies();
+                                }else{
+                                    console.log('Insufficient rubies to buy this item');
+                                    toggleInsufficientRubies();
+                                }
                             }
-                            
                         }}
-                        
                     >
                         <View style={styles.viewImageAndNameItemBox}>
                             <View style={styles.viewImageItemBox}>
@@ -453,7 +563,6 @@ export const PetShopScreen = ({navigation}) => {
                                         uri: isDuplicateURL === true
                                             ? item.itemSoldoutURL
                                             : item.itemPhotoURL
-                                    
                                     }}
                                     width={150}
                                     height={150}
@@ -537,8 +646,25 @@ export const PetShopScreen = ({navigation}) => {
                 </View>
                 <View style={{flex:2, marginVertical:5}}>
                 <View style={styles.box}>
+                    <View style={{flexDirection:'row',backgroundColor:'#0ABAB5', borderRadius:14}}>
                         <View style={styles.boxhead}>
                             <Text style={styles.headerText}>ไอเทมกดใช้</Text>
+                        </View>
+                        <View>
+                                        <TouchableOpacity
+                                            onPress={toggleInfoForUse}
+                                        >
+                                            <Image
+                                                style={{
+                                                width:20,
+                                                height:20,
+                                                }}
+                                                source={{
+                                                    uri: 'https://cdn.discordapp.com/attachments/1202281623585034250/1223147271349207060/material-symbols_info-outline.png?ex=6618cbaa&is=660656aa&hm=b470b6ad93747529febdb8740923d079987e0134bf0f1539700df42b8dfb5274&'
+                                                }}
+                                        />
+                                        </TouchableOpacity>
+                                    </View>
                         </View>
                         <View style={{flex:4,alignItems: 'center'}}>
                             <FlatList
@@ -567,18 +693,221 @@ export const PetShopScreen = ({navigation}) => {
                 </View>
                 <View style={{flex:1}}></View>
             </View>
+            {/*modalChangePetCardVisible */}
             <Modal
                 animationType="fade"
                 transparent={true}
-                visible={modalVisible}
+                visible={modalChangePetCardVisible}
                 onRequestClose={() => {
-                    toggleModal();
+                    toggleModalChangePetCardVisible();
                 }}
             >
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
                     <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
-                        <Text>Downgrade card has been used.</Text>
-                        <TouchableOpacity onPress={toggleModal} style={{ marginTop: 20 }}>
+                        <Text>Change Pet card has been used.</Text>
+                        <Text>Your new pet is.</Text>
+                        {newPetImage ? ( // เช็คว่า newPetImage มีค่าหรือไม่
+                            <View>
+                                <Image
+                                    source={{
+                                        uri: newPetImage
+                                    }}
+                                    style={{ width: 200, height: 200 }}
+                                />
+                            </View>
+                        ) : (
+                            <Text>Loading...</Text>
+                        )}
+                        <TouchableOpacity onPress={toggleModalChangePetCardVisible} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalInfoVisible */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalInfoVisible}
+                onRequestClose={() => {
+                    toggleRandomInfo();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>การสุ่มเหรียญจะสุ่มระหว่าง 100 ถึง 1,000 เหรียญ</Text>
+                        <Text>เมื่อเปิดจนครบการันตีจะได้เหรียญจำนวน 1,000 เหรียญแน่นอน</Text>
+                        <TouchableOpacity onPress={toggleRandomInfo} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalInfoForUseVisible */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalInfoForUseVisible}
+                onRequestClose={() => {
+                    toggleInfoForUse();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>บัตรกันลดขั้น สามารถป้องกันไม่ให้สัตว์เลี้ยงวิวัฒนาการย้อนกลับได้หนึ่งครั้ง เมื่อซื้อแล้วจะถูกเก็บอยู่ในช่องเก็บของ และจะมีได้เพียงชิ้นเดียวในช่องเก็บของเท่านั้น จะซื้อใหม่ได้ก็ต่อเมื่อบัตรถูกใช้แล้ว บัตรจะถูกใช้อัตโนมัติเมื่อเข้าเงื่อนไข</Text>
+                        <Text></Text>
+                        <Text>บัตรเปลี่ยนสัตว์เลี้ยง เมื่อซื้อจะสุ่มสัตว์เลี้ยงปัจุบันเป็นร่างแรกของสัตว์เลี้ยงที่สุ่มได้ โปรดเข้าใจด้วยว่ามีความเสี่ยงที่จะสุ่มได้สัตว์เลี้ยงปัจจุบัน</Text>
+                        <TouchableOpacity onPress={toggleInfoForUse} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalPurchasedComplete */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalPurchasedComplete}
+                onRequestClose={() => {
+                    togglePurchasedComplete();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Purchased Complete!</Text>
+                        <TouchableOpacity onPress={togglePurchasedComplete} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalPurchasedIncomplete */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalPurchasedIncomplete}
+                onRequestClose={() => {
+                    togglePurchasedIncomplete();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Purchased Incomplete!</Text>
+                        <TouchableOpacity onPress={togglePurchasedIncomplete} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalRandomCoin */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalRandomCoin}
+                onRequestClose={() => {
+                    toggleRandomCoin();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Purchased Complete!</Text>
+                        <Text>จำนวนเงินที่สุ่มได้คือ: {randomCoinValue}</Text>
+                        <TouchableOpacity onPress={toggleRandomCoin} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalGuaranteCoin */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalGuaranteCoin}
+                onRequestClose={() => {
+                    toggleGuaranteCoin();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Congratulations!</Text>
+                        <Text>จำนวนเงินที่สุ่มได้คือ: {randomCoinValue}</Text>
+                        <TouchableOpacity onPress={toggleGuaranteCoin} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalInsufficientCoins */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalInsufficientCoins}
+                onRequestClose={() => {
+                    toggleInsufficientCoins();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Purchased Incomplete!</Text>
+                        <Text>Insufficient coins to buy this item</Text>
+                        <TouchableOpacity onPress={toggleInsufficientCoins} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalInsufficientRubies */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalInsufficientRubies}
+                onRequestClose={() => {
+                    toggleInsufficientRubies();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Purchased Incomplete!</Text>
+                        <Text>because Insufficient rubies to buy this item</Text>
+                        <TouchableOpacity onPress={toggleInsufficientRubies} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalOneItemInInventory */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalOneItemInInventory}
+                onRequestClose={() => {
+                    toggle1stItemInInventory();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น</Text>
+                        <Text>ใน Inventory เท่านั้น</Text>
+                        <TouchableOpacity onPress={toggle1stItemInInventory} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+            {/*modalDuplicateItem */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalDuplicateItem}
+                onRequestClose={() => {
+                    toggleDuplicateItem();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว</Text>
+                        <Text>ไม่สามารถซื้อไอเทมซ้ำได้</Text>
+                        <TouchableOpacity onPress={toggleDuplicateItem} style={{ marginTop: 20 }}>
                             <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
                         </TouchableOpacity>
                     </View>
@@ -594,7 +923,7 @@ const styles = {
         textAlign:'center', 
         fontSize:17, 
         fontWeight: 'bold', 
-        color:'#ffffff'
+        color:'#ffffff',
     },
     CurrencyText:{
         fontSize:14,
@@ -624,9 +953,10 @@ const styles = {
     },
     boxhead:{
         flex:1,
+        flexDirection:'row',
         borderRadius:14,  
         borderColor:'#000000', 
-        justifyContent:'space around', 
+        justifyContent:'center', 
         backgroundColor:'#0ABAB5'
     },
     ViewTouchableBoxCategoryHealthy:{
