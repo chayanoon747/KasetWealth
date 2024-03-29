@@ -704,7 +704,7 @@ export const addTransaction = (userUID, itemData, input, selectedDate,isFirstTra
 };
 
 export const addPersonalGoal = (userUID, itemData, input, currentFormatedDate) => {
-    if (input.value !== 0) {
+    if (input!== 0) {
         const personalGoal = {
             transactionType: itemData.category,
             detail: itemData.subCategory,
@@ -712,7 +712,7 @@ export const addPersonalGoal = (userUID, itemData, input, currentFormatedDate) =
             questType: itemData.questType,
             questState: false,
             rewardStatus: false,
-            value: input.value,
+            value: input,
             seen: false,
             addDate: currentFormatedDate
         };
@@ -1809,7 +1809,6 @@ export const updateMoneyBalance = async (userUID, newBalance) => {
 export const addRandomQuest = async (userUID) => {
     try {
         const allQuest = await retrieveRandomQuest();
-        
         // Add daily quests
         for (const element of allQuest.daily) {
             await addQuestToUser('pets', userUID, element);
@@ -1842,7 +1841,14 @@ export const addRandomDailyQuest = async (userUID) => {
 export const addRandomWeeklyQuest = async (userUID) => {
     try {
         const weeklyQuests = await retrieveRandomWeeklyQuest();
-        await addQuestToUser('pets', userUID, weeklyQuests[0]);
+        await addQuestToUser('pets', userUID, weeklyQuests[0])
+        // .then(async()=>{
+        //     await addQuestToUser('pets', userUID, weeklyQuests[1]).then(async()=>{
+        //         await addQuestToUser('pets', userUID, weeklyQuests[2]).then(()=>{
+        //             console.log("Weekly quests added successfully!");
+        //         })
+        //     })
+        // })
         await addQuestToUser('pets', userUID, weeklyQuests[1]);
         await addQuestToUser('pets', userUID, weeklyQuests[2]);
         console.log("Weekly quests added successfully!");
@@ -1890,8 +1896,12 @@ export const retrieveRandomDailyQuest = async () => {
         const data = await firestore().collection('quests').doc('daily').get();
         if (data.exists) {
             const allData = data.data().quest;
-            const randomIndex1 = Math.floor(Math.random() * allData.length);
-            const randomIndex2 = Math.floor(Math.random() * allData.length);
+            let randomIndex1 = 0
+            let randomIndex2 = 0
+            do{
+            randomIndex1 = Math.floor(Math.random() * allData.length);
+            randomIndex2 = Math.floor(Math.random() * allData.length);
+            }while(randomIndex1 == randomIndex2)
             return [allData[randomIndex1], allData[randomIndex2]];
         } else {
             throw new Error("No daily quests found");
@@ -1907,9 +1917,14 @@ export const retrieveRandomWeeklyQuest = async () => {
         const data = await firestore().collection('quests').doc('weekly').get();
         if (data.exists) {
             const allData = data.data().quest;
-            const randomIndex1 = Math.floor(Math.random() * allData.length);
-            const randomIndex2 = Math.floor(Math.random() * allData.length);
-            const randomIndex3 = Math.floor(Math.random() * allData.length);
+            let randomIndex1 = 0
+            let randomIndex2 = 0
+            let randomIndex3 = 0
+            do{
+            randomIndex1 = Math.floor(Math.random() * allData.length);
+            randomIndex2 = Math.floor(Math.random() * allData.length);
+            randomIndex3 = Math.floor(Math.random() * allData.length);
+            }while(randomIndex1 == randomIndex2 || randomIndex2 == randomIndex3 || randomIndex3 == randomIndex1)
             return [allData[randomIndex1], allData[randomIndex2], allData[randomIndex3]];
         } else {
             throw new Error("No weekly quests found");
@@ -1984,7 +1999,7 @@ export const retrieveAllQuest = (userUID)=>{
         if(data.exists){
             const allData = data.data().quest;
             allData.forEach(element=>{
-                if(element.questType == 'Personal'){
+                if(element.questType == 'Personal Goal'){
                     allQuest.Personal.push(element)
                 }
                 if(element.questType == 'daily'){
@@ -2019,11 +2034,31 @@ export const retrieveFinishedQuest = (userUID)=>{
                 if(element.questType == 'weekly' && element.questState == true && element.rewardStatus == false){
                     finishedquest.Weekly.push(element)
                 }
-                if(element.questType == 'Personal' && element.questState == true && element.rewardStatus == false){
+                if(element.questType == 'Personal Goal' && element.questState == true && element.rewardStatus == false){
                     finishedquest.Personal.push(element)
                 }
             });
         return finishedquest
+        }
+    })
+}
+
+export const retrieveCheckExpenseQuest = (userUID)=>{
+    object=[]
+
+    return firestore()
+    .collection('pets')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().quest;
+            allData.forEach(quest=>{
+                if(quest.transactionType == 'ค่าใช้จ่าย'){
+                    object.push(quest)
+                }
+            });
+        return object
         }
     })
 }
@@ -2114,31 +2149,57 @@ export const precheckDailyQuest = (userUID,dailyQuestSelected,formattedCurrentDa
       Assest:[],
       Debt:[],
     }
+
+    const TypeSelect ={
+        Income:false,
+        Expense:false,
+        Assest:false,
+        Debt:false,
+    }
+
+    dailyQuestSelected.forEach(quest => {
+        if(quest.transactionType == 'รายได้'){
+            TypeSelect.Income = true
+        }
+        if(quest.transactionType == 'สินทรัพย์'){
+            TypeSelect.Expense = true
+        }
+        if(quest.transactionType == 'ค่าใช้จ่าย'){
+            TypeSelect.Assest = true
+        }
+        if(quest.transactionType == 'หนี้สิน'){
+            TypeSelect.Debt = true
+        }
+    })
+
     return firestore().collection('financials').doc(userUID).get()
     .then((data)=>{
       if (data.exists){
         const allData = data.data().transactions;
         allData.forEach(element=>{
           if(element.date == formattedCurrentDate){
-            dailyQuestSelected.forEach(element1=>{
-              if(element1.transactionType == element.transactionType){
+            if(TypeSelect.Income){
                 if(element.transactionType == 'รายได้'){
-                  progression.Income.push(element)
+                    progression.Income.push(element)
                 }
+            }
+            if(TypeSelect.Assest){
                 if(element.transactionType == 'สินทรัพย์'){
-                  progression.Assest.push(element)
+                    progression.Assest.push(element)
                 }
+            }
+            if(TypeSelect.Expense){
                 if(element.transactionType == 'ค่าใช้จ่าย'){
-                  progression.Expense.push(element)
+                    progression.Expense.push(element)
                 }
+            }
+            if(TypeSelect.Debt){
                 if(element.transactionType == 'ค่าใช้จ่าย' && (element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)')){
-                  progression.Debt.push(element)
+                    progression.Debt.push(element)
                 }
-              }
-            })
+            }
           }
         })
-        
         return progression
       }
     })
@@ -2173,42 +2234,121 @@ export const precheckWeeklyQuest = (userUID,QuestSelected,formattedCurrentDate)=
       Assest:[],
       Debt:[],
     }
+
+    const TypeSelect ={
+        Income:false,
+        Expense:false,
+        Assest:false,
+        Debt:false,
+    }
+
+    QuestSelected.forEach(quest => {
+        if(quest.transactionType == 'รายได้'){
+            TypeSelect.Income = true
+        }
+        if(quest.transactionType == 'สินทรัพย์'){
+            TypeSelect.Expense = true
+        }
+        if(quest.transactionType == 'ค่าใช้จ่าย'){
+            TypeSelect.Assest = true
+        }
+        if(quest.transactionType == 'หนี้สิน'){
+            TypeSelect.Debt = true
+        }
+    })
+
     return firestore().collection('financials').doc(userUID).get()
     .then((data)=>{
       if (data.exists){
         const allData = data.data().transactions;
         allData.forEach(element=>{
           if(element.date == nDay1 || element.date == nDay2 || element.date == nDay3 || element.date == nDay4 || element.date == nDay5 || element.date == nDay6 || element.date == nDay7){
-            QuestSelected.forEach(element1=>{
-              if(element1.transactionType == element.transactionType){
+            if(TypeSelect.Income){
                 if(element.transactionType == 'รายได้'){
-                  progression.Income.push(element)
+                    progression.Income.push(element)
                 }
+            }
+            if(TypeSelect.Assest){
                 if(element.transactionType == 'สินทรัพย์'){
-                  progression.Assest.push(element)
+                    progression.Assest.push(element)
                 }
+            }
+            if(TypeSelect.Expense){
                 if(element.transactionType == 'ค่าใช้จ่าย'){
-                  progression.Expense.push(element)
+                    progression.Expense.push(element)
                 }
+            }
+            if(TypeSelect.Debt){
                 if(element.transactionType == 'ค่าใช้จ่าย' && (element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)')){
-                  progression.Debt.push(element)
+                    progression.Debt.push(element)
                 }
-              }
-            })
+            }
           }
         })
-        
         return progression
       }
     })
     .catch((error) => {
-        console.error("Error precheckDailyQuest:", error);
+        console.error("Error precheckWeeklyQuest:", error);
+        throw error;
+    });
+}
+
+export const precheckExpenseQuest = (userUID,QuestSelected,formattedCurrentDate,questRound)=>{
+
+    const formattedCurrentDateAsDateObject = new Date(questRound)
+    const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
+
+    const Day2 = formattedCurrentDatetimestamp+86400000
+    const Day3 = formattedCurrentDatetimestamp+172800000
+    const Day4 = formattedCurrentDatetimestamp+259200000
+    const Day5 = formattedCurrentDatetimestamp+345600000
+    const Day6 = formattedCurrentDatetimestamp+432000000
+    const Day7 = formattedCurrentDatetimestamp+518400000
+
+    const nDay1 = convertDate(questRound)
+    const nDay2 = convertDate(Day2)
+    const nDay3 = convertDate(Day3)
+    const nDay4 = convertDate(Day4)
+    const nDay5 = convertDate(Day5)
+    const nDay6 = convertDate(Day6)
+    const nDay7 = convertDate(Day7)
+
+    const progression = {
+        Daily:[],
+        Expense:[]
+    }
+
+    return firestore().collection('financials').doc(userUID).get()
+    .then((data)=>{
+      if (data.exists){
+        const allData = data.data().transactions;
+        allData.forEach(element=>{
+            if(element.date == formattedCurrentDate){
+                //
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                    progression.Daily.push(element)
+                }
+            }
+            if(element.date == nDay1 || element.date == nDay2 || element.date == nDay3 || element.date == nDay4 || element.date == nDay5 || element.date == nDay6 || element.date == nDay7){
+                //
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                    progression.Expense.push(element)
+                }
+            }
+        })
+        return progression
+      }
+    })
+    .catch((error) => {
+        console.error("Error precheckWeeklyQuest:", error);
         throw error;
     });
 }
 
 export const precheckPersonalQuest = (userUID, QuestSelected) => {
     const progression = {
+        Date:QuestSelected.addDate,
         Income: [],
         Expense: [],
         Assest: [],
@@ -2225,33 +2365,28 @@ export const precheckPersonalQuest = (userUID, QuestSelected) => {
                 allData.forEach((element) => {
                     const elementDate = element.date;
                     if (elementDate >= QuestSelected.addDate) {
-                        QuestSelected.forEach((element1) => {
-                            if (element1.transactionType === element.transactionType) {
-                                if (element.transactionType === 'รายได้') {
-                                    progression.Income.push(element);
-                                }
-                                if (element.transactionType === 'สินทรัพย์') {
-                                    progression.Assest.push(element);
-                                }
-                                if (element.transactionType === 'ค่าใช้จ่าย') {
-                                    progression.Expense.push(element);
-                                    if (
-                                        element.category === 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' ||
-                                        element.category === 'ค่าใช้จ่ายคงที่(ชำระหนี้)'
-                                    ) {
-                                        progression.Debt.push(element);
-                                    }
-                                }
+                        if (element.transactionType === 'รายได้') {
+                            progression.Income.push(element);
+                        }
+                        if (element.transactionType === 'สินทรัพย์') {
+                            progression.Assest.push(element);
+                        }
+                        if (element.transactionType === 'ค่าใช้จ่าย') {
+                            progression.Expense.push(element);
+                            if (
+                                element.category === 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' ||
+                                element.category === 'ค่าใช้จ่ายคงที่(ชำระหนี้)'
+                            ) {
+                                progression.Debt.push(element);
                             }
-                        });
+                        }
                     }
                 });
-
                 return progression;
             }
         })
         .catch((error) => {
-            console.error("Error precheckDailyQuest:", error);
+            console.error("Error precheckPersonalQuest:", error);
             throw error;
         });
 };
@@ -2278,7 +2413,26 @@ export const changeFinished = async (allQuestSelected, checked, userUID) => {
 
     const filteredPersonalQuests = allQuestSelected.Personal.filter(element1 => {
         return checked.some(element => element.value == element1.value && element.transactionType == element1.transactionType);
-      });
+    });
+
+    const addPersonalQuestReward = filteredPersonalQuests ? filteredPersonalQuests.map(async(element) => { 
+        try {
+            const prepare = {
+                Daily:[],
+                Weekly:[],
+                Personal:[]
+            } 
+
+            filteredPersonalQuests.forEach(element=>{
+                prepare.Personal.push(element)
+            })
+            await finalReward(userUID, prepare);
+            console.log('Add Personal Quest Reward Success')
+        } catch (error) {
+            console.error("Error Add Personal Quest Reward:", error);
+            throw error;
+        }
+    }) : [];
 
     const delDailypromises = filteredDailyQuests.map(async (element) => {
         try {
@@ -2334,7 +2488,7 @@ export const changeFinished = async (allQuestSelected, checked, userUID) => {
 
     const delPersonalpromises = filteredPersonalQuests.map(async (element) => {
         try {
-          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            // console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
             await firestore().collection('pets').doc(userUID).update({
                 quest: firestore.FieldValue.arrayRemove(element)
             });
@@ -2344,32 +2498,18 @@ export const changeFinished = async (allQuestSelected, checked, userUID) => {
             throw error;
         }
     });
-    const addPersonalpromises = filteredPersonalQuests.map(async (element) => {
-      try {
-        element.questState = true
-        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
-          await firestore().collection('pets').doc(userUID).update({
-              quest: firestore.FieldValue.arrayUnion(element)
-          });
-          console.log("Update Finished Quest successfully!");
-      } catch (error) {
-          console.error("Error Remove Finished Quest:", error);
-          throw error; 
-      }
-    });
 
+    await Promise.all(addPersonalQuestReward);
     await Promise.all(delDailypromises);
     await Promise.all(addDailypromises);
     await Promise.all(delWeeklypromises);
     await Promise.all(addWeeklypromises);
     await Promise.all(delPersonalpromises);
-    await Promise.all(addPersonalpromises);
 };
 
 export const changeRewards = async (userUID,checkedQuest) =>{
     const trackingDailyQuest = checkedQuest.Daily
     const trackingWeeklyQuest = checkedQuest.Weekly
-    const trackingPersonalQuest = checkedQuest.Personal
 
     const delDailypromises = trackingDailyQuest.map(async (element) => {
         try {
@@ -2386,6 +2526,7 @@ export const changeRewards = async (userUID,checkedQuest) =>{
     const addDailypromises = trackingDailyQuest.map(async (element) => {
       try {
         element.rewardStatus = true
+        element.seen = true
         //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
           await firestore().collection('pets').doc(userUID).update({
               quest: firestore.FieldValue.arrayUnion(element)
@@ -2412,32 +2553,7 @@ export const changeRewards = async (userUID,checkedQuest) =>{
     const addWeeklypromises = trackingWeeklyQuest.map(async (element) => {
       try {
         element.rewardStatus = true
-        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
-          await firestore().collection('pets').doc(userUID).update({
-              quest: firestore.FieldValue.arrayUnion(element)
-          });
-          console.log("Update Finished Quest successfully!");
-      } catch (error) {
-          console.error("Error Remove Finished Quest:", error);
-          throw error; 
-      }
-    });
-
-    const delPersonalpromises = trackingPersonalQuest.map(async (element) => {
-        try {
-          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
-            await firestore().collection('pets').doc(userUID).update({
-                quest: firestore.FieldValue.arrayRemove(element)
-            });
-            console.log("Remove Finished Quest successfully!");
-        } catch (error) {
-            console.error("Error Remove Finished Quest:", error);
-            throw error;
-        }
-    });
-    const addPersonalpromises = trackingPersonalQuest.map(async (element) => {
-      try {
-        element.rewardStatus = true
+        element.seen = true
         //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
           await firestore().collection('pets').doc(userUID).update({
               quest: firestore.FieldValue.arrayUnion(element)
@@ -2453,13 +2569,9 @@ export const changeRewards = async (userUID,checkedQuest) =>{
     await Promise.all(addDailypromises);
     await Promise.all(delWeeklypromises);
     await Promise.all(addWeeklypromises);
-    await Promise.all(delPersonalpromises);
-    await Promise.all(addPersonalpromises);
 }
 
 export const finalReward = async (userUID, checkedQuest ) => {
-    console.log(checkedQuest)
-
     const rewards = {
         Money: 0,
         Ruby: 0
@@ -2470,23 +2582,21 @@ export const finalReward = async (userUID, checkedQuest ) => {
       } else {
         console.log("test object has values");
         checkedQuest.Daily.forEach(element => {
-            console.log(element)
             if (element.questType == 'daily') {
                 let moneyReward = element.value / 10;
                 rewards.Money += moneyReward;
             }
         })
-        //console.log(checkedQuest.Weekly[0].questType)
         checkedQuest.Weekly.forEach(element => {
             if (element.questType == 'weekly') {
                 let moneyReward = element.value / 10;
-                let rubyReward = element.value / 30;
+                let rubyReward = Math.floor(element.value / 30);
                 rewards.Money += moneyReward;
                 rewards.Ruby += rubyReward;
             }
         })
         checkedQuest.Personal.forEach(element => {
-            if (element.questType == 'Personal') {
+            if (element.questType == 'Personal Goal') {
                 let moneyReward = element.value / 10;
                 rewards.Money += moneyReward;
             }
@@ -2499,7 +2609,8 @@ export const finalReward = async (userUID, checkedQuest ) => {
             Ruby: 0
         };
 
-        const data = await firestore().collection('pets').doc(userUID).get();
+
+        const data = await firestore().collection('pets').doc(userUID).get()
         if (data.exists) {
             oldValue.Money = data.data().Money;
             oldValue.Ruby = data.data().Ruby;
