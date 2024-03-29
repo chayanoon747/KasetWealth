@@ -2162,10 +2162,10 @@ export const precheckDailyQuest = (userUID,dailyQuestSelected,formattedCurrentDa
             TypeSelect.Income = true
         }
         if(quest.transactionType == 'สินทรัพย์'){
-            TypeSelect.Expense = true
+            TypeSelect.Assest = true
         }
         if(quest.transactionType == 'ค่าใช้จ่าย'){
-            TypeSelect.Assest = true
+            TypeSelect.Expense = true
         }
         if(quest.transactionType == 'หนี้สิน'){
             TypeSelect.Debt = true
@@ -2242,20 +2242,24 @@ export const precheckWeeklyQuest = (userUID,QuestSelected,formattedCurrentDate)=
         Debt:false,
     }
 
+    console.log('เควสโว้ย',QuestSelected)
+
     QuestSelected.forEach(quest => {
         if(quest.transactionType == 'รายได้'){
             TypeSelect.Income = true
         }
         if(quest.transactionType == 'สินทรัพย์'){
-            TypeSelect.Expense = true
+            TypeSelect.Assest = true
         }
         if(quest.transactionType == 'ค่าใช้จ่าย'){
-            TypeSelect.Assest = true
+            TypeSelect.Expense = true
         }
         if(quest.transactionType == 'หนี้สิน'){
             TypeSelect.Debt = true
         }
     })
+
+    console.log(TypeSelect)
 
     return firestore().collection('financials').doc(userUID).get()
     .then((data)=>{
@@ -2415,25 +2419,6 @@ export const changeFinished = async (allQuestSelected, checked, userUID) => {
         return checked.some(element => element.value == element1.value && element.transactionType == element1.transactionType);
     });
 
-    const addPersonalQuestReward = filteredPersonalQuests ? filteredPersonalQuests.map(async(element) => { 
-        try {
-            const prepare = {
-                Daily:[],
-                Weekly:[],
-                Personal:[]
-            } 
-
-            filteredPersonalQuests.forEach(element=>{
-                prepare.Personal.push(element)
-            })
-            await finalReward(userUID, prepare);
-            console.log('Add Personal Quest Reward Success')
-        } catch (error) {
-            console.error("Error Add Personal Quest Reward:", error);
-            throw error;
-        }
-    }) : [];
-
     const delDailypromises = filteredDailyQuests.map(async (element) => {
         try {
           //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
@@ -2499,17 +2484,32 @@ export const changeFinished = async (allQuestSelected, checked, userUID) => {
         }
     });
 
-    await Promise.all(addPersonalQuestReward);
+    const addPersonalpromises = filteredPersonalQuests.map(async (element) => {
+        try {
+        element.questState = true
+        //console.log("Nooooooooooooooooooooooooooooooooooooooooooooo",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayUnion(element)
+            });
+            console.log("Update Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error; 
+        }
+    });
+
     await Promise.all(delDailypromises);
     await Promise.all(addDailypromises);
     await Promise.all(delWeeklypromises);
     await Promise.all(addWeeklypromises);
     await Promise.all(delPersonalpromises);
+    await Promise.all(addPersonalpromises);
 };
 
 export const changeRewards = async (userUID,checkedQuest) =>{
     const trackingDailyQuest = checkedQuest.Daily
     const trackingWeeklyQuest = checkedQuest.Weekly
+    const trackingPersonalQuest = checkedQuest.Personal 
 
     const delDailypromises = trackingDailyQuest.map(async (element) => {
         try {
@@ -2565,10 +2565,44 @@ export const changeRewards = async (userUID,checkedQuest) =>{
       }
     });
 
+    const addPersonalQuestReward = trackingPersonalQuest ? trackingPersonalQuest.map(async(element) => { 
+        try {
+            const prepare = {
+                Daily:[],
+                Weekly:[],
+                Personal:[]
+            } 
+
+            trackingPersonalQuest.forEach(element=>{
+                prepare.Personal.push(element)
+            })
+            await finalReward(userUID, prepare);
+            console.log('Add Personal Quest Reward Success')
+        } catch (error) {
+            console.error("Error Add Personal Quest Reward:", error);
+            throw error;
+        }
+    }) : [];
+
+    const delPersonalpromises = trackingPersonalQuest.map(async (element) => {
+        try {
+          //console.log("damnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",element)
+            await firestore().collection('pets').doc(userUID).update({
+                quest: firestore.FieldValue.arrayRemove(element)
+            });
+            console.log("Remove Finished Quest successfully!");
+        } catch (error) {
+            console.error("Error Remove Finished Quest:", error);
+            throw error;
+        }
+    });
+    
+    await Promise.all(addPersonalQuestReward);
     await Promise.all(delDailypromises);
     await Promise.all(addDailypromises);
     await Promise.all(delWeeklypromises);
     await Promise.all(addWeeklypromises);
+    await Promise.all(delPersonalpromises);
 }
 
 export const finalReward = async (userUID, checkedQuest ) => {
@@ -2612,8 +2646,8 @@ export const finalReward = async (userUID, checkedQuest ) => {
 
         const data = await firestore().collection('pets').doc(userUID).get()
         if (data.exists) {
-            oldValue.Money = data.data().Money;
-            oldValue.Ruby = data.data().Ruby;
+            oldValue.Money = data.data().Money
+            oldValue.Ruby = data.data().Ruby
         }
 
         oldValue.Money += rewards.Money;

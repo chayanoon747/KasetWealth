@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet,ScrollView, FlatList, Modal} from "react-native";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch} from 'react-redux';
 import { changeFinished,changeRewards,finalReward, retrieveFinishedQuest, retrieveAllDataQuestNew } from "../../firebase/UserModel";
@@ -21,15 +21,11 @@ export const GameQuest = ({navigation})=>{
     const [personalQuestSelected, setPersonalQuestSelected] = useState({})
     const [trackingFinishedQuest,setTrackingFinishedQuest] = useState({})
 
-    const [dailyProgression,setDailyProgression] = useState({})
-    const [weeklyProgression,setWeeklyProgression] = useState({})
-    const [personalProgression,setPersonalProgression] = useState({})
-
-    const [disableButtonState,setDisableButtonState] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [disableButtonState,setDisableButtonState] = useState(true)
 
     const [step,setStep] = useState('0')
     const [finish,setFinish] = useState(false)
-    const [finishProgression,setFinishProgression] = useState(false)
     const [finishChangeButton,setFinishChangeButton] = useState(false)
 
     const [stampTime,setStampTime] = useState({})
@@ -64,29 +60,17 @@ export const GameQuest = ({navigation})=>{
       if(step == '0'){
         getAllQuest()
       }
+      if(step == '1'){
+        setDisableButtonState(false)
+      }
       getPQuestData()
       getQuestData()
-      if(step == '1'){
-        getProgression() 
-        }
-      if(step == '2'){
-        const checked = checkDailyQuest()
-        handleChangedFinished(checked)
-      }
-      if(step == '2'){
-        const checked = checkWeeklyQuest()
-        handleChangedFinished(checked)
-      }
-      if(step == '2'){
-        const checked = checkPersonalQuest()
-        handleChangedFinished(checked)
-      }
-      if(disableButtonState == true){
+      if(disableButtonState == true && step =='1'){
         getAllQuest()
       }
       dispatch(setCameFromNoti(false))
       console.log("มาแล้ว")
-    }, [isUpdate,finish,finishProgression,finishChangeButton,hasNotification]);
+    }, [isUpdate,finish,finishChangeButton,hasNotification]);
 
     const getQuestData = async()=>{
       try{
@@ -134,27 +118,6 @@ export const GameQuest = ({navigation})=>{
       }
     }
 
-    const getProgression = async()=>{
-      try{
-          //onsole.log(allQuestSelected.Daily) มีข้อมูลแล้ว
-          const itemDailyQuest = await precheckDailyQuest(userUID,allQuestSelected.Daily,formattedCurrentDate)
-          setDailyProgression(itemDailyQuest)
-          const itemWeeklyQuest = await precheckWeeklyQuest(userUID,allQuestSelected.Weekly,questRounds)
-          setWeeklyProgression(itemWeeklyQuest)
-          const itemPersonalQuest = await Promise.all(
-            personalQuestSelected.map(async (element) => {
-              const retObj = await precheckPersonalQuest(userUID, element);
-              return retObj;
-              })
-            );
-          setPersonalProgression(itemPersonalQuest)
-          setStep('2')
-          setFinishProgression(true)
-      }catch (error) {
-          console.error('Error getProgression:',error);
-      }
-    }
-
     useEffect(() => {
       getImageData()
       dispatch(setCameFromNoti(false));
@@ -169,138 +132,6 @@ export const GameQuest = ({navigation})=>{
         }catch (error) {
             console.error('Error getImageData:', error);
         }  
-    }
-
-    const checkDailyQuest = ()=>{
-      const updatedQuest=[]
-      if(allQuestSelected.Daily != undefined){
-        allQuestSelected.Daily.forEach(element=>{
-          if(element.questState == false){
-            if(element.transactionType == 'รายได้'){
-              let incomeUnit =0
-              dailyProgression.Income.forEach(element1=>{
-                incomeUnit += parseInt(element1.value)
-              })
-              if(incomeUnit>=element.value){
-                updatedQuest.push(element)
-                console.log("daily quest income finished")
-              }
-            }
-            if(element.transactionType == 'สินทรัพย์'){
-              let assetUnit =0
-              dailyProgression.Assest.forEach(element1=>{
-                assetUnit += parseInt(element1.value)
-              })
-              if(assetUnit>=element.value){
-                updatedQuest.push(element)
-                console.log("daily quest asset finished")
-              }
-            }
-            if(element.transactionType == 'หนี้สิน'){
-              let debtUnit = 0
-              dailyProgression.Debt.forEach(element1=>{
-                debtUnit += parseInt(element1.value)
-              })
-              if(debtUnit>=element.value){
-                updatedQuest.push(element)
-                console.log("daily quest debt finished")
-              }
-            }
-          }
-        })
-        return updatedQuest
-      }
-    }
-
-    //แก้ให้เป็นรายสัปดาห์
-    const checkWeeklyQuest = ()=>{
-      const updatedQuest=[]
-      if(allQuestSelected.Weekly != undefined){
-        allQuestSelected.Weekly.forEach(element=>{
-          if(element.questState == false){
-            if(element.transactionType == 'รายได้'){
-              let incomeUnit =0
-              weeklyProgression.Income.forEach(element1=>{
-                incomeUnit += parseInt(element1.value)
-              })
-              if(incomeUnit>=element.value){
-                updatedQuest.push(element)
-                console.log("weekly quest income finished")
-              }
-            }
-            if(element.transactionType == 'สินทรัพย์'){
-              let assetUnit =0
-              weeklyProgression.Assest.forEach(element1=>{
-                assetUnit += parseInt(element1.value)
-              })
-              if(assetUnit>=element.value){
-                updatedQuest.push(element)
-                console.log("weekly quest asset finished")
-              }
-            }
-            if(element.transactionType == 'หนี้สิน'){
-              let debtUnit = 0
-              weeklyProgression.Debt.forEach(element1=>{
-                debtUnit += parseInt(element1.value)
-              })
-              if(debtUnit>=element.value){
-                updatedQuest.push(element)
-                console.log("weekly quest debt finished")
-              }
-            }
-          }
-        })
-        return updatedQuest
-      }
-    }
-
-    const checkPersonalQuest = ()=>{
-      const updatedQuest=[]
-      if(personalQuestSelected != undefined){
-        personalQuestSelected.forEach(quest=>{
-          if(quest.questState == false){
-            personalProgression.forEach(progression =>{
-              if(progression.Date == quest.addDate){
-                if(quest.transactionType == 'รายได้'){
-                  let incomeUnit = 0
-                  progression.Income.forEach(element=>{
-                    incomeUnit += parseInt(element.value)
-                  })
-                  if(incomeUnit>=quest.value){
-                    updatedQuest.push(quest)
-                    console.log("Personal quest income finished")
-                  }
-                }
-                if(quest.transactionType == 'สินทรัพย์'){
-                  let assestUnit =0
-                  progression.Assest.forEach(element=>{
-                    assestUnit += parseInt(element.value)
-                  })
-                  if(assestUnit>=quest.value){
-                    updatedQuest.push(quest)
-                    console.log("Personal quest assest finished")
-                  }
-                }
-                if(quest.transactionType == 'หนี้สิน'){
-                  let debtUnit =0
-                  progression.Debt.forEach(element=>{
-                    debtUnit += parseInt(element.value)
-                  })
-                  if(debtUnit>=quest.value){
-                    updatedQuest.push(quest)
-                    console.log("Personal quest debt finished")
-                  }
-                }
-              }
-            })
-          }
-        })
-        return updatedQuest
-      }
-    }
-
-    const handleChangedFinished =async(checked)=>{
-      await changeFinished(allQuestSelected,checked,userUID)
     }
 
     const handleDailyQuestReward = (index)=>{
@@ -354,7 +185,7 @@ export const GameQuest = ({navigation})=>{
           <Image source={require('../../assets/Vector.png')} style={{ width: 20, height: 20,alignSelf: 'center',transform: [{translateY: 10}] }}/>
           </TouchableOpacity>
       }
-      if((item.questState) === true && (item === false)){
+      if((item.questState) === true && (item.rewardStatus === false)){
         return <TouchableOpacity style={{ alignSelf: 'flex-end',width: 40, height: 40, borderRadius: 20, 
         backgroundColor: '#FFFFFF',alignSelf: 'center',transform: [{translateY: -5}] }} disabled={disableButtonState}
         onPress={()=>{handleButton()}}>
@@ -373,6 +204,7 @@ export const GameQuest = ({navigation})=>{
     setDisableButtonState(true)
     await finalReward(userUID,trackingFinishedQuest) 
     await changeRewards(userUID,trackingFinishedQuest)
+    toggleModal()
     setFinishChangeButton(!finishChangeButton)
   }
 
@@ -383,7 +215,9 @@ export const GameQuest = ({navigation})=>{
         selectedPetImageIndex = 1;
     }
 
-    
+    const toggleModal = () => {
+      setModalVisible(!modalVisible);
+    };
 
     const renderItem = ({ item })=>{
       return(
@@ -511,7 +345,26 @@ export const GameQuest = ({navigation})=>{
                </View>
             <View style = {{height:50}}>
             </View>
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    toggleModal();
+                }}
+            >
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+                    <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 10 }}>
+                        <Text>Received Reward.</Text>
+                        <TouchableOpacity onPress={toggleModal} style={{ marginTop: 20 }}>
+                            <Text style={{ textAlign:'center', color: "#0ABAB5" }}>Close</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
+
+
     )
 }
 
