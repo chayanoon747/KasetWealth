@@ -185,9 +185,9 @@ export const SignUpScreen = ({ navigation })=>{
                     >  
                     </TextInput>
 
-                    <TouchableOpacity style={{height:20, alignItems:'flex-end', marginBottom:'8%'}}>
-                        <Text style={{color:'#A9A9A9'}}>Forgot Password?</Text>
-                    </TouchableOpacity>
+                    <View style={{height:20, alignItems:'flex-end', marginBottom:'8%'}}>
+                       
+                    </View>
                     
                     <TouchableOpacity style={{height:50, borderRadius:16, backgroundColor:'#0ABAB5', justifyContent:'center', alignItems:'center', marginHorizontal:'8%', marginVertical:'2%'}}
                         onPress={handleSignUp}

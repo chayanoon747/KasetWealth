@@ -531,8 +531,8 @@ export const GameQuest = ({navigation})=>{
 
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10, borderRadius:16, 
                 marginVertical:10,backgroundColor:'#ffffff', justifyContent: 'space-between',height: 60}}>
-                  <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#9B51E0',alignSelf: 'center',transform: [{translateY: -5}] }}>
-                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1213008385612578856/game_questionMark.png?ex=65fd2397&is=65eaae97&hm=fb59b4103f2f12567a56b031641d19a35b22c74048858b56b0b9e71671ebcc8e&=&format=webp&quality=lossless&width=210&height=210'}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
+                  <View style={{ width: 40, height: 40, borderRadius: 20,alignSelf: 'center',transform: [{translateY: -5}] }}>
+                    <Image source={{uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1213008385612578856/game_questionMark.png?ex=6618d317&is=66065e17&hm=16112f15a2548058fa73c5ae3f1f11f1bfe85e916bbeb6de4a725b30020013c6&'}} style={{ width: 40, height: 40,alignSelf: 'center' }}/>
                   </View>
                   <View style={{flex: 1, flexDirection: 'column', alignItems: 'flex-start'}}>
                     <Text style={styles.headerText}>    ---</Text>

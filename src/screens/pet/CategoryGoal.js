@@ -20,7 +20,6 @@ export const CategoryGoal = ({navigation})=>{
                     <Text style={styles.BigText}>{item.category}</Text>
                     <Text style={styles.smallText}>-{item.subCategory}</Text>
                     <Text style={{position:'absolute',color:'transparent'}}>{item.questType}</Text>
-                    
                 </TouchableOpacity>
             </View>
         )         
@@ -35,13 +34,26 @@ export const CategoryGoal = ({navigation})=>{
     return(
        <SafeAreaView style={styles.container}>
             <View style={styles.secondContainer}>
-                <FlatList 
+                <FlatList style={{flex:1}}
                     data={firstCategoryFinancial}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={renderItem}
                     numColumns={2}
                     scrollEnabled={false}
                 />
+                <View style={{flex:1}}>
+                    <TouchableOpacity style={styles.checkTouchableOpacityContainer}
+                        onPress={() => handleItemPress(secondCategoryFinancial[0])}
+                    >
+                        <View style={styles.imageContainer}>
+                            <Image source={require('../../assets/game_backgroundIcon.png')} style={styles.gameBackgroundIcon} />
+                            <Image source={{uri: secondCategoryFinancial[0].photoURL}} style={styles.gameIcons} />
+                        </View>
+                        <Text style={[styles.BigText,{marginTop:20}]}>{secondCategoryFinancial[0].category}</Text>
+                        <Text style={styles.smallText}>-{secondCategoryFinancial[0].subCategory}</Text>
+                        <Text style={{position:'absolute',color:'transparent'}}>{secondCategoryFinancial[0].questType}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
        </SafeAreaView>
     )
@@ -69,7 +81,6 @@ const styles = StyleSheet.create({
         width:'50%',
         height:'100%',
         flexDirection:'row',
-       
         justifyContent:'center',
         alignItems:'center',
        
@@ -77,11 +88,8 @@ const styles = StyleSheet.create({
     checkTouchableOpacityContainer: {
         flex:1,
         backgroundColor:'transparent',
-        justifyContent:'center', 
+        justifyContent:'center',
         alignItems:'center',
-        
-        
-        
     },
     imageContainer: {
         flex:1,
@@ -101,20 +109,20 @@ const styles = StyleSheet.create({
         borderWidth:2
     },
     BigText: {
-        flex:1,
         width:'100%',
         color:'white',
         fontFamily:'ZenOldMincho-Regular', 
         marginTop:'5%', 
         fontSize:26,
-        textAlign:'center'
+        textAlign:'center',
+        textAlignVertical:'center'
     },
     smallText: {
         flex:1,
         color:'white',
-        fontFamily:'ZenOldMincho-Regular', 
+        fontFamily:'ZenOldMincho-Regular',
         fontSize:12,
-        textAlign:'center',  
+        textAlign:'center',
     }
     
   });
@@ -126,18 +134,22 @@ const firstCategoryFinancial = [
         questType: "Personal Goal",
         photoURL: 'https://cdn.discordapp.com/attachments/951838870272606259/1207602407794675772/game_income.png?ex=65e03e62&is=65cdc962&hm=df67dcce10c0cb83983a1cc4d62708513fdb7f3f12053eb5ce9c93d47678526d&'
     },
-    {
+    /*{
         category: "ค่าใช้จ่าย",
         subCategory: "ลดการจ่าย",
         questType: "Personal Goal",
         photoURL: 'https://cdn.discordapp.com/attachments/951838870272606259/1207602407501078578/game_expense.png?ex=65e03e62&is=65cdc962&hm=1278b25c57492b3406555f08d57f4fe64d993cd67b8106a2e9f532cfa9cd3081&'
-    },
+    },*/
     {
         category: "สินทรัพย์",
         subCategory: "ได้รับผลตอบแทน",
         questType: "Personal Goal",
         photoURL: 'https://cdn.discordapp.com/attachments/951838870272606259/1207602407194763314/game_asset.png?ex=65e03e62&is=65cdc962&hm=f8fb0accf16c53d8511d9995b2d095ce0319ae4837b78ce03e37559bcd5bff54&'
     },
+   
+]
+
+const secondCategoryFinancial = [
     {
         category: "หนี้สิน",
         subCategory: "ชำระหนี้สิน",

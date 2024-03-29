@@ -252,6 +252,11 @@ export const PetShopScreen = ({navigation}) => {
         const selectedPetImages = allPetImages[randomIndex];
         addPetImages(userUID, selectedPetImages);
         addOnePetImage(userUID, selectedPetImages[0])
+<<<<<<< Updated upstream
+=======
+        toggleModal();
+        dispatch(setIsUpdate(!isUpdate));
+>>>>>>> Stashed changes
 
     };
 
@@ -346,6 +351,7 @@ export const PetShopScreen = ({navigation}) => {
                         style={styles.TouchableItemBox}
                         onPress={() => {
                             if (rubyBalance >= item.itemPrice) {
+<<<<<<< Updated upstream
                                 checkDuplicateItem(userUID, item)
                                 .then(isDuplicate => {
                                     // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
@@ -364,6 +370,31 @@ export const PetShopScreen = ({navigation}) => {
                                     console.error('Error checking duplicate item:', error);
                                     // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
                                 });
+=======
+                                if (item.itemName === 'บัตรกันลดขั้น') {
+                                    checkDuplicateItem(userUID, item)
+                                    .then(isDuplicate => {
+                                        // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        if (!isDuplicate) {
+                                            // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            reportBuyItem(item);
+                                            buyItem2Inventory(item);
+                                        } else {
+                                            console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
+                                            alert('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้น\nใน Inventory เท่านั้น');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error checking duplicate item:', error);
+                                        // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
+                                    });
+                                }else{
+                                    reportBuyItem(item)
+                                    randomPetCard();
+                                }
+>>>>>>> Stashed changes
                             }else{
                                 console.log('Insufficient rubies to buy this item');
                                 alert('Purchased Incomplete !\nbecause Insufficient rubies to buy this item');
@@ -473,8 +504,8 @@ export const PetShopScreen = ({navigation}) => {
 
     return(
         <SafeAreaView style={{flex:1,backgroundColor:'#2C6264'}}>
-            <View style={{flex:12,padding:5}}>
-                <View style={{flex:0.5,marginHorizontal:19}}>
+            <View style={{height:'100%',padding:5}}>
+                <View style={{flex:0.6,marginHorizontal:19}}>
                     <View style={{flex:1}}>
                         <View style={{flex:1,flexDirection:'row'}}>
                             <View style={{flex:0.2}}>
@@ -486,7 +517,7 @@ export const PetShopScreen = ({navigation}) => {
                                 <View style={{flex:0.2}}>
                             <View style={styles.Emptybox}></View>
                             </View>
-                            <View style={{flex:0.2,marginRight:4}}>
+                            <View style={{flex:0.3,marginRight:4}}>
                                 <View style={styles.Currencybox}>
                                     <Image source={{
                                         uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'}}
@@ -496,7 +527,7 @@ export const PetShopScreen = ({navigation}) => {
                                     <Text style={styles.CurrencyText}>{coinBalance}</Text>
                                 </View>
                             </View>
-                            <View style={{flex:0.2}}>
+                            <View style={{flex:0.3}}>
                             <View style={styles.Currencybox}>
                                     <Image source={{
                                         uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'}}
@@ -552,7 +583,6 @@ export const PetShopScreen = ({navigation}) => {
                         </View>
                     </View>
                 </View>
-                <View style={{flex:1}}></View>
             </View>
         </SafeAreaView>
     )
@@ -575,7 +605,8 @@ const styles = {
         borderRadius:15,
         borderWidth:1, 
         borderColor:'#000000',
-        backgroundColor:'#fffffa'
+        backgroundColor:'#fffffa',
+       
     },
     Emptybox:{
         flex:1, 
@@ -590,14 +621,18 @@ const styles = {
         borderRadius:15,
         borderWidth:1, 
         borderColor:'#000000',
-        backgroundColor:'#fffffa'
+        backgroundColor:'#fffffa',
+        alignItems: 'center',
     },
     boxhead:{
-        flex:1,
-        borderRadius:14,  
+        flex:1.2,
+        
+        borderTopRightRadius:14,
+        borderTopLeftRadius:14,
         borderColor:'#000000', 
-        justifyContent:'space around', 
-        backgroundColor:'#0ABAB5'
+        justifyContent:'space around',
+        backgroundColor:'#0ABAB5',
+        
     },
     ViewTouchableBoxCategoryHealthy:{
         marginVertical:'2%'

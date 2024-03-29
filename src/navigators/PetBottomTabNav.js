@@ -62,7 +62,7 @@ export const PetBottomTabNav = ({navigation})=>{
                     },
                     tabBarLabel:({focused, color, size})=>{
                     return(
-                        <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>หน้าหลัก</Text>
+                        <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Home</Text>
                     )
                     },
                     headerShown:false,
@@ -87,7 +87,7 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
                 tabBarLabel:({focused, color, size})=>{
                   return(
-                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>ภารกิจ</Text>
+                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Quest</Text>
                   )
                 },
                 headerShown:false,
@@ -106,7 +106,7 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
                 tabBarLabel:({focused, color, size})=>{
                   return(
-                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>ร้านค้า</Text>
+                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Store</Text>
                   )
                 },
                 header: () => (
@@ -147,7 +147,7 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
                 tabBarLabel:({focused, color, size})=>{
                   return(
-                    <Text style={{ fontSize:14, fontFamily:'ZenOldMincho-Regular'}} color={color} size={size}>ออก</Text>
+                    <Text style={{ fontSize:14, fontFamily:'ZenOldMincho-Regular'}} color={color} size={size}>Exit</Text>
                   )
                 },
                 headerShown:false,
