@@ -49,20 +49,24 @@ export const EnterNameScreen = ({ navigation }) => {
             Alert.alert('กรุณาระบุชื่อ');
         } else {
             input.value = input.value.trim();
-            addPetName(userUID, input)
-            addLastedDate(userUID, formattedDate)
-            addRandomQuest(userUID)
-            newCurrentQuestTime(userUID,formattedDate)
-            newStampQuestTime(userUID,formattedDate)
-                .then(() => {
-                    dispatch(setIsUpdate(!isUpdate));
-                    setTimeout(() => {
-                        navigation.navigate('ExpainingScreen');
-                    }, 700);
-                })
-                .catch(error => {
-                    console.error('Error adding pet name:', error);
-                });
+            if(input.value.length <= 24){
+                addPetName(userUID, input)
+                addLastedDate(userUID, formattedDate)
+                addRandomQuest(userUID)
+                newCurrentQuestTime(userUID,formattedDate)
+                newStampQuestTime(userUID,formattedDate)
+                    .then(() => {
+                        dispatch(setIsUpdate(!isUpdate));
+                        setTimeout(() => {
+                            navigation.navigate('ExpainingScreen');
+                        }, 700);
+                    })
+                    .catch(error => {
+                        console.error('Error adding pet name:', error);
+                    });
+            }else{
+                Alert.alert('กรุณาตั้งชื่อไม่เกิน 24 ตัวอักษร')
+            }
         }
     };
 

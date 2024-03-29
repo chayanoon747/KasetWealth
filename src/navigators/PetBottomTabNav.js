@@ -62,7 +62,7 @@ export const PetBottomTabNav = ({navigation})=>{
                     },
                     tabBarLabel:({focused, color, size})=>{
                     return(
-                        <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>หน้าหลัก</Text>
+                        <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Home</Text>
                     )
                     },
                     headerShown:false,
@@ -87,7 +87,7 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
                 tabBarLabel:({focused, color, size})=>{
                   return(
-                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>ภารกิจ</Text>
+                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Quest</Text>
                   )
                 },
                 headerShown:false,
@@ -106,14 +106,14 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
                 tabBarLabel:({focused, color, size})=>{
                   return(
-                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>ร้านค้า</Text>
+                    <Text style={{ fontSize:14, fontFamily: focused ? 'ZenOldMincho-Bold' : 'ZenOldMincho-Regular'}} color={color} size={size}>Store</Text>
                   )
                 },
                 header: () => (
                     <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
                        
 
-                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>ร้านค้า</Text>
+                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>Store</Text>
 
                         <TouchableOpacity style={{width:35, marginRight:15}}
                             onPress={()=>{
@@ -147,7 +147,7 @@ export const PetBottomTabNav = ({navigation})=>{
                 },
                 tabBarLabel:({focused, color, size})=>{
                   return(
-                    <Text style={{ fontSize:14, fontFamily:'ZenOldMincho-Regular'}} color={color} size={size}>ออก</Text>
+                    <Text style={{ fontSize:14, fontFamily:'ZenOldMincho-Regular'}} color={color} size={size}>Exit</Text>
                   )
                 },
                 headerShown:false,

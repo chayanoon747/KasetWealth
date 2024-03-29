@@ -510,7 +510,7 @@ export const EditHomeScreen =({navigation, route})=>{
         if(item.itemType == 'wall'){
             return(
                 <TouchableOpacity  style={{marginLeft:8}}
-                    onPress={()=>{handleItemPress(item).then(()=>{dispatch(setIsUpdateItemPet(!isUpdateItemPet))})}}
+                    onPress={()=>{handleItemPress(item)}}
                 >
                     <Image source={{uri:item.itemPhotoURL}}
                         width={90} height={90} resizeMode="contain">

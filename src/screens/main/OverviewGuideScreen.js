@@ -369,7 +369,7 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                         <View style={{height:10}}></View>
                         <View style={{justifyContent:'center',alignContent:'center',flexDirection:'row'}}>
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
-                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
+                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}></Text>
                                 {/* GAUGE  */}
                                 <RNSpeedometer value={guageWealth ? parseFloat(guageWealth) : 0} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#80011f'},
@@ -388,7 +388,7 @@ export const OverviewGuideScreen = ({navigation, route})=>{
                             </View>
                             <View style={{width:30}}></View>
                             <View style={{justifyContent:'center',alignContent:'center',flexDirection:'column'}}>
-                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลในทุกๆ 3 วัน</Text>
+                                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:14,textAlign:'center'}}>*ควรใส่ข้อมูลอย่างสม่ำเสมอ</Text>
                                 {/* GAUGE  */}
                                 <RNSpeedometer value={guageRiability ? parseFloat(guageRiability) : 0} size={150} minValue={0} maxValue={10} allowedDecimals={1} labels={[
                                     {name:'1',labelColor:'#FFFFFA',activeBarColor:'#08f26e'},
