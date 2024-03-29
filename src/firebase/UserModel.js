@@ -2149,31 +2149,57 @@ export const precheckDailyQuest = (userUID,dailyQuestSelected,formattedCurrentDa
       Assest:[],
       Debt:[],
     }
+
+    const TypeSelect ={
+        Income:false,
+        Expense:false,
+        Assest:false,
+        Debt:false,
+    }
+
+    dailyQuestSelected.forEach(quest => {
+        if(quest.transactionType == 'รายได้'){
+            TypeSelect.Income = true
+        }
+        if(quest.transactionType == 'สินทรัพย์'){
+            TypeSelect.Expense = true
+        }
+        if(quest.transactionType == 'ค่าใช้จ่าย'){
+            TypeSelect.Assest = true
+        }
+        if(quest.transactionType == 'หนี้สิน'){
+            TypeSelect.Debt = true
+        }
+    })
+
     return firestore().collection('financials').doc(userUID).get()
     .then((data)=>{
       if (data.exists){
         const allData = data.data().transactions;
         allData.forEach(element=>{
           if(element.date == formattedCurrentDate){
-            dailyQuestSelected.forEach(element1=>{
-              if(element1.transactionType == element.transactionType){
+            if(TypeSelect.Income){
                 if(element.transactionType == 'รายได้'){
-                  progression.Income.push(element)
+                    progression.Income.push(element)
                 }
+            }
+            if(TypeSelect.Assest){
                 if(element.transactionType == 'สินทรัพย์'){
-                  progression.Assest.push(element)
+                    progression.Assest.push(element)
                 }
+            }
+            if(TypeSelect.Expense){
                 if(element.transactionType == 'ค่าใช้จ่าย'){
-                  progression.Expense.push(element)
+                    progression.Expense.push(element)
                 }
+            }
+            if(TypeSelect.Debt){
                 if(element.transactionType == 'ค่าใช้จ่าย' && (element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)')){
-                  progression.Debt.push(element)
+                    progression.Debt.push(element)
                 }
-              }
-            })
+            }
           }
         })
-        
         return progression
       }
     })
@@ -2208,28 +2234,55 @@ export const precheckWeeklyQuest = (userUID,QuestSelected,formattedCurrentDate)=
       Assest:[],
       Debt:[],
     }
+
+    const TypeSelect ={
+        Income:false,
+        Expense:false,
+        Assest:false,
+        Debt:false,
+    }
+
+    QuestSelected.forEach(quest => {
+        if(quest.transactionType == 'รายได้'){
+            TypeSelect.Income = true
+        }
+        if(quest.transactionType == 'สินทรัพย์'){
+            TypeSelect.Expense = true
+        }
+        if(quest.transactionType == 'ค่าใช้จ่าย'){
+            TypeSelect.Assest = true
+        }
+        if(quest.transactionType == 'หนี้สิน'){
+            TypeSelect.Debt = true
+        }
+    })
+
     return firestore().collection('financials').doc(userUID).get()
     .then((data)=>{
       if (data.exists){
         const allData = data.data().transactions;
         allData.forEach(element=>{
           if(element.date == nDay1 || element.date == nDay2 || element.date == nDay3 || element.date == nDay4 || element.date == nDay5 || element.date == nDay6 || element.date == nDay7){
-            QuestSelected.forEach(element1=>{
-              if(element1.transactionType == element.transactionType){
+            if(TypeSelect.Income){
                 if(element.transactionType == 'รายได้'){
-                  progression.Income.push(element)
+                    progression.Income.push(element)
                 }
+            }
+            if(TypeSelect.Assest){
                 if(element.transactionType == 'สินทรัพย์'){
-                  progression.Assest.push(element)
+                    progression.Assest.push(element)
                 }
+            }
+            if(TypeSelect.Expense){
                 if(element.transactionType == 'ค่าใช้จ่าย'){
-                  progression.Expense.push(element)
+                    progression.Expense.push(element)
                 }
+            }
+            if(TypeSelect.Debt){
                 if(element.transactionType == 'ค่าใช้จ่าย' && (element.category == 'ค่าใช้จ่ายผันแปร(ชำระหนี้)' || element.category == 'ค่าใช้จ่ายคงที่(ชำระหนี้)')){
-                  progression.Debt.push(element)
+                    progression.Debt.push(element)
                 }
-              }
-            })
+            }
           }
         })
         return progression
@@ -2272,22 +2325,16 @@ export const precheckExpenseQuest = (userUID,QuestSelected,formattedCurrentDate,
         const allData = data.data().transactions;
         allData.forEach(element=>{
             if(element.date == formattedCurrentDate){
-                QuestSelected.forEach(element1=>{
-                    if(element1.transactionType == element.transactionType){
-                        if(element.transactionType == 'ค่าใช้จ่าย'){
-                            progression.Daily.push(element)
-                        }
-                    }
-                })
+                //
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                    progression.Daily.push(element)
+                }
             }
             if(element.date == nDay1 || element.date == nDay2 || element.date == nDay3 || element.date == nDay4 || element.date == nDay5 || element.date == nDay6 || element.date == nDay7){
-                QuestSelected.forEach(element1=>{
-                    if(element1.transactionType == element.transactionType){
-                        if(element.transactionType == 'ค่าใช้จ่าย'){
-                            progression.Expense.push(element)
-                        }
-                    }
-                })
+                //
+                if(element.transactionType == 'ค่าใช้จ่าย'){
+                    progression.Expense.push(element)
+                }
             }
         })
         return progression
@@ -2335,7 +2382,6 @@ export const precheckPersonalQuest = (userUID, QuestSelected) => {
                         }
                     }
                 });
-                console.progression
                 return progression;
             }
         })

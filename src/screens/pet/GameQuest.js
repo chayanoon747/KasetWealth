@@ -179,7 +179,7 @@ export const GameQuest = ({navigation})=>{
             if(element.transactionType == 'รายได้'){
               let incomeUnit =0
               dailyProgression.Income.forEach(element1=>{
-                incomeUnit += element1.value
+                incomeUnit += parseInt(element1.value)
               })
               if(incomeUnit>=element.value){
                 updatedQuest.push(element)
@@ -189,35 +189,17 @@ export const GameQuest = ({navigation})=>{
             if(element.transactionType == 'สินทรัพย์'){
               let assetUnit =0
               dailyProgression.Assest.forEach(element1=>{
-                assetUnit += element1.value
+                assetUnit += parseInt(element1.value)
               })
               if(assetUnit>=element.value){
                 updatedQuest.push(element)
                 console.log("daily quest asset finished")
               }
             }
-            if(element.transactionType == 'ค่าใช้จ่าย'){
-              let expenseUnit =0
-              dailyProgression.Expense.forEach(element1=>{
-                expenseUnit += element1.value 
-              })
-              if(expenseUnit<element.value ){
-                const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
-                const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
-
-                const stampTimeAsDateObject = new Date(stampTime)
-                const stampTimetimestamp = stampTimeAsDateObject.getTime()
-                const daydif = (formattedCurrentDatetimestamp-stampTimetimestamp)/86400000;
-                if(daydif >= 1){
-                  updatedQuest.push(element)
-                  console.log("daily quest asset finished")
-                }
-              }
-            }
             if(element.transactionType == 'หนี้สิน'){
               let debtUnit = 0
               dailyProgression.Debt.forEach(element1=>{
-                debtUnit += element1.value
+                debtUnit += parseInt(element1.value)
               })
               if(debtUnit>=element.value){
                 updatedQuest.push(element)
@@ -226,7 +208,6 @@ export const GameQuest = ({navigation})=>{
             }
           }
         })
-        console.log(updatedQuest)
         return updatedQuest
       }
     }
@@ -240,7 +221,7 @@ export const GameQuest = ({navigation})=>{
             if(element.transactionType == 'รายได้'){
               let incomeUnit =0
               weeklyProgression.Income.forEach(element1=>{
-                incomeUnit += element1.value
+                incomeUnit += parseInt(element1.value)
               })
               if(incomeUnit>=element.value){
                 updatedQuest.push(element)
@@ -250,35 +231,17 @@ export const GameQuest = ({navigation})=>{
             if(element.transactionType == 'สินทรัพย์'){
               let assetUnit =0
               weeklyProgression.Assest.forEach(element1=>{
-                assetUnit += element1.value
+                assetUnit += parseInt(element1.value)
               })
               if(assetUnit>=element.value){
                 updatedQuest.push(element)
                 console.log("weekly quest asset finished")
               }
             }
-            if(element.transactionType == 'ค่าใช้จ่าย'){
-              let expenseUnit =0
-              weeklyProgression.Expense.forEach(element1=>{
-                expenseUnit += element1.value
-              })
-              if(expenseUnit<element.value ){
-                const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
-                const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
-
-                const questRoundsAsDateObject = new Date(questRounds)
-                const questRoundstimestamp = questRoundsAsDateObject.getTime()
-                const daydif = (formattedCurrentDatetimestamp-questRoundstimestamp)/86400000;
-                if(daydif >= 7){
-                  updatedQuest.push(element)
-                  console.log("weekly quest asset finished")
-                }
-              }
-            }
             if(element.transactionType == 'หนี้สิน'){
               let debtUnit = 0
               weeklyProgression.Debt.forEach(element1=>{
-                debtUnit += element1.value
+                debtUnit += parseInt(element1.value)
               })
               if(debtUnit>=element.value){
                 updatedQuest.push(element)
@@ -287,7 +250,6 @@ export const GameQuest = ({navigation})=>{
             }
           }
         })
-        console.log(updatedQuest)
         return updatedQuest
       }
     }
@@ -302,7 +264,7 @@ export const GameQuest = ({navigation})=>{
                 if(quest.transactionType == 'รายได้'){
                   let incomeUnit = 0
                   progression.Income.forEach(element=>{
-                    incomeUnit += element.value
+                    incomeUnit += parseInt(element.value)
                   })
                   if(incomeUnit>=quest.value){
                     updatedQuest.push(quest)
@@ -312,7 +274,7 @@ export const GameQuest = ({navigation})=>{
                 if(quest.transactionType == 'สินทรัพย์'){
                   let assestUnit =0
                   progression.Assest.forEach(element=>{
-                    assestUnit += element.value
+                    assestUnit += parseInt(element.value)
                   })
                   if(assestUnit>=quest.value){
                     updatedQuest.push(quest)
@@ -322,7 +284,7 @@ export const GameQuest = ({navigation})=>{
                 if(quest.transactionType == 'หนี้สิน'){
                   let debtUnit =0
                   progression.Debt.forEach(element=>{
-                    debtUnit += element.value
+                    debtUnit += parseInt(element.value)
                   })
                   if(debtUnit>=quest.value){
                     updatedQuest.push(quest)
@@ -333,7 +295,6 @@ export const GameQuest = ({navigation})=>{
             })
           }
         })
-        console.log(updatedQuest)
         return updatedQuest
       }
     }
