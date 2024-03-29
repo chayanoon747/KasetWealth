@@ -30,7 +30,7 @@ export const PetShopScreen = ({navigation}) => {
     const [modalDuplicateItem, setModalDuplicateItem] = useState(false);
     const [newPetImage, setNewPetImage] = useState(null);
     const [randomCoinValue, setRandomCoinValue] = useState(null);
-    
+
     useEffect(() => {
         retrieveCurrency();
         handleRetriveInventory()
@@ -646,23 +646,25 @@ export const PetShopScreen = ({navigation}) => {
                 </View>
                 <View style={{flex:2, marginVertical:5}}>
                 <View style={styles.box}>
+                    <View style={{flexDirection:'row',backgroundColor:'#0ABAB5', borderRadius:14}}>
                         <View style={styles.boxhead}>
-                            <Text style={styles.headerText}>
-                                ไอเทมกดใช้
-                                <TouchableOpacity
-                                    onPress={toggleInfoForUse}
-                                >
-                                    <Image
-                                        style={{
-                                        width:20,
-                                        height:20,
-                                        }}
-                                        source={{
-                                            uri: 'https://cdn.discordapp.com/attachments/1202281623585034250/1223147271349207060/material-symbols_info-outline.png?ex=6618cbaa&is=660656aa&hm=b470b6ad93747529febdb8740923d079987e0134bf0f1539700df42b8dfb5274&'
-                                        }}
-                                />
-                                </TouchableOpacity>
-                            </Text>
+                            <Text style={styles.headerText}>ไอเทมกดใช้</Text>
+                        </View>
+                        <View>
+                                        <TouchableOpacity
+                                            onPress={toggleInfoForUse}
+                                        >
+                                            <Image
+                                                style={{
+                                                width:20,
+                                                height:20,
+                                                }}
+                                                source={{
+                                                    uri: 'https://cdn.discordapp.com/attachments/1202281623585034250/1223147271349207060/material-symbols_info-outline.png?ex=6618cbaa&is=660656aa&hm=b470b6ad93747529febdb8740923d079987e0134bf0f1539700df42b8dfb5274&'
+                                                }}
+                                        />
+                                        </TouchableOpacity>
+                                    </View>
                         </View>
                         <View style={{flex:4,alignItems: 'center'}}>
                             <FlatList
