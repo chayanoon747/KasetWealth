@@ -113,7 +113,7 @@ export const PetBottomTabNav = ({navigation})=>{
                     <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
                        
 
-                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>ร้านค้า</Text>
+                        <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginLeft:50}}>Store</Text>
 
                         <TouchableOpacity style={{width:35, marginRight:15}}
                             onPress={()=>{
