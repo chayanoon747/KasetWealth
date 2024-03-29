@@ -28,9 +28,9 @@ export const PetShopScreen = ({navigation}) => {
     const [modalInsufficientRubies, setModalInsufficientRubies] = useState(false);
     const [modalOneItemInInventory, setModalOneItemInInventory] = useState(false);
     const [modalDuplicateItem, setModalDuplicateItem] = useState(false);
-    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [newPetImage, setNewPetImage] = useState(null);
     const [randomCoinValue, setRandomCoinValue] = useState(null);
+    
     useEffect(() => {
         retrieveCurrency();
         handleRetriveInventory()
@@ -292,7 +292,6 @@ export const PetShopScreen = ({navigation}) => {
                 // สุ่มตัวเลขในช่วง 100 ถึง 1000
                 randomAmount = Math.floor(Math.random() * (1000 - 100 + 1)) + 100;
             }
-            
         return randomAmount;
     }
 
@@ -310,7 +309,6 @@ export const PetShopScreen = ({navigation}) => {
 
     const toggleRandomCoin = () => {
         setModalRandomCoin(!modalRandomCoin);
-        //alert('Purchased Complete!\nจำนวนเงินที่สุ่มได้คือ ' + newRandomMoney);
     }
 
     const toggleGuaranteCoin = () => {
@@ -331,10 +329,6 @@ export const PetShopScreen = ({navigation}) => {
 
     const toggleDuplicateItem = () => {
         setModalDuplicateItem(!modalDuplicateItem);
-    }
-
-    const handleButton = () => {
-        //
     }
 
     const randomPetCard = async () => { //บัตรสุ่มสัตว์เลี้ยง
@@ -361,7 +355,6 @@ export const PetShopScreen = ({navigation}) => {
             ],
         ];
         
-        setIsButtonDisabled(true);
         const randomIndex = Math.floor(Math.random() * allPetImages.length);
         const selectedPetImages = allPetImages[randomIndex];
         addPetImages(userUID, selectedPetImages);
@@ -369,7 +362,6 @@ export const PetShopScreen = ({navigation}) => {
         setNewPetImage(selectedPetImages[0]);
         console.log(newPetImage);
         toggleModalChangePetCardVisible();
-        setIsButtonDisabled(false);
     };
 
     const renderItem = ({ item, index }) => {
@@ -410,7 +402,7 @@ export const PetShopScreen = ({navigation}) => {
                                 <TouchableOpacity
                                     style={mysteryStyles.touchableMysteryItemBox}
                                     onPress={() => {
-                                        reportBuyItem(item)
+                                        reportBuyItem(item);
                                     }}
                                 >
                                     <View style={mysteryStyles.viewTextPriceButton}>
@@ -462,43 +454,39 @@ export const PetShopScreen = ({navigation}) => {
                     <TouchableOpacity
                         style={styles.TouchableItemBox} 
                         onPress={() => {
-                            if (!isButtonDisabled) {
-                                setIsButtonDisabled(true);
-                                if (rubyBalance >= item.itemPrice) {
-                                    if (item.itemName === 'บัตรกันลดขั้น') {
-                                        checkDuplicateItem(userUID, item)
-                                        .then(isDuplicate => {
-                                            // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                            // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                            if (!isDuplicate) {
-                                                // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                                // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                                reportBuyItem(item);
-                                                buyItem2Inventory(item);
-                                            } else {
-                                                console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
-                                                toggle1stItemInInventory();
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error checking duplicate item:', error);
-                                            // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
-                                        });
-                                    }else{
-                                        reportBuyItem(item)
-                                        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-                                        randomPetCard();
-                                        setIsButtonDisabled(false);
-                                        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-                                    }
+                            if (rubyBalance >= item.itemPrice) {
+                                if (item.itemName === 'บัตรกันลดขั้น') {
+                                    checkDuplicateItem(userUID, item)
+                                    .then(isDuplicate => {
+                                        // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                        if (!isDuplicate) {
+                                            // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                            reportBuyItem(item);
+                                            buyItem2Inventory(item);
+                                        } else {
+                                            console.log('ไอเทมชิ้นนี้อนุญาติให้มีแค่ 1 ชิ้นใน Inventory เท่านั้น');
+                                            toggle1stItemInInventory();
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error checking duplicate item:', error);
+                                        // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
+                                    });
                                 }else{
-                                    if (item.itemCurrencyType === 'ruby') {
-                                        console.log('Insufficient rubies to buy this item');
-                                        toggleInsufficientRubies();
-                                    }else{
-                                        console.log('Insufficient coins to buy this item');
-                                        toggleInsufficientRubies();
-                                    }
+                                    reportBuyItem(item)
+                                    console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+                                    randomPetCard();
+                                    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+                                }
+                            }else{
+                                if (item.itemCurrencyType === 'ruby') {
+                                    console.log('Insufficient rubies to buy this item');
+                                    toggleInsufficientRubies();
+                                }else{
+                                    console.log('Insufficient coins to buy this item');
+                                    toggleInsufficientRubies();
                                 }
                             }
                         }}
@@ -537,43 +525,35 @@ export const PetShopScreen = ({navigation}) => {
                     <TouchableOpacity
                         style={styles.TouchableItemBox}
                         onPress={() => {
-                            if (!isButtonDisabled) {
-                                setIsButtonDisabled(true)
-                                if (coinBalance >= item.itemPrice) {
-                                    checkDuplicateItem(userUID, item)
-                                    .then(isDuplicate => {
-                                        // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                        // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
-                                        if (!isDuplicate) {
-                                            // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                            // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
-                                            buyFur2Inventory(item);
-                                            reportBuyItem(item);
-                                        } else {
-                                            console.log('คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว ไม่สามารถซื้อสินค้าซ้ำได้');
-                                            toggleDuplicateItem();
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error checking duplicate on press item:', error);
-                                        // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
-                                    })
-                                    .finally(() => {
-                                        setIsButtonDisabled(false); // ตั้งค่าปุ่มให้สามารถกดได้อีกครั้งหลังจากทำงานเสร็จสิ้น
-                                    });
-                                }else{
-                                    if (item.itemCurrencyType === 'coin') {
-                                        console.log('Insufficient coins to buy this item');
-                                        toggleInsufficientRubies();
-                                    }else{
-                                        console.log('Insufficient rubies to buy this item');
-                                        toggleInsufficientRubies();
+                            if (coinBalance >= item.itemPrice) {
+                                checkDuplicateItem(userUID, item)
+                                .then(isDuplicate => {
+                                    // console.log('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                    // alert('สถานะของ isDuplicate คือ: ' + isDuplicate);
+                                    if (!isDuplicate) {
+                                        // console.log('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                        // alert('สถานะของ checkDuplicateItem คือ: ' + isDuplicate);
+                                        buyFur2Inventory(item);
+                                        reportBuyItem(item);
+                                    } else {
+                                        console.log('คุณมีไอเทมชิ้นนี้ใน Inventory แล้ว ไม่สามารถซื้อสินค้าซ้ำได้');
+                                        toggleDuplicateItem();
                                     }
-                                    setIsButtonDisabled(false); // ตั้งค่าปุ่มให้สามารถกดได้เมื่อเงื่อนไขไม่เป็นจริง
+                                })
+                                .catch(error => {
+                                    console.error('Error checking duplicate on press item:', error);
+                                    // ทำการจัดการข้อผิดพลาดที่เกิดขึ้น
+                                });
+                            }else{
+                                if (item.itemCurrencyType === 'coin') {
+                                    console.log('Insufficient coins to buy this item');
+                                    toggleInsufficientRubies();
+                                }else{
+                                    console.log('Insufficient rubies to buy this item');
+                                    toggleInsufficientRubies();
                                 }
                             }
                         }}
-                        disabled={isButtonDisabled}
                     >
                         <View style={styles.viewImageAndNameItemBox}>
                             <View style={styles.viewImageItemBox}>
