@@ -6,12 +6,12 @@ import { PetBottomTabNav } from "../../navigators/PetBottomTabNav";
 import { TextInput} from "react-native-paper";
 import { useSelector, useDispatch} from 'react-redux';
 import { useState, useEffect } from "react";
-import { addPetName, addRandomDailyQuest, addRandomWeeklyQuest, changeFinished, delDailyQuest, delWeeklyQuest, finalReward, newCurrentQuestTime, newStampQuestTime, precheckDailyQuest, precheckExpenseQuest, precheckPersonalQuest, precheckWeeklyQuest, retrieveAllQuest, retrieveCheckExpenseQuest, retrieveCurrentQuestTime, retrieveFinishedQuest, retrievePersonalQuest, retrieveRandomWeeklyQuest, retrieveStampQuestTime } from "../../firebase/UserModel";
+import { addPetName, addRandomDailyQuest, addRandomWeeklyQuest, delDailyQuest, delWeeklyQuest, newCurrentQuestTime, newStampQuestTime, retrieveAllQuest, retrieveCurrentQuestTime, retrieveStampQuestTime } from "../../firebase/UserModel";
 import { retrieveAllDataPet } from "../../firebase/UserModel";
 import { retrieveInventory } from "../../firebase/RetrieveData";
 import { setEditItemLocation } from "../../redux/variableSlice";
 import { retrieveAllDataQuest } from "../../firebase/UserModel";
-import { retrieveQuestDaliyAndWeek,retrieveAllDataQuestNew, removeCardDownGrade } from "../../firebase/UserModel"
+import { retrieveQuestDaliyAndWeek,retrieveAllDataQuestNew } from "../../firebase/UserModel"
 import { setHasNotification } from "../../redux/variableSlice";
 import { addDownGradeCardtoFalse, retrieveCurrencyPet } from "../../firebase/UserModel";
 import { setTotalDownGradeCardValue, setItemData } from "../../redux/variableSlice";
@@ -54,20 +54,7 @@ export const HomeScreen =({navigation})=>{
     const [questAll , setQuestAll] = useState([])
     const [questStateTrue, setQuestStateTrue] = useState([])
     
-    const [allQuestSelected,setAllQuestSelected] = useState({})
-    const [personalQuestSelected, setPersonalQuestSelected] = useState({})
-
-    const [dailyProgression,setDailyProgression] = useState({})
-    const [weeklyProgression,setWeeklyProgression] = useState({})
-    const [personalProgression,setPersonalProgression] = useState({})
-
-    const [step,setStep] = useState('0')
     const [finish,setFinish] = useState(false)
-    const [finishChecked,setFinishChecked] = useState(false)
-    const [finishProgression,setFinishProgression] = useState(false)
-
-    const [expenseQuest,setExpenseQuest] = useState([]) 
-    const [expenseProgression,setExpenseProgression] = useState({})
 
     const [stampTime,setStampTime] = useState({})
     const [questRounds,setQuestRounds] = useState({})
@@ -87,39 +74,13 @@ export const HomeScreen =({navigation})=>{
         retrieveCurrency()
         getImageData()
         getQuestData()
-        if(step == '0'){
-            getPQuestData()
-            getAllQuest()
-        }
-        if(step == '1'){
-            getProgression()
-        }
-        if(step == '2'){
-            const checked = checkDailyQuest()
-            handleChangedFinished(checked)
-        }
-        if(step == '2'){
-            const checked = checkWeeklyQuest()
-            handleChangedFinished(checked)
-        }
-        if(step == '2'){
-            const checked = checkPersonalQuest()
-            handleChangedFinished(checked)
-        }
-        if (step == '2'){
-            const checked = checkExpenseDailyQuest()
-            console.log('checked',checked)
-            sumReward(checked)
-            setStep('3')
-            setFinishChecked(true)
-        }
-        if(step == '3'){
+        getAllQuest()
+        if(finish){
             checkRandomQuest();
-            setStep('4')
         }
         console.log(hasNotification)
         handleTotalDownGradeCardValue()
-    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish,finishChecked,finishProgression]);    
+    }, [isUpdate,hasNotification,cameFromNoti,totalDownGradeCardValue, editItemLocation, isUpdateItemPet,finish]);    
 
     const retrieveCurrency = async () => {
         try {
@@ -147,250 +108,14 @@ export const HomeScreen =({navigation})=>{
 
     const getAllQuest = async()=>{
         try{
-            const itemAllQuest = await retrieveAllQuest(userUID)
-            setAllQuestSelected(itemAllQuest)
-            const itemTime = await retrieveStampQuestTime(userUID)
-            setStampTime(itemTime)
-            const itemTime2 = await retrieveCurrentQuestTime(userUID)
-            setQuestRounds(itemTime2)
-            const expenseQuestItem = await retrieveCheckExpenseQuest(userUID)
-            setExpenseQuest(expenseQuestItem)
-            //console.log(expenseQuestItem)
-            setStep('1')
-            setFinish(true)
+          const itemTime = await retrieveStampQuestTime(userUID)
+          setStampTime(itemTime)
+          const itemTime2 = await retrieveCurrentQuestTime(userUID)
+          setQuestRounds(itemTime2)
+          setFinish(true)
         }catch (error) {
             console.error('Error getAllQuest:', error);
         }
-    }
-
-    const getPQuestData = async()=>{
-        try{
-            const itemAllDataQuest = await retrievePersonalQuest(userUID)
-            setPersonalQuestSelected(itemAllDataQuest)
-        }catch (error) {
-            console.error('Error getQuestData:', error);
-        }  
-      }
-
-    const getProgression = async()=>{
-        try{
-            const itemDailyQuest = await precheckDailyQuest(userUID,allQuestSelected.Daily,formattedCurrentDate)
-            setDailyProgression(itemDailyQuest)
-            const itemWeeklyQuest = await precheckWeeklyQuest(userUID,allQuestSelected.Weekly,questRounds)
-            setWeeklyProgression(itemWeeklyQuest)
-            const itemPersonalQuest = await Promise.all(
-                personalQuestSelected.map(async (element) => {
-                    const retObj = await precheckPersonalQuest(userUID, element);
-                    return retObj;
-                })
-            );
-            setPersonalProgression(itemPersonalQuest)
-            const itemExpenseProgression = await precheckExpenseQuest(userUID,expenseQuest,formattedCurrentDate,questRounds)
-            setExpenseProgression(itemExpenseProgression)
-            setStep('2')
-            setFinishProgression(true)
-        }
-        catch (error) {
-            console.error('Error getProgression:',error);
-        }
-    }
-    
-    const checkDailyQuest = ()=>{
-        const updatedQuest=[]
-        if(allQuestSelected.Daily != undefined){
-          allQuestSelected.Daily.forEach(element=>{
-            if(element.questState == false){
-              if(element.transactionType == 'รายได้'){
-                let incomeUnit =0
-                dailyProgression.Income.forEach(element1=>{
-                  incomeUnit += parseInt(element1.value)
-                })
-                if(incomeUnit>=element.value){
-                  updatedQuest.push(element)
-                  console.log("daily quest income finished")
-                }
-              }
-              if(element.transactionType == 'สินทรัพย์'){
-                let assetUnit =0
-                dailyProgression.Assest.forEach(element1=>{
-                  assetUnit += parseInt(element1.value)
-                })
-                if(assetUnit>=element.value){
-                  updatedQuest.push(element)
-                  console.log("daily quest asset finished")
-                }
-              }
-              if(element.transactionType == 'หนี้สิน'){
-                let debtUnit = 0
-                dailyProgression.Debt.forEach(element1=>{
-                  debtUnit += parseInt(element1.value)
-                })
-                if(debtUnit>=element.value){
-                  updatedQuest.push(element)
-                  console.log("daily quest debt finished")
-                }
-              }
-            }
-          })
-          return updatedQuest
-        }
-    }
-  
-    //แก้ให้เป็นรายสัปดาห์
-    const checkWeeklyQuest = ()=>{
-        const updatedQuest=[]
-        if(allQuestSelected.Weekly != undefined){
-            allQuestSelected.Weekly.forEach(element=>{
-                if(element.questState == false){
-                    if(element.transactionType == 'รายได้'){
-                    let incomeUnit = 0
-                    weeklyProgression.Income.forEach(element1=>{
-                        incomeUnit += parseInt(element1.value)
-                    })
-                    if(incomeUnit>=element.value){
-                        updatedQuest.push(element)
-                        console.log("weekly quest income finished")
-                    }
-                    }
-                    if(element.transactionType == 'สินทรัพย์'){
-                    let assetUnit =0
-                    weeklyProgression.Assest.forEach(element1=>{
-                        assetUnit += parseInt(element1.value)
-                    })
-                    if(assetUnit>=element.value){
-                        updatedQuest.push(element)
-                        console.log("weekly quest asset finished")
-                    }
-                    }
-                    if(element.transactionType == 'หนี้สิน'){
-                    let debtUnit = 0
-                    weeklyProgression.Debt.forEach(element1=>{
-                        debtUnit += parseInt(element1.value)
-                    })
-                    if(debtUnit>=element.value){
-                        updatedQuest.push(element)
-                        console.log("weekly quest debt finished")
-                    }
-                    }
-                }
-            })
-            return updatedQuest
-        }
-    }
-  
-    const checkPersonalQuest = ()=>{
-        const updatedQuest=[]
-        if(personalQuestSelected != undefined){
-            personalQuestSelected.forEach(quest=>{
-            if(quest.questState == false){
-                personalProgression.forEach(progression =>{
-                    if(progression.Date == quest.addDate){
-                        if(quest.transactionType == 'รายได้'){
-                        let incomeUnit = 0
-                        progression.Income.forEach(element=>{
-                            incomeUnit += parseInt(element.value)
-                        })
-                        if(incomeUnit>=quest.value){
-                            updatedQuest.push(quest)
-                            console.log("Personal quest income finished")
-                        }
-                        }
-                        if(quest.transactionType == 'สินทรัพย์'){
-                        let assestUnit =0
-                        progression.Assest.forEach(element=>{
-                            assestUnit += parseInt(element.value)
-                        })
-                        if(assestUnit>=quest.value){
-                            updatedQuest.push(quest)
-                            console.log("Personal quest assest finished")
-                        }
-                        }
-                        if(quest.transactionType == 'หนี้สิน'){
-                        let debtUnit =0
-                        progression.Debt.forEach(element=>{
-                            debtUnit += parseInt(element.value)
-                        })
-                        if(debtUnit>=quest.value){
-                            updatedQuest.push(quest)
-                            console.log("Personal quest debt finished")
-                        }
-                        }
-                    }
-                    })
-                }
-            })
-            return updatedQuest
-        }
-    }  
-
-    const checkExpenseDailyQuest = ()=>{
-        const updatedQuest=[]
-        if(expenseQuest != undefined){
-            expenseQuest.forEach(element=>{
-            if(element.questState == false){
-              if(element.questType == 'daily'){
-                let expenseUnit =0
-                expenseProgression.Daily.forEach(element1=>{
-                  expenseUnit += element1.value 
-                })
-                if(expenseUnit<element.value ){
-                  const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
-                  const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
-  
-                  const stampTimeAsDateObject = new Date(stampTime)
-                  const stampTimetimestamp = stampTimeAsDateObject.getTime()
-                  const daydif = (formattedCurrentDatetimestamp-stampTimetimestamp)/86400000;
-                  if(daydif >= 1){
-                    updatedQuest.push(element)
-                    console.log("daily quest expense finished")
-                  }
-                }
-              }
-              if(element.questType == 'weekly'){
-                let expenseUnit =0
-                expenseProgression.Expense.forEach(element1=>{
-                    expenseUnit += element1.value
-                })
-                if(expenseUnit<element.value ){
-                    const formattedCurrentDateAsDateObject = new Date(formattedCurrentDate)
-                    const formattedCurrentDatetimestamp = formattedCurrentDateAsDateObject.getTime()
-    
-                    const questRoundsAsDateObject = new Date(questRounds)
-                    const questRoundstimestamp = questRoundsAsDateObject.getTime()
-                    const daydif = (formattedCurrentDatetimestamp-questRoundstimestamp)/86400000;
-                    if(daydif >= 7){
-                    updatedQuest.push(element)
-                    console.log("weekly quest expense finished")
-                    }
-                }
-                }
-            }
-          })
-          //console.log(updatedQuest)
-          return updatedQuest
-        }
-    }
-
-    const handleChangedFinished =async(checked)=>{
-        await changeFinished(allQuestSelected,checked,userUID)
-    }
-
-    const sumReward = async(checkedQuest) =>{
-        const prepare = {
-            Daily:[],
-            Weekly:[],
-            Personal:[]
-        }
-        checkedQuest.forEach(quest => {
-            if(quest.questType == 'daily'){
-                prepare.Daily.push(quest)
-            }
-            if(quest.questType == 'weekly'){
-                prepare.Weekly.push(quest)
-            }
-        }) 
-
-        await finalReward(userUID, prepare);
     }
 
     const checkRandomQuest= async()=>{
@@ -478,7 +203,6 @@ export const HomeScreen =({navigation})=>{
         if (totalDownGradeCardValue) {
             addDownGradeCardtoFalse(userUID);
             dispatch(setTotalDownGradeCardValue(false));
-            removeCardDownGrade(userUID)
             //showAlert();
             toggleModal();
         }
@@ -542,7 +266,7 @@ export const HomeScreen =({navigation})=>{
                         </View>
 
                         <TouchableOpacity style={{flex:1, justifyContent:'center', alignItems:'flex-end'}}
-                            onPress={async()=>{
+                            onPress={()=>{
                                 navigation.navigate('EditHomeScreen')
                         }}
                         >

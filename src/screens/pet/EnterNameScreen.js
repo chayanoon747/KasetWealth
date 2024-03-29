@@ -4,7 +4,7 @@ import { TextInput } from "react-native-paper";
 import { Dimensions } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useState, useEffect } from "react";
-import { addPetName, addRandomQuest, newCurrentQuestTime, newStampQuestTime } from "../../firebase/UserModel";
+import { addPetName, addRandomQuest, newCurrentQuestTime } from "../../firebase/UserModel";
 import { setIsUpdate } from "../../redux/variableSlice";
 import { retrieveAllDataPet, addLastedDate } from "../../firebase/UserModel";
 

@@ -80,8 +80,7 @@ export const AddGoalScreen = ({navigation})=>{
         
 
         if(validatePhoto){
-            const InputValue = parseInt(input.value)
-            addPersonalGoal(userUID, itemData, InputValue , formattedCurrentDate)
+            addPersonalGoal(userUID, itemData, input , formattedCurrentDate)
                     .then(() => {
                         dispatch(setIsUpdate(!isUpdate))
                         dispatch(setItemData({}))
@@ -103,7 +102,7 @@ export const AddGoalScreen = ({navigation})=>{
             const value = parseFloat(commaValue);
     
             if (!isNaN(value)) {
-                addPersonalGoal(userUID, itemData, value , formattedCurrentDate)
+                addPersonalGoal(userUID, itemData, input , formattedCurrentDate)
                     .then(() => {
                         dispatch(setIsUpdate(!isUpdate))
                         dispatch(setItemData({}))
