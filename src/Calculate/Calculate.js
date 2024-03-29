@@ -15,8 +15,7 @@ export const getSurvivalRatio = (incomeWorkValue,incomeAssetValue,expensesValues
         let survivalRatioValue = ( (incomeWorkValue+incomeAssetValue)/expensesValuesAll ).toFixed(2);
         return survivalRatioValue;
     }else{
-        let survivalRatioValue = 0
-        return survivalRatioValue;
+        return "good";
     }
     
     
@@ -51,13 +50,19 @@ export const getLiabilityToAssetRatio = (liabilityValues,assetValues)=>{
     }
     
 }
+//,liabilityAll
 //ยังไม่ได้ทำ retrive การชำระหนี้สิน (อยู่ในค่าใช้จ่าย) //Hard code ก่อน ยังทำไม่ได้
 //อัตราส่วนการชำระคืนหนี้สินจากรายได้ (การชำระหนี้สิน/รายได้รวม)
-export const getDebtRepaymentRatioFromIncome = (debtSettlementValue,incomeValuesAll)=>{
-    if(incomeValuesAll > 0){
+export const getDebtRepaymentRatioFromIncome = (debtSettlementValue,incomeValuesAll,liabilityAll)=>{
+    if(incomeValuesAll > 0 && liabilityAll > 0){
         let debtRepaymentRatioFromIncomeValue = (debtSettlementValue/incomeValuesAll).toFixed(2);
         return debtRepaymentRatioFromIncomeValue;
-    }else{
+    }else if(incomeValuesAll > 0 && liabilityAll == 0){
+        return 'ไม่สามารถคำนวณได้เนื่องจากยังไม่มีหนี้สิน';
+    }else if(incomeValuesAll == 0 && liabilityAll == 0){
+        return 'ไม่สามารถคำนวณได้เนื่องจากยังไม่มีหนี้สิน';
+    }
+    else{
         return 'bad';
     }
     
@@ -100,7 +105,7 @@ export const getFinancialFreedomRatio =(incomeAssetValue,expensesValuesAll)=>{
         let financialFreedomRatioValue = (incomeAssetValue/expensesValuesAll).toFixed(2);
         return financialFreedomRatioValue;
     }else{
-        return 'good'
+        return 'good';
     }
     
 }
