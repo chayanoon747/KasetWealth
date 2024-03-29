@@ -93,7 +93,7 @@ export const PetHomeStackNav = ({navigation})=>{
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
                     </TouchableOpacity>
 
-                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>บ้านของ{petNameData}</Text>
+                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>House of {petNameData}</Text>
                     </View>
                 )
             }}
@@ -113,7 +113,7 @@ export const PetHomeStackNav = ({navigation})=>{
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
                     </TouchableOpacity>
 
-                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>คลังเก็บของ</Text>
+                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>Inventory</Text>
                     </View>
                 )
             }}
@@ -133,7 +133,7 @@ export const PetHomeStackNav = ({navigation})=>{
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
                     </TouchableOpacity>
 
-                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>การแจ้งเตือน</Text>
+                    <Text style={{flex:1, fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff',textAlign:'center', marginRight:50}}>Notification</Text>
                     </View>
                 )
             }}
