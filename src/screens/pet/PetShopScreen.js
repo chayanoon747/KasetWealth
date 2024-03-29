@@ -362,6 +362,7 @@ export const PetShopScreen = ({navigation}) => {
         setNewPetImage(selectedPetImages[0]);
         console.log(newPetImage);
         toggleModalChangePetCardVisible();
+        dispatch(setIsUpdate(!isUpdate));
     };
 
     const renderItem = ({ item, index }) => {
@@ -595,8 +596,8 @@ export const PetShopScreen = ({navigation}) => {
 
     return(
         <SafeAreaView style={{flex:1,backgroundColor:'#2C6264'}}>
-            <View style={{flex:12,padding:5}}>
-                <View style={{flex:0.5,marginHorizontal:19}}>
+            <View style={{height:'100%',padding:5}}>
+                <View style={{flex:0.6,marginHorizontal:19}}>
                     <View style={{flex:1}}>
                         <View style={{flex:1,flexDirection:'row'}}>
                             <View style={{flex:0.2}}>
@@ -608,7 +609,7 @@ export const PetShopScreen = ({navigation}) => {
                                 <View style={{flex:0.2}}>
                             <View style={styles.Emptybox}></View>
                             </View>
-                            <View style={{flex:0.2,marginRight:4}}>
+                            <View style={{flex:0.3,marginRight:4}}>
                                 <View style={styles.Currencybox}>
                                     <Image source={{
                                         uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'}}
@@ -618,7 +619,7 @@ export const PetShopScreen = ({navigation}) => {
                                     <Text style={styles.CurrencyText}>{coinBalance}</Text>
                                 </View>
                             </View>
-                            <View style={{flex:0.2}}>
+                            <View style={{flex:0.3}}>
                             <View style={styles.Currencybox}>
                                     <Image source={{
                                         uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'}}
@@ -691,7 +692,7 @@ export const PetShopScreen = ({navigation}) => {
                         </View>
                     </View>
                 </View>
-                <View style={{flex:1}}></View>
+                
             </View>
             {/*modalChangePetCardVisible */}
             <Modal
@@ -941,7 +942,8 @@ const styles = {
         borderRadius:15,
         borderWidth:1, 
         borderColor:'#2C6264',
-        backgroundColor:'#2C6264'
+        backgroundColor:'#2C6264',
+        alignItems: 'center',
     },
     Currencybox:{
         flex:1,
@@ -952,9 +954,10 @@ const styles = {
         backgroundColor:'#fffffa'
     },
     boxhead:{
-        flex:1,
+        flex:1.2,
+        borderTopRightRadius:14,
+        borderTopLeftRadius:14,
         flexDirection:'row',
-        borderRadius:14,  
         borderColor:'#000000', 
         justifyContent:'center', 
         backgroundColor:'#0ABAB5'

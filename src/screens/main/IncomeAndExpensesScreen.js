@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { retrieveSelectedDataIncomeAndExp, retrieveAllDataIncomeAndExpenses } from "../../firebase/UserModel";
 import { useSelector } from "react-redux";
 import { setItemTransactionType, setItemData, setCameFrom } from "../../redux/variableSlice";
+import moment from 'moment';
+import 'moment/locale/th'; 
 
 
 export const IncomeAndExpensesScreen = ({navigation})=>{
@@ -31,6 +33,14 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
     const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // เพิ่ม 1 เนื่องจาก getMonth() เริ่มจาก 0
     const day = currentDate.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
+    moment.locale('th');
+    let thaiMonth = moment(formattedDate).format('MMMM');
+    let thaiDay = moment(formattedDate).format('dddd');
+    if(selectedDate != ""){
+        thaiMonth = moment(selectedDate).format('MMMM');
+        thaiDay = moment(selectedDate).format('dddd');
+    }
+
     useEffect(() =>{
         dispatch(setItemTransactionType(''))
     })
@@ -131,8 +141,8 @@ export const IncomeAndExpensesScreen = ({navigation})=>{
             <View style={{ flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10,borderBottomWidth:1,borderColor:'#D2DBD6'}}>
                     <Text style={[styles.headerText,{flex:1}]}>{selectedDate ? selectedDate.slice(-2) : day}</Text>
                     <View style={{flex:3, flexDirection:'column', paddingLeft:10, borderLeftWidth:1, borderColor:'#D2DBD6'}}>
-                        <Text style={styles.subHeaderText}>วันศุกร์</Text>
-                        <Text style={styles.subHeaderText}>ธันวาคม</Text>
+                        <Text style={styles.subHeaderText}>{thaiDay}</Text>
+                        <Text style={styles.subHeaderText}>{thaiMonth}</Text>
                     </View>
                     <View style={{flex:2, flexDirection:'row', paddingLeft:0, borderLeftWidth:1, borderColor:'#D2DBD6',}}>
                         <View style={{flex:1, flexDirection:'column', paddingLeft:5}}>
