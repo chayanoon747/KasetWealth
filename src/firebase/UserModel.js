@@ -208,7 +208,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         },
         {
             transactionType:"ค่าใช้จ่าย",
-            category: "ค่าใช้จ่ายออมและลงทุน",
+            category: "ค่าใช้จ่ายออมและลงทุน(ออม)",
             subCategory: "เงินออม",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815284490250/tdesign_saving-pot.png?ex=65d4b766&is=65c24266&hm=e8e265bd5d90a8eb205b4e21b6b25f096bae4a3c2572b40c0a7001452686a799&"
         },
