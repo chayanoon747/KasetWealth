@@ -124,6 +124,7 @@ export const AddInputScreen = ({ navigation })=>{
         }
 
         if(validateInput && validateTypeInput && validateValueMaxLimitInput&& validateValueMinLimitInput && validateValueFixedDecimal){
+            input.value = input.value.trim();
             if(selectedDate == ""){ //formattedDate กรณีที่ user ไม่ได้เลือกวันที่ เป็นวันที่ปัจจุบัน
                 addTransaction(userUID,itemData, input, formattedDate,isFirstTransaction)
                 .then(()=>{

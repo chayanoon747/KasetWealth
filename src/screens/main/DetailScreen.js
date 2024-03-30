@@ -104,6 +104,7 @@ export const DetailScreen = ({navigation})=>{
         }*/
 
         if(validateInput && validateTypeInput && validateValueMaxLimitInput&& validateValueMinLimitInput && validateValueFixedDecimal){
+            input.value = input.value.trim();
             editTransaction(userUID,itemData, input, success)
         }
 

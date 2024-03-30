@@ -80,6 +80,7 @@ export const AddGoalScreen = ({navigation})=>{
         
 
         if(validatePhoto){
+            input.value = input.value.trim();
             const InputValue = parseInt(input.value)
             addPersonalGoal(userUID, itemData, InputValue , formattedCurrentDate)
                     .then(() => {
