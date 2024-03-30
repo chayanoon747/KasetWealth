@@ -214,7 +214,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         },
         {
             transactionType:"ค่าใช้จ่าย",
-            category: "ค่าใช้จ่ายออมและลงทุน",
+            category: "ค่าใช้จ่ายออมและลงทุน(ลงทุน)",
             subCategory: "เงินลงทุน",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815032954880/streamline_investment-selection-solid.png?ex=65d4b766&is=65c24266&hm=c4f2a8a5180c7cd11405f8d1e162384ce88831450107895477a0835f4a32b4ab&"
         },
