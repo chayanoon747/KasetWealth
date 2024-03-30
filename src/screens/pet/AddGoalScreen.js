@@ -63,9 +63,9 @@ export const AddGoalScreen = ({navigation})=>{
             return;
         }
 
-        if(input.value <= 0){
+        if(input.value <= 10){
             validateValueMinLimitInput = false
-            Alert.alert('กรุณากรอกเลขที่มากกว่า 0')
+            Alert.alert('กรุณากรอกเลขที่มากกว่า 10')
             return;
         }
 
