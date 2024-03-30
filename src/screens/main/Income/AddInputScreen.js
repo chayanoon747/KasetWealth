@@ -118,6 +118,7 @@ export const AddInputScreen = ({ navigation })=>{
             if(decimalPlaces > 2){
                 validateValueFixedDecimal = false
                 Alert.alert('กรุณาป้อนทศนิยมไม่เกิน 2 ตำแหน่ง')
+                setIsLoading(false)
                 return;
             }
         }
@@ -133,6 +134,7 @@ export const AddInputScreen = ({ navigation })=>{
                     }, 800);
                 }) 
             }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
+                console.log(selectedDate)
                 addTransaction(userUID,itemData, input, selectedDate,isFirstTransaction)
                 .then(()=>{
                     dispatch(setIsUpdate(!isUpdate))
@@ -204,7 +206,7 @@ export const AddInputScreen = ({ navigation })=>{
                 }
             }else{          //กรณีวันที่มีค่า ก็จะรับ set ค่าตาม user
                 if(checkBoxVariableExpenses){
-                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายผันแปร', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
+                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายผันแปร','ค่าใช้จ่ายผันแปร(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
                     .then(()=>{
                         
                         dispatch(setIsUpdate(!isUpdate))
@@ -214,7 +216,7 @@ export const AddInputScreen = ({ navigation })=>{
                         }, 800);
                     })
                 }else{
-                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายคงที่', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
+                    addTransactionLiability(userUID,itemData, input, selectedDate, 'ค่าใช้จ่ายคงที่','ค่าใช้จ่ายคงที่(ชำระหนี้)', `ชำระหนี้${itemData.subCategory}`,isFirstTransaction)
                     .then(()=>{
                         
                         dispatch(setIsUpdate(!isUpdate))

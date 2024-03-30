@@ -57,20 +57,58 @@ export const DetailScreen = ({navigation})=>{
      }
  
      const handleEditTransaction = ()=>{
-         //input มี 2 key คือ value กับ details
-         //console.log("success")
-         if(input.value == ""){
-             Alert.alert('กรุณาระบุจำนวนเงิน')
-         }else{
-             const value = parseFloat(input.value)
-             //console.log(value)
-             if(!isNaN(value)){
-                editTransaction(userUID,itemData, input, success)
-                
-             }else{
-                 Alert.alert('กรุณาระบุจำนวนเงินเป็นตัวเลข')
-             }
-         }   
+
+        let validateInput = true;
+        let validateTypeInput = true;
+        let validateValueMaxLimitInput = true;
+        let validateValueMinLimitInput = true;
+        let validateValueFixedDecimal = true;
+        
+        if(input.value == ""){
+            validateInput = false
+            Alert.alert('กรุณาระบุจำนวนเงิน')
+            return;
+        }
+        
+        if(isNaN(input.value)){
+            validateTypeInput = false
+            Alert.alert('กรุณากรอกเป็นตัวเลข')
+            return;
+        }
+
+        if(input.value >= 1000000){
+            validateValueMaxLimitInput = false
+            Alert.alert('กรุณากรอกจำนวนเงินไม่เกิน 100,000,000')
+            return;
+        }
+
+        if(input.value <= 0){
+            validateValueMinLimitInput = false
+            Alert.alert('กรุณากรอกเลขที่มากกว่า 0')
+            return;
+        }
+
+        if(input.value.toString().includes(".")){
+            let decimalPlaces = input.value.toString().split('.')[1].length;
+            if(decimalPlaces > 2){
+                validateValueFixedDecimal = false
+                Alert.alert('กรุณาป้อนทศนิยมไม่เกิน 2 ตำแหน่ง')
+                return;
+            }
+        }
+        
+        /*let parts = input.value.toString().split('.')
+        Alert.alert(parts.toString())
+        if (input.value > 0 && input.value < 1) {
+            input.value = '0' + input.value;
+        }*/
+
+        if(validateInput && validateTypeInput && validateValueMaxLimitInput&& validateValueMinLimitInput && validateValueFixedDecimal){
+            editTransaction(userUID,itemData, input, success)
+        }
+
+
+         
      }
      const handleRemoveTransaction = ()=>{
         RemoveTransaction(userUID,itemData, success)
