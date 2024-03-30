@@ -158,7 +158,7 @@ export const OverviewScreen = ({navigation})=>{
         setIncomeAssetValue(getIncomeAssetValue(itemsdata.incomeAsset));
         setIncomeInvestAssetValue(getIncomeInvestAssetValue(itemsdata.incomeInvestAsset));
         setIncomeOtherValue(getIncomeOtherValue(itemsdata.incomeOther));
-        setIncomeValuesAll(incomeWorkValue+incomeAssetValue+incomeOtherValue);
+        setIncomeValuesAll(incomeWorkValue+incomeAssetValue+incomeOtherValue+incomeInvestAssetValue);
 
         setExpensesVariableValue(getExpensesVaribleValues(itemsdata.expensesVariable));
         setExpensesFixedValue(getExpensesFixedValues(itemsdata.expensesFixed));
@@ -184,7 +184,7 @@ export const OverviewScreen = ({navigation})=>{
         try{
             setNetWealthValue(getNetWealth(assetValues,liabilityValues));
             setNetCashFlow(getNetCashFlow(incomeValuesAll,expensesValuesAll));
-            setSurvivalRatio(getSurvivalRatio(incomeWorkValue,incomeAssetValue,expensesValuesAll));
+            setSurvivalRatio(getSurvivalRatio(incomeWorkValue,incomeAssetValue,expensesValuesAll,incomeInvestAssetValue));
             setRatioMeasureShortLiability(getRatioMeasureShortLiability(assetLiquidValue,liabilityShortValues));
             setBasicLiquidityRatio(getBasicLiquidityRatio(assetLiquidValue,expensesValuesAll));
             setLiabilityToAssetRatio(getLiabilityToAssetRatio(liabilityValues,assetValues));

@@ -99,7 +99,7 @@ export const AddInputScreen = ({ navigation })=>{
             return;
         }
 
-        if(input.value >= 1000000){
+        if(input.value >= 100000000){
             validateValueMaxLimitInput = false
             Alert.alert('กรุณากรอกจำนวนเงินไม่เกิน 100,000,000')
             setIsLoading(false)

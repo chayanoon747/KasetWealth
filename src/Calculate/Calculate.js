@@ -10,9 +10,9 @@ export const getNetCashFlow = (incomeValuesAll,expensesValuesAll)=>{
 }
 // retrive รายได้จากการทำงาน //ทำแล้ว
 //อัตราส่วนความอยู่รอด (รายได้จากการทำงาน+รายได้จากสินทรัพย์)/ค่าใช้จ่ายรวม
-export const getSurvivalRatio = (incomeWorkValue,incomeAssetValue,expensesValuesAll)=>{
+export const getSurvivalRatio = (incomeWorkValue,incomeAssetValue,expensesValuesAll,incomeInvestAsset)=>{
     if(expensesValuesAll > 0){
-        let survivalRatioValue = ( (incomeWorkValue+incomeAssetValue)/expensesValuesAll ).toFixed(2);
+        let survivalRatioValue = ( (incomeWorkValue+incomeAssetValue+incomeInvestAsset)/expensesValuesAll ).toFixed(2);
         return survivalRatioValue;
     }else{
         return "good";
