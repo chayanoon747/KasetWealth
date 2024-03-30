@@ -5,7 +5,7 @@ import uuid from 'react-native-uuid';
 import { retrieveDataLiabilityRemaining, retrieveDataExpenses, retrieveRepayDebt, retrieveInventory } from './RetrieveData';
 import { Item } from 'react-native-paper/lib/typescript/components/Drawer/Drawer';
 import { useDispatch, useSelector } from 'react-redux';
-import { setIsUpdateItemPet } from '../redux/variableSlice';
+import { setIsUpdateItemPet, setPressInventory } from '../redux/variableSlice';
 
 
 
@@ -1709,9 +1709,9 @@ export const addFurniture2Inventory = (userUID, itemData) => {
         });
 };
 
-export const updateLocationItem = (userUID, item, newItem)=>{
-
-        firestore()
+export const updateLocationItem = (userUID, item, newItem, dispatch)=>{
+   
+    return  firestore()
         .collection('pets')
         .doc(userUID)
         .update({
@@ -1727,6 +1727,7 @@ export const updateLocationItem = (userUID, item, newItem)=>{
                 })
                 .then(()=>{
                     console.log(`update item successfully`)
+                    dispatch(setPressInventory(true));
                 })
                 .catch((error) => {
                     console.error("Error remove locationItem:", error);

@@ -19,7 +19,8 @@ const INIT_VARIABLES = {
     hasNotification: false,
     cameFromNoti: false,
     cameFrom: "",
-    totalDownGradeCardValue: false
+    totalDownGradeCardValue: false,
+    pressInventory: true,
 }
 
 const variableSlice = createSlice({
@@ -81,6 +82,9 @@ const variableSlice = createSlice({
       },
       setTotalDownGradeCardValue(state, action) {
         state.totalDownGradeCardValue = action.payload;
+      },
+      setPressInventory(state, action) {
+        state.pressInventory = action.payload;
       }
     },
 });
@@ -89,5 +93,5 @@ const { actions, reducer } = variableSlice;
 export const { setEditStatus, setSelectedItems, setItemTransactionType, setItemCategory, 
   setItemPhotoURL, setItemData, setSelectedDate, setIsUpdate, setStatus, setGuageValues, 
   setTotalGuage, setTotalDifferenceDate,setEditItemLocation, setIsUpdateItemPet,
-  setTotalDownGradeCardValue, setHasNotification, setCameFromNoti, setCameFrom  } = actions;
+  setTotalDownGradeCardValue, setHasNotification, setCameFromNoti, setCameFrom, setPressInventory  } = actions;
 export default reducer;
