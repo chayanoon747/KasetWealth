@@ -202,8 +202,8 @@ export const GameQuest = ({navigation})=>{
 
   const handleButton=async()=>{
     setDisableButtonState(true)
-    await finalReward(userUID,trackingFinishedQuest) 
     await changeRewards(userUID,trackingFinishedQuest)
+    await finalReward(userUID,trackingFinishedQuest) 
     toggleModal()
     setFinishChangeButton(!finishChangeButton)
   }
