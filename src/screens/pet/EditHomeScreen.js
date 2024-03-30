@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View,ImageBackground, Image, TouchableOpacity, Text, Alert } from "react-native";
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import { setEditItemLocation, setIsUpdateItemPet } from "../../redux/variableSlice";
+import { setEditItemLocation, setIsUpdateItemPet, setPressInventory } from "../../redux/variableSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { retrieveInventory } from "../../firebase/RetrieveData";
@@ -24,6 +24,7 @@ export const EditHomeScreen =({navigation, route})=>{
     const userUID = user[0].uid;
 
     const isUpdateItemPet = useSelector((state)=>state.variables.isUpdateItemPet);
+    const pressInventory = useSelector((state)=>state.variables.pressInventory);
 
     const dispatch = useDispatch()
     const editItemLocation = useSelector((state)=>state.variables.editItemLocation);
@@ -416,7 +417,7 @@ export const EditHomeScreen =({navigation, route})=>{
             itemType: item.itemType,
             itemSoldoutURL: item.itemSoldoutURL
         };
-        updateLocationItem(userUID,item, newItem);
+        updateLocationItem(userUID,item, newItem, dispatch);
         
         if(item.itemType == 'table'){
             if(item.itemLocation == '1'){
@@ -447,7 +448,8 @@ export const EditHomeScreen =({navigation, route})=>{
     }
 
     const handleConfirmPress = ()=>{
-        console.log(itemSelected)
+        dispatch(setPressInventory(false));
+        //console.log(itemSelected)
         const newItem = {
             itemLocation: itemSelected.itemLocation,
             itemName: itemSelected.itemName,
@@ -462,7 +464,8 @@ export const EditHomeScreen =({navigation, route})=>{
             itemType: itemSelected.itemType,
             itemSoldoutURL: itemSelected.itemSoldoutURL
         };
-        updateLocationItem(userUID,previousItem, newItem);
+        
+        updateLocationItem(userUID,previousItem, newItem, dispatch);
         if(itemSelected.itemType == 'table'){
             if(itemSelected.itemLocation == '1'){
                 setItemTableSelected1();
@@ -566,7 +569,10 @@ export const EditHomeScreen =({navigation, route})=>{
                         <TouchableOpacity  
                             onPress={()=>{
                                 dispatch(setEditItemLocation(false));
-                                navigation.navigate('InventoryScreen');
+                                if(pressInventory){
+                                    navigation.navigate('InventoryScreen');
+                                }
+                                
                         }}
                         >
                             <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207721814902710292/Home.png?ex=65e0ad97&is=65ce3897&hm=20d1865de6eeab0c3cdd396eefdfad956f7c30490f80677bd7823ca9ec294a3d&=&format=webp&quality=lossless&width=60&height=60'}}

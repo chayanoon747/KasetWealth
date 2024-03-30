@@ -107,7 +107,7 @@ export const SignInScreen = ({ navigation })=>{
                             navigation.navigate('ForgetPasswordScreen');
                           }}
                     >
-                        <Text style={{color:'#A9A9A9'}}>Forgot Password?</Text>
+                        <Text style={{color:'#A9A9A9'}}>Forget Password?</Text>
                     </TouchableOpacity>
                     
                     <TouchableOpacity style={{height:50, borderRadius:16, backgroundColor:'#0ABAB5', justifyContent:'center', alignItems:'center', marginHorizontal:'8%', marginVertical:'2%'}}
