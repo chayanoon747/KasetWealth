@@ -148,7 +148,7 @@ export const CategorySelectionScreen = ({ navigation }) => {
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff" />
                     )}
                 </TouchableOpacity>
-                <Text style={styles.title}>รายได้</Text>
+                <Text style={isEdit ? styles.titleEdit : styles.title}>รายได้</Text>
                 <TouchableOpacity style={styles.editButton} onPress={() => {
                     if (!isEdit) {
                         dispatch(setEditStatus(true));
@@ -166,11 +166,6 @@ export const CategorySelectionScreen = ({ navigation }) => {
             </View>
             <View style={{height:15}}></View>
             <TabView style={{marginHorizontal:16}}
-            renderLabel={({ route, focused, color }) => (
-                <Text style={{ color, margin: 8 }}>
-                  AAAAA
-                </Text>
-              )}
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
@@ -203,6 +198,12 @@ const styles = StyleSheet.create({
         fontFamily: 'ZenOldMincho-Regular',
         fontSize: 24,
         color: '#ffffff',
+    },
+    titleEdit: {
+        fontFamily: 'ZenOldMincho-Regular',
+        fontSize: 24,
+        color: '#ffffff',
+        marginLeft: 30
     },
     editButton: {
         flexDirection: 'row',
@@ -250,6 +251,8 @@ const styles = StyleSheet.create({
         height: 25,
         position: 'absolute',
         zIndex: 1,
+        marginRight: 100,
+        borderWidth:2
     },
     image: {
         width: 30,

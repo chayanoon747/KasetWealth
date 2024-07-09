@@ -16,7 +16,7 @@ export const AddCategoryScreen = ({route, navigation})=>{
 
     
     const transactionTypeItem = useSelector((state)=>state.variables.transactionType)
-    //console.log(transactionTypeItem);
+    console.log(`transactionTypeItem: ${transactionTypeItem}`);
     
     const categoryItem = useSelector((state)=>state.variables.category)
     //console.log(categoryItem);
