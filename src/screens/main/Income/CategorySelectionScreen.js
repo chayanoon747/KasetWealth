@@ -1,77 +1,51 @@
-import { View, Text, StyleSheet, ScrollView, Image, FlatList, Touchable, TouchableOpacity} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Shadow }  from 'react-native-shadow-2';
-import { useEffect, useState } from "react";
-import { retrieveCategory } from "../../../firebase/UserModel";
-import { resetIcon } from "../../../navigators/IncomeStackNav";
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedItems, setItemCategory, setItemData, setItemTransactionType } from '../../../redux/variableSlice'
+import { setSelectedItems, setItemCategory, setItemData, setEditStatus } from '../../../redux/variableSlice';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import { RemoveCategoryIcon } from "../../../firebase/UserModel";
-import { setEditStatus } from "../../../redux/variableSlice";
+import { retrieveCategory, RemoveCategoryIcon } from "../../../firebase/UserModel";
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
+const { width } = Dimensions.get('window');
 
-export const CategorySelectionScreen = ({navigation})=>{
-    
-    const user = useSelector((state)=>state.auths);
+export const CategorySelectionScreen = ({ navigation }) => {
+    const user = useSelector(state => state.auths);
     const userUID = user[0].uid;
-    //console.log(userUID);
-
-    const editStatus = useSelector((state)=>state.variables.isEdit)
-    //console.log(editStatus);
-
+    const editStatus = useSelector(state => state.variables.isEdit);
     const selectedItems = useSelector(state => state.variables.selectedItems);
-    //console.log(selectedItems);
-
     const dispatch = useDispatch();
 
     const [isEdit, setIsEdit] = useState(false);
-    
     const [category1, setCategory1] = useState([]);
     const [category2, setCategory2] = useState([]);
     const [category3, setCategory3] = useState([]);
-    const [isDelete, setIsDelete] = useState(false);
-    
+    const [index, setIndex] = useState(0);
+    const [routes] = useState([
+        { key: 'work', title: 'รายได้จากการทำงาน' },
+        { key: 'assets', title: 'รายได้จากสินทรัพย์' },
+        { key: 'others', title: 'รายได้อื่นๆ' },
+    ]);
 
     useEffect(() => {
         retrieveData();
-    }, [isDelete]);
+    }, [isEdit]);
 
-    const success = ()=>{
-        setIsDelete(!isDelete)
-        setIsEdit(false)
+    const success = () => {
+        setIsEdit(false);
         dispatch(setEditStatus(false));
-    }
+    };
 
     const retrieveData = async () => {
         try {
-            const items1 = [];
-            const items2 = [];
-            const items3 = [];
-
             const categoryData = await retrieveCategory(userUID);
-            for (const item of categoryData) {
-                if (item.category == "รายได้จากการทำงาน") {
-                    items1.push(item);
-                }
-            }
-
-            for (const item of categoryData) {
-                if (item.category == "รายได้จากสินทรัพย์" || item.category == "รายได้จากสินทรัพย์(ลงทุน)") {
-                    items2.push(item);
-                }
-            }
-            for (const item of categoryData) {
-                if (item.category == "รายได้อื่นๆ") {
-                    items3.push(item);
-                }
-            }
+            const items1 = categoryData.filter(item => item.category === "รายได้จากการทำงาน");
+            const items2 = categoryData.filter(item => item.category === "รายได้จากสินทรัพย์" || item.category === "รายได้จากสินทรัพย์(ลงทุน)");
+            const items3 = categoryData.filter(item => item.category === "รายได้อื่นๆ");
             setCategory1(items1);
             setCategory2(items2);
             setCategory3(items3);
-            //setCategory1([categoryData][0]);
-            //console.log(category1);
         } catch (error) {
             console.error('Error retrieving data:', error);
         }
@@ -79,180 +53,213 @@ export const CategorySelectionScreen = ({navigation})=>{
 
     const renderItem = ({ item }) => {
         const isSelected = selectedItems.includes(item);
-       
-        return(
-            <TouchableOpacity style={{width:'20%', height:'50%', alignItems:'center', marginVertical:5}}
-                disabled={editStatus ? (item.subCategory == 'เพิ่ม' ? true : false) : false}
+        return (
+            <TouchableOpacity style={styles.itemContainer}
+                disabled={editStatus && item.subCategory === 'เพิ่ม'}
                 onPress={() => handleItemPress(item)}
             >
-                <View style={{justifyContent:'center', alignItems:'center'}}>
-                    {isSelected ? (
-                        <Image source={require('../../../assets/circleGreen.png')} width={25} height={25} />
-                        ) : (
-                        <Image source={require('../../../assets/circle.png')} width={25} height={25} />
-                    )}
-                    <Image style={{position:'absolute'}} source={{uri: item.photoURL}} width={23} height={23}/>
+                <View style={styles.itemContent}>
+                    <Image source={isSelected ? require('../../../assets/circleGreen.png') : require('../../../assets/circle.png')} style={styles.icon} />
+                    <Image style={styles.image} source={{ uri: item.photoURL }} />
                 </View>
-                
-                <Text style={{fontSize:12, fontWeight:'bold'}}>{item.subCategory}</Text>
+                <Text style={styles.itemText}>{item.subCategory}</Text>
             </TouchableOpacity>
-        )
+        );
     };
 
     const handleItemPress = (item) => {
         if (!editStatus) {
-            if(item.subCategory != 'เพิ่ม'){
-                dispatch(setItemData(item))
+            if (item.subCategory !== 'เพิ่ม') {
+                dispatch(setItemData(item));
                 navigation.navigate('AddInputScreen');
-            }else{
+            } else {
                 dispatch(setItemCategory(item.category));
                 navigation.navigate('AddCategoryScreen');
             }
-
-            
         } else {
             const isItemSelected = selectedItems.includes(item);
-    
-            if (isItemSelected) {
-                dispatch(setSelectedItems(selectedItems.filter(selectedItem => selectedItem !== item)));
-            } else {
-                dispatch(setSelectedItems([...selectedItems, item]));
-            }
+            dispatch(setSelectedItems(isItemSelected
+                ? selectedItems.filter(selectedItem => selectedItem !== item)
+                : [...selectedItems, item]
+            ));
         }
     };
-    
 
-    return(
-        <SafeAreaView style={{flex:1, backgroundColor:'#fffffa'}}>
-            <View style={{flex:1, paddingBottom:20}}>
-                <View style={{flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center', justifyContent:'space-between'}}>
-                
-                <TouchableOpacity style={{marginLeft:15}}
-                    onPress={()=>{
-                    if(isEdit){
+    const WorkRoute = () => (
+        <View style={styles.routeContainer}>
+            <FlatList
+                data={category1}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+            />
+        </View>
+    );
+
+    const AssetsRoute = () => (
+        <View style={styles.routeContainer}>
+            <FlatList
+                data={category2}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+            />
+        </View>
+    );
+
+    const OthersRoute = () => (
+        <View style={styles.routeContainer}>
+            <FlatList
+                data={category3}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+            />
+        </View>
+    );
+
+    const renderScene = SceneMap({
+        work: WorkRoute,
+        assets: AssetsRoute,
+        others: OthersRoute,
+    });
+
+    const renderTabBar = props => (
+        <TabBar
+            {...props}
+            indicatorStyle={styles.indicator}
+            style={styles.tabBar}
+            labelStyle={styles.label}
+        />
+    );
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity style={styles.backButton} onPress={() => {
+                    if (isEdit) {
                         dispatch(setSelectedItems([]));
                         dispatch(setEditStatus(false));
-                        setIsEdit(false)
-                    }else{
+                        setIsEdit(false);
+                    } else {
                         navigation.navigate('FinancialScreen');
                     }
-                    
-                    }}
-                >
+                }}>
                     {isEdit ? (
-                    <Image source={require('../../../assets/cancelIcon.png')} width={30} height={30} color="#ffffff"/>
+                        <Image source={require('../../../assets/cancelIcon.png')} style={styles.icon} />
                     ) : (
-                    <IconAntDesign name="arrowleft" size={30} color="#ffffff"/>
-                    )}
-                    
-                </TouchableOpacity>
-
-                <Text style={{fontFamily:'ZenOldMincho-Regular',fontSize:24, color:'#ffffff'}}>รายได้</Text>
-                
-                <TouchableOpacity style={{marginRight:15}}
-                    onPress={()=>{
-                        if(!isEdit){
-                            dispatch(setEditStatus(true));
-                            setIsEdit(true);
-                        }else{
-                            //console.log(selectedItems);
-                            RemoveCategoryIcon(userUID, selectedItems, success)
-                        }
-                    }}
-                >
-                    {isEdit ? (
-                    <Image source={require('../../../assets/trashIcon.png')} width={30} height={30} color="#ffffff"/>
-                    ) : (
-                    <IconFeather name="edit" size={30} color="#ffffff" />
+                        <IconAntDesign name="arrowleft" size={30} color="#ffffff" />
                     )}
                 </TouchableOpacity>
-
-                </View>
+                <Text style={styles.title}>รายได้</Text>
+                <TouchableOpacity style={styles.editButton} onPress={() => {
+                    if (!isEdit) {
+                        dispatch(setEditStatus(true));
+                        setIsEdit(true);
+                    } else {
+                        RemoveCategoryIcon(userUID, selectedItems, success);
+                    }
+                }}>
+                    {isEdit ? (
+                        <Image source={require('../../../assets/trashIcon.png')} style={{width: 30,height: 30}} />
+                    ) : (
+                        <IconFeather name="edit" size={30} color="#ffffff" />
+                    )}
+                </TouchableOpacity>
             </View>
-
-            <View style={{flex:9, padding:5}}>
-                <View style={{flex:3, marginVertical:10}}>
-                    <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
-                        <View style={styles.box}>
-                            <View style={styles.boxhead}>
-                                <Text style={styles.headerText}>รายได้จากการทำงาน</Text>
-                            </View>
-                            <View style={{flex:3}}>
-                                <FlatList
-                                    data={category1}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={renderItem}
-                                    numColumns={5}
-                                />
-                            </View>
-                        </View>
-                    </Shadow>
-                </View>
+            <View style={{height:15}}></View>
+            <TabView style={{marginHorizontal:16}}
+            renderLabel={({ route, focused, color }) => (
+                <Text style={{ color, margin: 8 }}>
+                  AAAAA
+                </Text>
+              )}
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                initialLayout={{ width }}
+                renderTabBar={renderTabBar}
                 
-                <View style={{flex:3, marginVertical:10}}>
-                    <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
-                        <View style={styles.box}>
-                            <View style={styles.boxhead}>
-                                <Text style={styles.headerText}>รายได้จากสินทรัพย์</Text>
-                            </View>
-                            <View style={{flex:3}}>
-                                <FlatList
-                                    data={category2}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={renderItem}
-                                    numColumns={5}
-                                />
-                                
-                            </View>
-                        </View>
-                    </Shadow>
-                </View>
-
-                <View style={{flex:3, marginVertical:10}}>
-                    <Shadow style={{width:'100%', height:'100%'}} distance={7} startColor={"#0ABAB5"} offset={[8,6]}>
-                        <View style={styles.box}>
-                            <View style={styles.boxhead}>
-                                <Text style={styles.headerText}>รายได้อื่นๆ</Text>
-                            </View>
-                            <View style={{flex:3}}>
-                                <FlatList
-                                    data={category3}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    renderItem={renderItem}
-                                    numColumns={5} 
-                                />
-                            </View>
-                        </View>
-                    </Shadow>
-                </View>
-            </View>
-            
-           
+            />
         </SafeAreaView>
-    )
-}
+    );
+};
+
 const styles = StyleSheet.create({
-    headerText:{
-        fontFamily:'ZenOldMincho-Bold', 
-        textAlign:'center', 
-        fontSize:17, 
-        fontWeight: 'bold', 
-        color:'#0ABAB5'
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f8f8',
     },
-    box:{
-        flex:1, 
-        borderRadius:15,
-        borderWidth:1, 
-        borderColor:'#000000',
-        backgroundColor:'#fffffa'
+    header: {
+        flexDirection: 'row',
+        height: 80,
+        backgroundColor: '#0ABAB5',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 15,
     },
-    boxhead:{
-        flex:1, 
-        borderTopLeftRadius:15, 
-        borderBottomWidth:1, 
-        borderColor:'#000000',  
-        borderTopRightRadius:15, 
-        justifyContent:'center', 
-        backgroundColor:'#fffffa'
-    }
-})
+    backButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    title: {
+        fontFamily: 'ZenOldMincho-Regular',
+        fontSize: 24,
+        color: '#ffffff',
+    },
+    editButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    tabBar: {
+        borderTopLeftRadius: 32,
+        borderTopRightRadius: 32,
+        textAlign:'center',
+        backgroundColor: '#0ABAB5',
+    },
+    indicator: {
+        backgroundColor: '#ffffff',
+        height: 4,
+    },
+    label: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+        textAlign:'center'
+    },
+    routeContainer: {
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+        paddingHorizontal: 10,
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+        padding: 10,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
+    },
+    itemContent: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#e0e0e0',
+        marginRight: 10,
+    },
+    icon: {
+        width: 25,
+        height: 25,
+        position: 'absolute',
+        zIndex: 1,
+    },
+    image: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+    },
+    itemText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        flex: 1,
+        color:'#100D40'
+    },
+});
