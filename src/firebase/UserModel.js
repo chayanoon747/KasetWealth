@@ -196,13 +196,13 @@ export const addUser = (user, profile, success, unsuccess)=>{
         },
         {
             transactionType:"ค่าใช้จ่าย",
-            category: "ค่าใช้จ่ายออมและลงทุน",
+            category: "ค่าใช้จ่ายออมและลงทุน(ออม)",
             subCategory: "ประกันสังคม",
             photoURL: "https://drive.google.com/uc?export=view&id=1G5RFuNliO7aTg9R-TG0-H1VG1kbgq2q3"
         },
         {
             transactionType:"ค่าใช้จ่าย",
-            category: "ค่าใช้จ่ายออมและลงทุน",
+            category: "ค่าใช้จ่ายออมและลงทุน(ออม)",
             subCategory: "สวัสดิการ\n การออม",
             photoURL: "https://drive.google.com/uc?export=view&id=1awPBEcAoF_7yQKXwbP5W93q0UNgbP6BC"
         },
