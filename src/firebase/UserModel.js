@@ -529,7 +529,7 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         transactionType: transactionType,
         category: category,
         subCategory: 'เพิ่ม',
-        photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&'
+        photoURL: 'https://drive.google.com/uc?export=view&id=1wJIqp47QLmtIpLij-AGim-bUayuULNlm'
     }
     return firestore()
         .collection('users')
@@ -983,7 +983,7 @@ export const addCategoriesExpenses = (userUID,transactionType, categoryPlusIcon,
         transactionType: transactionType,
         category: categoryPlusIcon,
         subCategory: 'เพิ่ม',
-        photoURL: 'https://cdn.discordapp.com/attachments/1202281623585034250/1202285553274605638/addIcon.png?ex=65cce6ad&is=65ba71ad&hm=63a2934e36100b8820891cc93759bea72d3219514dfe2379ad59b88b56ae7116&'
+        photoURL: 'https://drive.google.com/uc?export=view&id=1wJIqp47QLmtIpLij-AGim-bUayuULNlm'
     }
     return firestore()
         .collection('users')
@@ -1704,7 +1704,7 @@ export const removeCardDownGrade = (userUID) => {
     const downGradeCard = {
         itemType: "forUse",
         itemName: "บัตรกันลดขั้น",
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1222869375200264234/Featherfallingcard.png?ex=6617c8da&is=660553da&hm=992aebb3d25042fe33471afc059ea2123fa04e89c7acd4cca016e2a312c46c82&"
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1-ajNNnLTDZQuq5qcCGPE5e5vcrV_1F8R"
     }
 
     return firestore()
