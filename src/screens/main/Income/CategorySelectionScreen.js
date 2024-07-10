@@ -61,7 +61,7 @@ export const CategorySelectionScreen = ({ navigation }) => {
                 <View style={styles.itemContent}>
                     {isSelected ? (
                         <Image source={require('../../../assets/circleGreen.png')} width={25} height={25} />
-                        ) : (
+                    ) : (
                         <Image source={require('../../../assets/circle.png')} width={25} height={25} />
                     )}
                     <Image style={styles.image} source={{ uri: item.photoURL }} />
