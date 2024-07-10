@@ -129,7 +129,7 @@ export const FinancialScreen = ({navigation})=>{
                 <View style={{flex:1, backgroundColor:'#F5F5F5', borderRadius:32}}>
                     <View style={{flex:1, margin:30}}>
                         <View style={{flex:1, flexDirection:'row'}}>
-                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                            <TouchableOpacity style={{flex:1, borderWidth:1, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
                                 onPress={()=>{
                                     dispatch(setItemTransactionType('รายได้'))
                                     navigation.navigate('CategorySelectionScreen')
@@ -140,7 +140,7 @@ export const FinancialScreen = ({navigation})=>{
                                 </View>
                                 <Text style={{fontFamily:'Poppins-Regular', color:'#000000', fontSize:14}}>รายได้</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                            <TouchableOpacity style={{flex:1, borderWidth:1, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
                                 onPress={()=>{
                                     dispatch(setItemTransactionType('ค่าใช้จ่าย'))
                                     navigation.navigate('CategoryExpensesSelectionScreen')
@@ -153,7 +153,7 @@ export const FinancialScreen = ({navigation})=>{
                             </TouchableOpacity>
                         </View>
                         <View style={{flex:1, flexDirection:'row'}}>
-                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                            <TouchableOpacity style={{flex:1, borderWidth:1, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
                                 onPress={()=>{
                                     dispatch(setItemTransactionType('สินทรัพย์'))
                                     navigation.navigate('CategoryAssetSelectionScreen')
@@ -164,7 +164,7 @@ export const FinancialScreen = ({navigation})=>{
                                 </View>
                                 <Text style={{fontFamily:'Poppins-Regular', color:'#000000', fontSize:14}}>สินทรัพย์</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                            <TouchableOpacity style={{flex:1, borderWidth:1, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
                                 onPress={()=>{
                                     dispatch(setItemTransactionType('หนี้สิน'))
                                     navigation.navigate('CategoryLiabilitySelectionScreen')
