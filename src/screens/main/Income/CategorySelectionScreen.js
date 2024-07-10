@@ -54,7 +54,7 @@ export const CategorySelectionScreen = ({ navigation }) => {
     const renderItem = ({ item }) => {
         const isSelected = selectedItems.includes(item);
         return (
-            <TouchableOpacity style={styles.itemContainer}
+            <TouchableOpacity style={[styles.itemContainer, isSelected && styles.selectedItem]}
                 disabled={editStatus && item.subCategory === 'เพิ่ม'}
                 onPress={() => handleItemPress(item)}
             >
@@ -65,7 +65,7 @@ export const CategorySelectionScreen = ({ navigation }) => {
                 <Text style={styles.itemText}>{item.subCategory}</Text>
             </TouchableOpacity>
         );
-    };
+    };    
 
     const handleItemPress = (item) => {
         if (!editStatus) {
@@ -127,6 +127,12 @@ export const CategorySelectionScreen = ({ navigation }) => {
             indicatorStyle={styles.indicator}
             style={styles.tabBar}
             labelStyle={styles.label}
+            pressColor="#ffffff"
+            renderLabel={({ route, focused }) => (
+                <Text style={[styles.label, { color: focused ? '#ffffff' : '#03071E' }]}>
+                    {route.title}
+                </Text>
+            )}
         />
     );
 
@@ -264,5 +270,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         flex: 1,
         color:'#100D40'
+    },
+    selectedItem: {
+        backgroundColor: '#FF4F4F',
     },
 });
