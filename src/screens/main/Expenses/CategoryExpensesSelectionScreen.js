@@ -67,7 +67,7 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
     const renderItem = ({ item }) => {
         const isSelected = selectedItems.includes(item);
         return (
-            <TouchableOpacity style={styles.itemContainer}
+            <TouchableOpacity style={[styles.itemContainer, isSelected && styles.selectedItem]}
                 disabled={editStatus && item.subCategory === 'เพิ่ม'}
                 onPress={() => handleItemPress(item)}
             >
@@ -78,7 +78,7 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
                 <Text style={styles.itemText}>{item.subCategory}</Text>
             </TouchableOpacity>
         );
-    };
+    };    
 
     const handleItemPress = (item) => {
         if (!editStatus) {
@@ -140,6 +140,12 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
             indicatorStyle={styles.indicator}
             style={styles.tabBar}
             labelStyle={styles.label}
+            pressColor="#ffffff"
+            renderLabel={({ route, focused }) => (
+                <Text style={[styles.label, { color: focused ? '#ffffff' : '#03071E' }]}>
+                    {route.title}
+                </Text>
+            )}
         />
     );
 
@@ -161,7 +167,7 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
                         <IconAntDesign name="arrowleft" size={30} color="#ffffff" />
                     )}
                 </TouchableOpacity>
-                <Text style={styles.title}>ค่าใช้จ่าย</Text>
+                <Text style={isEdit ? styles.titleEdit : styles.title}>ค่าใช้จ่าย</Text>
                 <TouchableOpacity style={styles.editButton} onPress={() => {
                     if (!isEdit) {
                         dispatch(setEditStatus(true));
@@ -179,11 +185,6 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
             </View>
             <View style={{height:15}}></View>
             <TabView style={{marginHorizontal:16}}
-            renderLabel={({ route, focused, color }) => (
-                <Text style={{ color, margin: 8 }}>
-                  AAAAA
-                </Text>
-              )}
                 navigationState={{ index, routes }}
                 renderScene={renderScene}
                 onIndexChange={setIndex}
@@ -216,6 +217,12 @@ const styles = StyleSheet.create({
         fontFamily: 'ZenOldMincho-Regular',
         fontSize: 24,
         color: '#ffffff',
+    },
+    titleEdit: {
+        fontFamily: 'ZenOldMincho-Regular',
+        fontSize: 24,
+        color: '#ffffff',
+        marginLeft: 30
     },
     editButton: {
         flexDirection: 'row',
@@ -274,5 +281,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         flex: 1,
         color:'#100D40',
+    },
+    selectedItem: {
+        backgroundColor: '#FF4F4F',
     },
 })
