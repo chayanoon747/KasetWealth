@@ -124,9 +124,9 @@ export const DetailScreen = ({navigation})=>{
                 <View style={{flex:1, alignItems:'center',marginTop:15,flexDirection:'row'}}>
 
     {/* รูป & ชื่อรายการ */}
-                    <View style={{flex:0.5,width:'100%',backgroundColor:'transparent',marginLeft:15}}>
+                    <View style={{flex:0.5,width:'100%',backgroundColor:'transparent',marginLeft:15, justifyContent:'center', alignItems:'center'}}>
                         <Image source={require('../../assets/backgroundIcon.png')} style={{width: 100, height:100}} />
-                        <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute', alignItems:'center', justifyContent:'center'}}/>
+                        <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute'}}/>
     {/* รับรูปไอค่อน */}
                     </View>
                     <TextInput style={{flex:1, backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:28}}

@@ -72,7 +72,11 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
                 onPress={() => handleItemPress(item)}
             >
                 <View style={styles.itemContent}>
-                    <Image source={isSelected ? require('../../../assets/circleGreen.png') : require('../../../assets/circle.png')} style={styles.icon} />
+                    {isSelected ? (
+                        <Image source={require('../../../assets/circleGreen.png')} width={25} height={25} />
+                    ) : (
+                        <Image source={require('../../../assets/circle.png')} width={25} height={25} />
+                    )}
                     <Image style={styles.image} source={{ uri: item.photoURL }} />
                 </View>
                 <Text style={styles.itemText}>{item.subCategory}</Text>
@@ -272,9 +276,10 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     image: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
+        width: 25,
+        height: 25,
+        position:'absolute'
+        
     },
     itemText: {
         fontSize: 16,
