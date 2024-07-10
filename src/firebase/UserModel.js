@@ -95,7 +95,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายผันแปร",
-            subCategory: "สาธารณูป\n      โภค",
+            subCategory: "สาธารณูปโภค",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433688264183808/tdesign_bill.png?ex=65d4b748&is=65c24248&hm=345382473e90edbd9ac57ab316c1d483b73b31af50a92d246921d78369f7600e&"
         },
         {
@@ -143,7 +143,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายคงที่",
-            subCategory: "ค่าผ่อน/\nเช่าบ้าน",
+            subCategory: "ค่าผ่อน/เช่าบ้าน",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433758506459166/mdi_cash-plus.png?ex=65d4b759&is=65c24259&hm=03a60133bfc4cb50a639e225539af4557b5c7dd2650b08d7e593c4f2a91c165e&"
         },
         {
@@ -161,25 +161,25 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายคงที่",
-            subCategory: "    ค่าผ่อน\nหนี้นอกระบบ",
+            subCategory: "ค่าผ่อนหนี้นอกระบบ",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757881376768/mdi_cash-remove.png?ex=65d4b759&is=65c24259&hm=de1ac939e335084ea57035bd68f3b9878f7747c8cc2d335aad5b4a241f03ad82&"
         },
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายคงที่",
-            subCategory: "  ค่าผ่อน\n   สินเชื้อ\nส่วนบุคคล",
+            subCategory: "ค่าผ่อนสินเชื่อส่วนบุคคล",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757579509860/mdi_cash-fast.png?ex=65d4b759&is=65c24259&hm=3d4e0f10efbbb7d285f25f3de49bbc990010b31de407a196215502390d57cf4e&"
         },
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายคงที่",
-            subCategory: "   ค่าผ่อน\nหนี้กยศ",
+            subCategory: "ค่าผ่อนหนี้กยศ.",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757323403294/mdi_cash-lock.png?ex=65d4b759&is=65c24259&hm=d0952ae3fb64a13d98c048516f9e78ff757ea4ad4656aaca4cc80a458f703039&"
         },
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายคงที่",
-            subCategory: "    ค่าผ่อน\nหนี้สหกรณ์",
+            subCategory: "ค่าผ่อนหนี้สหกรณ์",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433757097033748/mdi_cash-refund.png?ex=65d4b758&is=65c24258&hm=4a935f444c51d5231c50eca4f1809280c41ae878fd815ce1dedd9f390d9e5466&"
         },
         {
@@ -203,7 +203,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"ค่าใช้จ่าย",
             category: "ค่าใช้จ่ายออมและลงทุน",
-            subCategory: "สวัสดิการ\n การออม",
+            subCategory: "สวัสดิการการออม",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204433815490273310/streamline_give-gift-solid.png?ex=65d4b766&is=65c24266&hm=db0247e222caf1735bafcbb895512f568843be4be15c3eef5ba93da09006e380&"
         },
         {
@@ -234,19 +234,19 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์สภาพคล่อง",
-            subCategory: "  เงินฝาก\nออมทรัพย์",
+            subCategory: "เงินฝากออมทรัพย์",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435332439740456/tabler_cash.png?ex=65d4b8d0&is=65c243d0&hm=03ace3c90240752d7692e5d018962e9b9fdb17dd90dad7cdfe39a4e3a77f01fe&"
         },
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์สภาพคล่อง",
-            subCategory: "      เงิน\nฝากประจำ",
+            subCategory: "เงินฝากประจำ",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435332146143322/tdesign_money.png?ex=65d4b8d0&is=65c243d0&hm=3a7e0437b26fd94039ee446e9905138416252d722022a039714fea4645af610d&"
         },
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์สภาพคล่อง",
-            subCategory: "    เงินฝาก\nกระแสรายวัน",
+            subCategory: "เงินฝากกระแสรายวัน",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435331940884500/bi_cash-coin.png?ex=65d4b8d0&is=65c243d0&hm=780234dd2fc5a70d6e7d6751637e3fbd6b011967fd06c2db7ba293cfada8dbd7&"
         },
         {
@@ -258,7 +258,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์ลงทุน",
-            subCategory: "สลากออม\n    ทรัพย์",
+            subCategory: "สลากออมทรัพย์",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435375917891624/mdi_cash-100.png?ex=65d4b8da&is=65c243da&hm=e4dfb78aa18f5641893d7f09d64bfa5a6551104b883be2da1c92c24c8c1173f1&"
         },
         {
@@ -270,7 +270,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์ลงทุน",
-            subCategory: "กองทุนออม\n   เพื่อการ\n   เกษียณ",
+            subCategory: "กองทุนออมเพื่อการเกษียณ",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435375175761930/streamline_investment-selection-solid.png?ex=65d4b8da&is=65c243da&hm=458eba1bdaff2b8a2e28c5f5d0991432a63ea22262d1e6021a6fc7d58b5dee5f&"
         },
         {
@@ -294,13 +294,13 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์ลงทุน",
-            subCategory: "  อสังหาฯ\n(ขาย/เช่า)",
+            subCategory: "อสังหาฯ (ขาย/เช่า)",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435373606969344/mdi_house-city-outline.png?ex=65d4b8da&is=65c243da&hm=67d56b57ff0f09fc338ef64c4ebc97b5d232f4c123c34c2732ad8abe8518ab68&"
         },
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์ลงทุน",
-            subCategory: " กรมธรรม์\nประกันชีวิต",
+            subCategory: "กรมธรรม์ประกันชีวิต",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435373363826688/LifeInsurance.png?ex=65d4b8da&is=65c243da&hm=f4ab29aac1415a4b367204e46aa5c4a910240380cf9d26dd9170743e90bd7ee2&"
         },
         {
@@ -312,7 +312,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์ส่วนตัว",
-            subCategory: "  อสังหาฯ\n(อยู่อาศัย)",
+            subCategory: "อสังหาฯ (อยู่อาศัย)",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435410042888202/mdi_house-city-outline.png?ex=65d4b8e3&is=65c243e3&hm=9887b716de3a7e663dd299a0226e2e2f5fe4bfd613050800da0900ad16956b1c&"
         },
         {
@@ -330,7 +330,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType:"สินทรัพย์",
             category: "สินทรัพย์ส่วนตัว",
-            subCategory: "เครื่องใช้ใน\n      บ้าน",
+            subCategory: "เครื่องใช้ในบ้าน",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204435409145434143/Mask_group.png?ex=65d4b8e2&is=65c243e2&hm=83df901fab3e6ce0982cbc0214e7feaa8cdc84864a33aa3257d4846606762061&"
         },
         {
@@ -343,25 +343,25 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType: "หนี้สิน",
             category: "หนี้สินระยะสั้น",
-            subCategory: "      หนี้\nนอกระบบ",
+            subCategory: "หนี้นอกระบบ",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111718150205/Group.png?ex=65d4ba78&is=65c24578&hm=271ec956bb8f39be8580012b569ac6e479b24f05be4336c6b62600e68ce4ff72&"
         },
         {
             transactionType: "หนี้สิน",
             category: "หนี้สินระยะสั้น",
-            subCategory: "       หนี้\nบัตรเครดิต",
+            subCategory: "หนี้บัตรเครดิต",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111479210124/bytesize_creditcard.png?ex=65d4ba78&is=65c24578&hm=b166e1f2f5b81dd0a801533ce66b6d4309794c1c85e2a1fa351bd31fe0fb25a6&"
         },
         {
             transactionType: "หนี้สิน",
             category: "หนี้สินระยะสั้น",
-            subCategory: "        หนี้\nผ่อนซื้อสินค้า",
+            subCategory: "หนี้ผ่อนซื้อสินค้า",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111269236776/ProductInstallmentDebt.png?ex=65d4ba78&is=65c24578&hm=c9a52c0f736b8351763fe22454fe9aaef4a99bc5ace250a63131aa4a45fa7416&"
         },
         {
             transactionType: "หนี้สิน",
             category: "หนี้สินระยะสั้น",
-            subCategory: "หนี้สินจาก\n สินทรัพย์",
+            subCategory: "หนี้สินจากสินทรัพย์",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437111059513384/LiabilitiesFromAssets.png?ex=65d4ba78&is=65c24578&hm=fc9c3953721344584f2307a8824a17cf44ed1d754e3a958695eacbd731faa2e8&"
         },
         {
@@ -385,7 +385,7 @@ export const addUser = (user, profile, success, unsuccess)=>{
         {
             transactionType: "หนี้สิน",
             category: "หนี้สินระยะยาว",
-            subCategory: "หนี้สินเชื่อ\nส่วนบุคคล",
+            subCategory: "หนี้สินเชื่อส่วนบุคคล",
             photoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1204437145801072670/PersonalLoanDebt.png?ex=65d4ba80&is=65c24580&hm=4b7922bdac4c790c8b1794c2f0978237a2ff760dc05e32fae1ef36f600549a01&"
         },
         {
