@@ -120,7 +120,7 @@ export const DetailScreen = ({navigation})=>{
         <ScrollView style={{ backgroundColor:'#fffffa', paddingHorizontal:20}}>
         <View style={{height:25,backgroundColor:'transparent'}}></View>
         <Shadow style={{width:'100%', borderRadius:16}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
-            <View style={{flex:1,backgroundColor:'#FFFFFA',borderRadius:16,borderWidth:1}}>
+            <View style={{flex:1,backgroundColor:'#FFFFFA',borderRadius:16,borderWidth:1,width:'99%'}}>
                 <View style={{flex:1, alignItems:'center',marginTop:15,flexDirection:'row'}}>
 
     {/* รูป & ชื่อรายการ */}
