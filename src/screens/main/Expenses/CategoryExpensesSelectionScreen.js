@@ -56,7 +56,7 @@ export const CategoryExpensesSelectionScreen = ({navigation})=>{
             const categoryData = await retrieveCategory(userUID);
             const items1 = categoryData.filter(item => item.category === "ค่าใช้จ่ายผันแปร" || item.category === "ค่าใช้จ่ายผันแปร(ชำระหนี้)");
             const items2 = categoryData.filter(item => item.category === "ค่าใช้จ่ายคงที่" || item.category === "ค่าใช้จ่ายคงที่(ชำระหนี้)");
-            const items3 = categoryData.filter(item => item.category === "ค่าใช้จ่ายออมและลงทุน");
+            const items3 = categoryData.filter(item => item.category === "ค่าใช้จ่ายออมและลงทุน" || item.category === "ค่าใช้จ่ายออมและลงทุน(ออม)" || item.category === "ค่าใช้จ่ายออมและลงทุน(ลงทุน)");
             setCategory1(items1);
             setCategory2(items2);
             setCategory3(items3);
