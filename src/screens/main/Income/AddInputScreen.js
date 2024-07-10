@@ -276,11 +276,10 @@ export const AddInputScreen = ({ navigation })=>{
 
     const componentCheckBoxRepayDebt = ()=>{
         return(
-            <View style={{flex:1}}>
+            <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 <Text style={{color:'#FF0000'}}>*ระบบจะทำการสร้างหัวข้อสำหรับการชำระหนี้สินของรายการนี้ โปรดระบุว่าเป็นค่าใช้จ่ายแบบใด</Text>
-                <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center',marginHorizontal:15,marginVertical:5}}>
                     <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <View style={{flex:2, flexDirection:'row'}}>
                             <Checkbox style={{flex:1}}
                                 status={checkBoxVariableExpenses ? 'checked' : 'unchecked'}
                                 onPress={()=>{
@@ -292,11 +291,10 @@ export const AddInputScreen = ({ navigation })=>{
                                 color="#0ABAB5"
                             />
                             <Text style={{flex:1, textAlignVertical:'center', color:checkBoxVariableExpenses ? '#0ABAB5' : 'gray'}}>ค่าใช้จ่ายผันแปร</Text>
-                        </View>
+                        
                     </View>
 
                     <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <View style={{flex:2, flexDirection:'row'}}>
                             <Checkbox style={{flex:1}}
                                 status={checkBoxFixedExpenses ? 'checked' : 'unchecked'}
                                 onPress={()=>{
@@ -308,7 +306,7 @@ export const AddInputScreen = ({ navigation })=>{
                                 color="#0ABAB5"
                             />
                             <Text style={{flex:1, textAlignVertical:'center', color:checkBoxFixedExpenses ? '#0ABAB5' : 'gray'}}>ค่าใช้จ่ายคงที่</Text>
-                        </View>
+                        
                     </View>
                 </View>
             </View>
@@ -317,64 +315,66 @@ export const AddInputScreen = ({ navigation })=>{
 
     return(
         <ScrollView style={{ backgroundColor:'#fffffa', paddingHorizontal:20}}>
+            <View style={{height:25,backgroundColor:'transparent'}}></View>
             {isLoading ? (<ActivityIndicator size='large' color="#0ABAB5" style={{marginVertical:'60%'}}></ActivityIndicator>) : (
-            
-            <View style={{flex:1,backgroundColor:'#FFFFFA',borderRadius:16,borderWidth:1,marginTop:25}}>
-                
-                
-                <View style={{flex:1, alignItems:'center',marginTop:15,flexDirection:'row'}}>
-    {/* รูป & ชื่อรายการ */}
-                    <View style={{flex:0.5,width:'100%',backgroundColor:'transparent',marginLeft:15}}>
-                        <Image source={require('../../../assets/backgroundIcon.png')} style={{width: 100, height:100}} />
-                        <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute', alignItems:'center', justifyContent:'center'}}/>
-                        {/* รับรูปไอค่อน */}
+            <Shadow style={{width:'100%', borderRadius:16}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
+                <View style={{flex:1,backgroundColor:'#FFFFFA',borderRadius:16,borderWidth:1,width:'99%'}}>
+                    <View style={{flex:1, alignItems:'center',marginTop:15,flexDirection:'row'}}>
+
+        {/* รูป & ชื่อรายการ */}
+                        <View style={{flex:0.5,width:'100%',backgroundColor:'transparent',marginLeft:15}}>
+                            <Image source={require('../../../assets/backgroundIcon.png')} style={{width: 100, height:100}} />
+                            <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute', alignItems:'center', justifyContent:'center'}}/>
+        {/* รับรูปไอค่อน */}
+                        </View>
+                        <ScrollView style={styles.scrollViewText } horizontal={true} vertical={true}>
+                            <TextInput style={{flex:1, backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:28}}
+                                placeholder={itemData.subCategory} underlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false} scrollEnabled={true}
+                                >
+                            </TextInput>
+                        </ScrollView>
+                        <Image source={require('../../../assets/right_arrow.png')} style={{flex:0,width: 20, height:20,backgroundColor:'transparent',marginRight:15}} />
                     </View>
-                    <TextInput style={{flex:1, backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:28}}
-                        placeholder={itemData.subCategory} underlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false}
-                        >
-                    </TextInput>
-                    <Image source={require('../../../assets/right_arrow.png')} style={{flex:0,width: 20, height:20,backgroundColor:'transparent',marginRight:15}} />
-                </View>
-                <View style={{height:20,backgroundColor:'transparent'}}></View>
-                <View style={{flex:1,borderColor:'#A9A9A9',borderWidth:1,marginHorizontal:15,backgroundColor:'transparent'}}></View>
-    {/* กล่องจำนวนเงิน */}
-                <View style={{height:20,backgroundColor:'transparent'}}></View>
-                <View style={{flex:1,flexDirection:'row',justifyContent:'center',borderRadius:15,borderColor:'#000000',
-                    paddingHorizontal:3,backgroundColor:'transparent'}}>
-                    <View style={{flex:0,borderRadius:15,borderWidth:2,borderColor:'#A9A9A9',marginLeft:30,backgroundColor:'transparent'}}>
-                        <TextInput style={{flex:0,backgroundColor:'transparent'}}
-                            placeholder='THB' underlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false}
+                    <View style={{height:20,backgroundColor:'transparent'}}></View>
+                    <View style={{flex:1,borderColor:'#A9A9A9',borderWidth:1,marginHorizontal:15,backgroundColor:'transparent'}}></View>
+                    
+        {/* กล่องจำนวนเงิน */}
+                    <View style={{height:20,backgroundColor:'transparent'}}></View>
+                    <View style={{flex:1,flexDirection:'row',justifyContent:'center',borderRadius:15,borderColor:'#000000',
+                        paddingHorizontal:3,backgroundColor:'transparent'}}>
+                        <View style={{flex:0,borderRadius:15,borderWidth:2,borderColor:'#A9A9A9',marginLeft:30,backgroundColor:'transparent'}}>
+                            <TextInput style={{flex:0,backgroundColor:'transparent'}}
+                                placeholder='THB' underlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false}
+                                >
+                            </TextInput>
+                        </View>
+                        <TextInput style={{flex:1,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:22}}
+                            placeholder='ระบุจำนวนเงิน' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
+                            value={input.value} onChangeText={(text)=>{setValue(text)}} keyboardType="number-pad"
                             >
                         </TextInput>
                     </View>
-                    <TextInput style={{flex:1,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:22}}
-                        placeholder='ระบุจำนวนเงิน' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
-                        value={input.value} onChangeText={(text)=>{setValue(text)}} keyboardType="number-pad"
-                        >
-                    </TextInput>
-                </View>
-                <View style={{height:10}}></View>
-                <View style = {{flex:1,flexDirection:'row',backgroundColor:"transparent",borderColor:'transparent',alignItems:'center'}}>
-                    <View style={{height:20}}></View>
-                    <View style={{flex:1,borderColor:'#A9A9A9',borderWidth:1,marginHorizontal:15,backgroundColor:'transparent',height:0}}></View>
-                </View>
+                    <View style={{height:10}}></View>
+                    <View style = {{flex:1,flexDirection:'row',backgroundColor:"transparent",borderColor:'transparent',alignItems:'center'}}>
+                        <View style={{height:20}}></View>
+                        <View style={{flex:1,borderColor:'#A9A9A9',borderWidth:1,marginHorizontal:15,backgroundColor:'transparent',height:0}}></View>
+                    </View>
 
-    {/* กล่องรายละเอียด */}
-                <View style={styles.DetailInputBox}>
-                    <TextInput style={{flex:3,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:18, justifyContent:'start', alignItems:'start'}}
-                        placeholder='รายละเอียดเพิ่มเติม' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
-                        value={input.detail} onChangeText={(text)=>{setDetail(text)}}
-                    >  
-                    </TextInput>
+        {/* กล่องรายละเอียด */}
+                    <View style={styles.DetailInputBox}>
+                        <TextInput style={{flex:3,width:'100%', borderColor:'#000000', backgroundColor:'transparent', fontFamily:'ZenOldMincho', fontSize:18, justifyContent:'start', alignItems:'start'}}
+                            placeholder='รายละเอียดเพิ่มเติม' underlineColor='transparent' activeUnderlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5"
+                            value={input.detail} onChangeText={(text)=>{setDetail(text)}}
+                        >  
+                        </TextInput>
+                    </View>
+                    <View style={{height:10}}></View>
+                    {transactionType == 'หนี้สิน' ? componentCheckBoxRepayDebt() : <View></View>}
                 </View>
-                <View style={{height:10}}></View>
-                {transactionType == 'หนี้สิน' ? componentCheckBoxRepayDebt() : <View></View>}
-                
-                
-    {/* ปุ่มบันทึก */}
-                
-            </View>
+            </Shadow>
            )}
+
+        {/* ปุ่มบันทึก */}
            <View style={{height:100, justifyContent:'center', paddingHorizontal:3}}>
                     <Shadow  style={{width:'100%', height:50}} distance={5} startColor={'#0ABAB5'} offset={[2, 4]}>
                         <TouchableOpacity style={{width:'100%', height:'100%', justifyContent:'center', alignItems:'center', borderRadius:16, borderWidth:1, borderColor:'#0ABAB5', backgroundColor:'#ffffff'}}
@@ -410,5 +410,9 @@ const styles = StyleSheet.create({
         paddingHorizontal:3,
         marginHorizontal:15,
         marginVertical:15,
-    }
+    },
+    scrollViewText: {
+        flex: 1,
+        backgroundColor: 'transparent',
+      },
 })
