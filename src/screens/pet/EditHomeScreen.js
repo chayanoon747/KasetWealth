@@ -562,7 +562,7 @@ export const EditHomeScreen =({navigation, route})=>{
 
     return(
         <View style={{flex:1}}>
-            <ImageBackground source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207709035797946448/pxArt_1.png?ex=65e0a1b0&is=65ce2cb0&hm=22d1404ba545efff694fcb96da06d26072e6b17849dd3daa83cd8100a6641ac8&=&format=webp&quality=lossless&width=390&height=640'}}
+            <ImageBackground source={{uri:'https://drive.google.com/uc?export=view&id=1gYEKR3keA_NJQlEE0WRp7zB2770DCsgG'}}
             resizeMode="cover" style={{flex: 1}}>
                 <View style={{flex:1,margin:5}}>
                     <View style={{flex:1, justifyContent:'center', alignItems:'flex-end'}}>
@@ -575,7 +575,7 @@ export const EditHomeScreen =({navigation, route})=>{
                                 
                         }}
                         >
-                            <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207721814902710292/Home.png?ex=65e0ad97&is=65ce3897&hm=20d1865de6eeab0c3cdd396eefdfad956f7c30490f80677bd7823ca9ec294a3d&=&format=webp&quality=lossless&width=60&height=60'}}
+                            <Image source={{uri:'https://drive.google.com/uc?export=view&id=199LxW6_qmtU11-t4OBup9riBcQ1eN5XR'}}
                                 width={55} height={55}>
                             </Image>
                         </TouchableOpacity>

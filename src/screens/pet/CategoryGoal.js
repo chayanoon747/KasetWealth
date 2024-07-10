@@ -132,7 +132,7 @@ const firstCategoryFinancial = [
         category: "รายได้",
         subCategory: "หาเงินเพิ่ม",
         questType: "Personal Goal",
-        photoURL: 'https://cdn.discordapp.com/attachments/951838870272606259/1207602407794675772/game_income.png?ex=65e03e62&is=65cdc962&hm=df67dcce10c0cb83983a1cc4d62708513fdb7f3f12053eb5ce9c93d47678526d&'
+        photoURL: 'https://drive.google.com/uc?export=view&id=1Op2D0XSYXGMhB9R0UYvNGefQOsj1hwDe'
     },
     /*{
         category: "ค่าใช้จ่าย",
@@ -144,7 +144,7 @@ const firstCategoryFinancial = [
         category: "สินทรัพย์",
         subCategory: "ได้รับผลตอบแทน",
         questType: "Personal Goal",
-        photoURL: 'https://cdn.discordapp.com/attachments/951838870272606259/1207602407194763314/game_asset.png?ex=65e03e62&is=65cdc962&hm=f8fb0accf16c53d8511d9995b2d095ce0319ae4837b78ce03e37559bcd5bff54&'
+        photoURL: 'https://drive.google.com/uc?export=view&id=1QAUp7JGArScaYmNRsCnn2GTJU3r98HYn'
     },
     
 ]
@@ -154,7 +154,7 @@ const secondCategoryFinancial = [
         category: "หนี้สิน",
         subCategory: "ชำระหนี้สิน",
         questType: "Personal Goal",
-        photoURL: 'https://cdn.discordapp.com/attachments/951838870272606259/1207602409052962816/game_liability.png?ex=65e03e62&is=65cdc962&hm=41e5a8900c315d561f0120e140a9eac27cde927c447b4647253da29b93941214&'
+        photoURL: 'https://drive.google.com/uc?export=view&id=1Nzs2zRh4QkZAUeNqzsYYbmRmPci_KXbr'
     },
 ]
 

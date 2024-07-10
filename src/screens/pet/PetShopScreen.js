@@ -334,24 +334,28 @@ export const PetShopScreen = ({navigation}) => {
     const randomPetCard = async () => { //บัตรสุ่มสัตว์เลี้ยง
         const allPetImages = [
             [
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263385268264/Bear04-01.png?ex=660f95af&is=65fd20af&hm=88aed8e10d441173a2ab9a0c5ce3e49bf513d1750f958f2b85823704cd553ad4&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263146061875/Bear04-02.png?ex=660f95af&is=65fd20af&hm=3d71ed70ac03028973897dfa3ac85c65dae6b6f465999f5b4ab2634de5ecc019&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005263611887656/Bear04-03.png?ex=660f95af&is=65fd20af&hm=9ec7f3cd612068017f8336817197d376199657567cb82b41fbfd64e066fca326&"
+              //bear
+                "https://drive.google.com/uc?export=view&id=1mcYmgRiSPdgie2sAMjOSbJ1Ir04I2lx1",
+                "https://drive.google.com/uc?export=view&id=1C51dbKSProDXq8IsQRGAn3AO_gRAYJKs",
+                "https://drive.google.com/uc?export=view&id=1mUsBZlZtYXQrLdQ6BbO3IsaZpSdQNQ9X"
             ],
             [
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005356423319572/Cat01-1.png?ex=660f95c5&is=65fd20c5&hm=a10d9512efcfbaa24503758a3e2a5ed371a5c6125c499e3d5a8aa6d5c682e467&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005356158943252/Cat01-2.png?ex=660f95c5&is=65fd20c5&hm=31befe5afd06708706837b8ad4954e9eccf8a4d247853ce3f883213439bfc8ec&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213005356666720307/Cat01-3.png?ex=660f95c5&is=65fd20c5&hm=0b6c965f50ee6206a791f123ed239da1b46f56eb343f2152c5cab79f3414d12c&"
+              //cat
+                "https://drive.google.com/uc?export=view&id=1N5gYRqkgB6lYguJ-yoA8fmmHyDtzd9tO",
+                "https://drive.google.com/uc?export=view&id=1pRg9Ti7eMpWxz7zUwXI4iN5BvVelxx7i",
+                "https://drive.google.com/uc?export=view&id=11PLNBtnHUaKJtHisN6WuUxesut1zym6M"
             ],
             [
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044624592916/Devil03-01.png?ex=660f9669&is=65fd2169&hm=712d911aeb4ca4ece77834000f1377cd0adca38a2868adbfb8685a6f8e84f8af&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006044335177728/Devil03-02.png?ex=660f9669&is=65fd2169&hm=85337542817c8ff8d7d2f9b28219a5515c61c00040764e321a77816fd5b8843b&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534389272617/Devil03-03.png?ex=660f96de&is=65fd21de&hm=4dad23e13bba7be8648cd8f99ecac0ae8a95d36419c3aca475fc98e390d93c0e&"
+              //devil
+                "https://drive.google.com/uc?export=view&id=1kT-sg4RXybRN_T1sgKqWHpFoTglnjyr2",
+                "https://drive.google.com/uc?export=view&id=16gezCcgH_ciEz3dXm55e2ddntPQozQAw",
+                "https://drive.google.com/uc?export=view&id=15QTNVBqM5LAwak-8ytPMge2ux_TyZC5L"
             ],
             [
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006534766764073/Pengu02-01.png?ex=660f96de&is=65fd21de&hm=0f25d067fbf4e8e5781f194a5514f3617b135f23454b907e409aa228731557d4&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006535089717319/Pengu02-02.png?ex=660f96de&is=65fd21de&hm=e81cd083c3dcdd9ab89cfea69ce3676cad7fcbf197c5a5ea8bed2e580e8597c9&",
-                "https://cdn.discordapp.com/attachments/1202281623585034250/1213006535509409812/Pengu02-03.png?ex=660f96de&is=65fd21de&hm=122d7a17c8526fbb321c0724f5d3f55aff330efbd5a5ceeadad164dfcb4400a7&"
+              //penguin
+                "https://drive.google.com/uc?export=view&id=1r7Py2Xy1R_-hznjJ8g_novbwuyP7vk6c",
+                "https://drive.google.com/uc?export=view&id=1pldUhs7tULbFZEmlNf3gQIYPW9S9uSaW",
+                "https://drive.google.com/uc?export=view&id=1tp9RZpl8Ccvzxf1bky9QSN0duCv_Qq4T"
             ],
         ];
         
@@ -411,8 +415,8 @@ export const PetShopScreen = ({navigation}) => {
                                         <Image
                                             source={{
                                                 uri: item.itemCurrencyType === 'coin'
-                                                    ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'
-                                                    : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'
+                                                    ? 'https://drive.google.com/uc?export=view&id=1lB6vcCq3Kng3852LIrvXfM-W36guffFI'
+                                                    : 'https://drive.google.com/uc?export=view&id=1JBKocVjx9NAa8p8kNwWc7NGTpgc39dIC'
                                             }}
                                             width={15}
                                             height={15}
@@ -511,8 +515,8 @@ export const PetShopScreen = ({navigation}) => {
                         <Image
                             source={{
                                 uri: item.itemCurrencyType === 'coin'
-                                    ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'
-                                    : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'
+                                    ? 'https://drive.google.com/uc?export=view&id=1lB6vcCq3Kng3852LIrvXfM-W36guffFI'
+                                    : 'https://drive.google.com/uc?export=view&id=1JBKocVjx9NAa8p8kNwWc7NGTpgc39dIC'
                             }}
                             width={14}
                             height={14}
@@ -580,8 +584,8 @@ export const PetShopScreen = ({navigation}) => {
                         <Image
                             source={{
                                 uri: item.itemCurrencyType === 'coin'
-                                    ? 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'
-                                    : 'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'
+                                    ? 'https://drive.google.com/uc?export=view&id=1lB6vcCq3Kng3852LIrvXfM-W36guffFI'
+                                    : 'https://drive.google.com/uc?export=view&id=1JBKocVjx9NAa8p8kNwWc7NGTpgc39dIC'
                             }}
                             width={14}
                             height={14}
@@ -612,7 +616,7 @@ export const PetShopScreen = ({navigation}) => {
                             <View style={{flex:0.3,marginRight:4}}>
                                 <View style={styles.Currencybox}>
                                     <Image source={{
-                                        uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&'}}
+                                        uri:'https://drive.google.com/uc?export=view&id=1lB6vcCq3Kng3852LIrvXfM-W36guffFI'}}
                                         width={22}
                                         height={22}
                                     />
@@ -622,7 +626,7 @@ export const PetShopScreen = ({navigation}) => {
                             <View style={{flex:0.3}}>
                             <View style={styles.Currencybox}>
                                     <Image source={{
-                                        uri:'https://cdn.discordapp.com/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&'}}
+                                        uri:'https://drive.google.com/uc?export=view&id=1JBKocVjx9NAa8p8kNwWc7NGTpgc39dIC'}}
                                         width={22}
                                         height={22}
                                     />
@@ -951,7 +955,9 @@ const styles = {
         borderRadius:15,
         borderWidth:1, 
         borderColor:'#000000',
-        backgroundColor:'#fffffa'
+        backgroundColor:'#fffffa',
+        justifyContent:'flex-start',
+        alignItems:'center'
     },
     boxhead:{
         flex:1.2,
@@ -1120,7 +1126,7 @@ const itemsMysteryBox = [
         itemName: "CardBoard",
         itemPrice:20,
         itemGuarantee:8,
-        itemPhotoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1206324628419649566/image_7_box.png?ex=65db985b&is=65c9235b&hm=9be1bf2dd2ce56b8eb47d27a176c2a2b159ba320b64ed52f2c1ff1351237f4a4&"
+        itemPhotoURL: "https://drive.google.com/uc?export=view&id=1Rg_E2xuUkfdcD3gtUDvlxfmXbwX86ir5"
     }
 ]
 
@@ -1130,14 +1136,14 @@ const UseItem = [
         itemCurrencyType: 'ruby',
         itemName: "บัตรกันลดขั้น",
         itemPrice:200,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1222869375200264234/Featherfallingcard.png?ex=6617c8da&is=660553da&hm=992aebb3d25042fe33471afc059ea2123fa04e89c7acd4cca016e2a312c46c82&"
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1-ajNNnLTDZQuq5qcCGPE5e5vcrV_1F8R"
      },
      {
         itemType: "forUse",
         itemCurrencyType: 'ruby',
         itemName: 'บัตรเปลี่ยนสัตว์เลี้ยง',
         itemPrice: 160,
-        itemPhotoURL: "https://cdn.discordapp.com/attachments/1202281623585034250/1222869375615369226/Petchangercard.png?ex=6617c8da&is=660553da&hm=e0c08dd21682b5731c4932be9a73f2e8dfa3ed69af78eae4436eec5cacaf70d2&"
+        itemPhotoURL: "https://drive.google.com/uc?export=view&id=1CHhP-HlJJd4F-H_-tsafSwpXyqdCOCGo"
      }
 ]
 
@@ -1147,63 +1153,63 @@ const ItemsFurniture = [
         itemCurrencyType: 'coin',
         itemName: "ตุ๊กตา",
         itemPrice:700,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213487950067666984/u8p1ou2w.png?ex=66115738&is=65fee238&hm=bfbc981224319e11a8a2d5fc45f2b428cbae7e2c5cee7c3be55c879e65c7f9ca&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618450104360/bearSoldout.png?ex=66167bcd&is=660406cd&hm=fbddcfecef49f386f8bbe31f60b81682ede320feafeb4c2987a7f75f24b0ffef&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1z4prc3eUP1wF4_m6V7LVhItTcCQmIprX",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=17gaWlwmJsDDTzuya_gpP3uZv1ZojAs9T'
     },
     {
         itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "รูปกรอบสีขาว",
         itemPrice:299,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213569742908948530/tebucjfk.png?ex=6611a365&is=65ff2e65&hm=18c4c673bf1f2adaf7723bffe79102f3e7eb37242d7c2258480c916cc05bc322&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1213057759226888252/WhiteborderSoldout.png?ex=660fc693&is=65fd5193&hm=1b20a57a59da92a8d28b936280efd20c338f98ac05313e3414fd1dd4777e0aed&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=152wvqZEU8QLam4RWsCgDMRe8Tv8J-Mfd",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=15ECTp3HLVIUiCuUrqKYfI8jL9Lq0Qikx'
     },
     {
         itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "รูปกรอบสีทอง",
         itemPrice:899,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213569742640779264/1vn4cbyn.png?ex=6611a365&is=65ff2e65&hm=90478abf590d47bb976d84ac59858519a8fa7e2f8306bca588b8dcd957493968&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619473252434/GoldborderSoldout.png?ex=66167bcd&is=660406cd&hm=c26d898321ec262d0971593dd592818bcec9d179c53139793612a7b4f4cc4c64&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1vTzLb1MUe0w7mCK4-V100UWOLFI2AGAG",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=1LyyqCpZljjS0Xczxfuru2k9RpLzhC1g8'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "หอคอย",
         itemPrice:999,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484456149655552/gopzjayv.png?ex=661153f7&is=65fedef7&hm=945391fb9014be49b7b28f0573f309a08e5c6a6146f4522e9675ce9331625819&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901619020275752/towerSoldout.png?ex=66167bcd&is=660406cd&hm=82ac4d4e7f12a98ca4c2b5e17475723b9d4abdd90847b703029f987b8fcf730a&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1OrhiReyx1z9OPvBSA5HU0aWk4rPYU3-I",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=1TzAeiuHaPT5vL5O4x2Q8B70t_P8S23pS'
     },
     {
         itemType: "wall",
         itemCurrencyType: 'coin',
         itemName: "นาฬิกา",
         itemPrice:80,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213569742384664626/soo73iin.png?ex=6611a365&is=65ff2e65&hm=5ee5cc138a9d6e8644028bc6c08bb6f6402d0d7def1a3156513999b4bd18862e&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618097651732/clockSoldout.png?ex=66167bcd&is=660406cd&hm=e0a72348f8a1eeea6594cc11109018a0f9dc12567ec459b9275868df7446616f&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1C-22spWrjM50FiVK0PoUw8N0efx3byTj",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=1P-ouZ-D98XjagKw8CXfqMjHE2GW1B78V'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "โทรศัพท์",
         itemPrice:500,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484457974173746/fh7levth.png?ex=661153f8&is=65fedef8&hm=924f4b1791abdfe5666eb7fb560d3609496a0066a15f0693dc596c18f862e385&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901620131762176/phoneSoldout.png?ex=66167bce&is=660406ce&hm=d8f184477a187217ab0f616d177cc295a8195f56ca7d14aeaa315f3347066796&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1XFxMoMSjnQ8WHifRZcaLIk1Hf_MbXu2s",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=18z4W1MNEG9hobVV0MqAAqAIKFj6gHn37'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "นาฬิกาทราย",
         itemPrice:150,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484458628616232/28xhd20g.png?ex=661153f8&is=65fedef8&hm=f155faea98ae8aa1188ddb3dad71359bac9277eec20d3fef1dea7e594e630804&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901617690939453/hourglassSoldout.png?ex=66167bcd&is=660406cd&hm=4c405fb6440b4f3e4e4a75e977ceea4eb885d887f13665dc8275884e3188c235&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=16K0RRC4n-D2BPJvPw5qv797ytrt_nMW5",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=1lLiNlqcOr6jK0U4jYXV9cnOZfUFu46nD'
     },
     {
         itemType: "table",
         itemCurrencyType: 'coin',
         itemName: "แจกัน",
         itemPrice:120,
-        itemPhotoURL:"https://cdn.discordapp.com/attachments/1202281623585034250/1213484459488313404/55bmz04i.png?ex=661153f8&is=65fedef8&hm=6ef95f50de1970c4d16c872bdaa94c9ca6a84985a4f2f7c95d39d696a44e9ce6&",
-        itemSoldoutURL:'https://cdn.discordapp.com/attachments/1202281623585034250/1214901618747772938/flowerSoldout.png?ex=66167bcd&is=660406cd&hm=16754cdb06bdffa5846748315cfd49f7829199831427d361c41ea6a971a307f5&'
+        itemPhotoURL:"https://drive.google.com/uc?export=view&id=1DIyIZnrb8LoguJd1l9j4Uy8PItvlx-g2",
+        itemSoldoutURL:'https://drive.google.com/uc?export=view&id=1sT4Tlm7bUF3ptEXwXG4XTlTa_wbDszds'
     }
 ]
