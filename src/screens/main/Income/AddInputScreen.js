@@ -329,10 +329,12 @@ export const AddInputScreen = ({ navigation })=>{
                         <Image source={{uri:itemData.photoURL}} style={{width: 50, height:50, position:'absolute', alignItems:'center', justifyContent:'center'}}/>
                         {/* รับรูปไอค่อน */}
                     </View>
-                    <TextInput style={{flex:1, backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:28}}
-                        placeholder={itemData.subCategory} underlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false}
-                        >
-                    </TextInput>
+                    <ScrollView style={styles.scrollViewText } horizontal={true} vertical={true}>
+                        <TextInput style={{flex:1, backgroundColor:'transparent', fontFamily:'ZenOldMincho-Bold', fontSize:28}}
+                            placeholder={itemData.subCategory} underlineColor='transparent' placeholderTextColor='#0ABAB5' textColor="#0ABAB5" editable={false} scrollEnabled={true}
+                            >
+                        </TextInput>
+                    </ScrollView>
                     <Image source={require('../../../assets/right_arrow.png')} style={{flex:0,width: 20, height:20,backgroundColor:'transparent',marginRight:15}} />
                 </View>
                 <View style={{height:20,backgroundColor:'transparent'}}></View>
@@ -410,5 +412,9 @@ const styles = StyleSheet.create({
         paddingHorizontal:3,
         marginHorizontal:15,
         marginVertical:15,
-    }
+    },
+    scrollViewText: {
+        flex: 1,
+        backgroundColor: 'transparent',
+      },
 })
