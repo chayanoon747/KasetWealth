@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { retrieveCategory } from "../../../firebase/UserModel";
 import { resetIcon } from "../../../navigators/IncomeStackNav";
 import { useDispatch } from 'react-redux';
-import { setSelectedItems, setItemCategory, setItemData } from '../../../redux/variableSlice'
+import { setSelectedItems, setItemCategory, setItemData, setItemTransactionType } from '../../../redux/variableSlice'
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { RemoveCategoryIcon } from "../../../firebase/UserModel";

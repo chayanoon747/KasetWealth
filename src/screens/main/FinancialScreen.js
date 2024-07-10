@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, FlatList} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AssetLiabilityDetailScreen } from "./AssetLiabilityDetailScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { setItemTransactionType } from "../../redux/variableSlice";
 import { retrieveAllDataIncomeAndExpenses, retrieveDataLiabilityRemaining, retrieveDataAsset } from "../../firebase/RetrieveData";
 import { getNetWealth } from "../../Calculate/Calculate";
+import { BoxInfo } from "../../components/BoxInfo";
 
 export const FinancialScreen = ({navigation})=>{
     const dispatch = useDispatch();
@@ -107,8 +108,80 @@ export const FinancialScreen = ({navigation})=>{
     }  
 
     return(
-        <SafeAreaView style={{flex:1, padding:30, backgroundColor:'#fffffa'}}>
-            {/* ยอดเงินคงเหลือ */}
+        <SafeAreaView style={{flex:1, paddingVertical:10, paddingHorizontal:5, backgroundColor:'#fffffa'}}>
+            <View style={{flex:1}}>
+                <ScrollView horizontal={true}>
+                    <BoxInfo topic='ยอดเงินคงเหลือ' topicValue={incomeValuesAll-expensesValuesAll} subTopic1='รายได้'
+                             subTopic1Value={incomeValuesAll} subTopic2='ค่าใช้จ่าย' subTopic2Value={expensesValuesAll}
+                             button={true} navigation={navigation}
+                    />
+                    <BoxInfo topic='ความมั่งคั่งสุทธิ' topicValue={assetValuesAll-liabilityValuesAll} subTopic1='สินทรัพย์'
+                             subTopic1Value={assetValuesAll} subTopic2='หนี้สิน' subTopic2Value={liabilityValuesAll}
+                             button={true} navigation={navigation}
+                    />
+
+                </ScrollView>
+            </View>
+            
+           
+            <View style={{flex:2, paddingHorizontal:15}}>
+                <Text style={{fontFamily:'Poppins-SemiBold', color:'#000000', fontSize:20}}>ธุรกรรม</Text>
+                <View style={{flex:1, backgroundColor:'#F5F5F5', borderRadius:32}}>
+                    <View style={{flex:1, margin:30}}>
+                        <View style={{flex:1, flexDirection:'row'}}>
+                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                                onPress={()=>{
+                                    dispatch(setItemTransactionType('รายได้'))
+                                    navigation.navigate('CategorySelectionScreen')
+                                }}
+                            >
+                                <View style={{width:'65%',height:'65%', alignItems:'center'}}>
+                                    <Image source={require('../../assets/financialIcons/IncomeIcon.png')} style={{width:'100%', height:'100%'}} resizeMode="contain"/>
+                                </View>
+                                <Text style={{fontFamily:'Poppins-Regular', color:'#000000', fontSize:14}}>รายได้</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                                onPress={()=>{
+                                    dispatch(setItemTransactionType('ค่าใช้จ่าย'))
+                                    navigation.navigate('CategoryExpensesSelectionScreen')
+                                }}
+                            >
+                                <View style={{width:'65%',height:'65%', alignItems:'center'}}>
+                                    <Image source={require('../../assets/financialIcons/ExpenseIcon.png')} style={{width:'100%', height:'100%'}} resizeMode="contain"/>
+                                </View>
+                                <Text style={{fontFamily:'Poppins-Regular', color:'#000000', fontSize:14}}>ค่าใช้จ่าย</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{flex:1, flexDirection:'row'}}>
+                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                                onPress={()=>{
+                                    dispatch(setItemTransactionType('สินทรัพย์'))
+                                    navigation.navigate('CategoryAssetSelectionScreen')
+                                }}
+                            >
+                                <View style={{width:'65%',height:'65%', alignItems:'center'}}>
+                                    <Image source={require('../../assets/financialIcons/AssetIcon.png')} style={{width:'100%', height:'100%'}} resizeMode="contain"/>
+                                </View>
+                                <Text style={{fontFamily:'Poppins-Regular', color:'#000000', fontSize:14}}>สินทรัพย์</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{flex:1, borderWidth:2, borderRadius:16, margin:5, alignItems:'center', justifyContent:'center'}}
+                                onPress={()=>{
+                                    dispatch(setItemTransactionType('หนี้สิน'))
+                                    navigation.navigate('CategoryLiabilitySelectionScreen')
+                                }}
+                            >
+                                <View style={{width:'65%',height:'65%', alignItems:'center'}}>
+                                    <Image source={require('../../assets/financialIcons/LiabilityIcon.png')} style={{width:'100%', height:'100%'}} resizeMode="contain"/>
+                                </View>
+                                <Text style={{fontFamily:'Poppins-Regular', color:'#000000', fontSize:14}}>หนี้สิน</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                </View>
+            </View>
+           
+            {/*
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff'}}>
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10}}>
                     <Text style={styles.headerText}>ยอดเงินคงเหลือ</Text>
@@ -146,7 +219,7 @@ export const FinancialScreen = ({navigation})=>{
                 </View>
             </View>
 
-            {/* ความมั่งคั่งสุทธิ */}
+            
             <View style={{flex:1, borderWidth:1, borderColor:'#000000', borderRadius:16, marginVertical:10, backgroundColor:'#ffffff'}}>
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-start', paddingHorizontal:10, paddingTop:10}}>
                     <Text style={styles.headerText}>ความมั่งคั่งสุทธิ</Text>
@@ -228,7 +301,7 @@ export const FinancialScreen = ({navigation})=>{
                     </TouchableOpacity>
                 </View>
                 
-            </View>
+            </View>*/}
         </SafeAreaView>
     )
 }

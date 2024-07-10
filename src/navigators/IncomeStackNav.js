@@ -210,11 +210,7 @@ export const IncomeStackNav = ({navigation})=>{
             <View style={{ flexDirection: 'row', height:80, backgroundColor:'#0ABAB5', alignItems:'center'}}>
               <TouchableOpacity style={{width:35, marginLeft:15}}
                 onPress={()=>{
-                  if(transactionTypeItem == ""){
-                    navigation.navigate('IncomeAndExpensesScreen');
-                  }else{
-                    navigation.navigate('AddInputScreen');
-                  }
+                  navigation.navigate('AddInputScreen');
                   
                 }}
                >
@@ -251,7 +247,8 @@ export const IncomeStackNav = ({navigation})=>{
         name='IncomeAndExpensesScreen'
         component={IncomeAndExpensesScreen}
         options={{
-          header: () => (
+          headerShown: false
+          /*header: () => (
             <View style={{height:80, backgroundColor:'#0ABAB5'}}>
               <View style={{flex:1}}>
 
@@ -283,7 +280,7 @@ export const IncomeStackNav = ({navigation})=>{
               </View>
             </View>
           )
-        }}
+        */}}
       />
 
       <Stack.Screen

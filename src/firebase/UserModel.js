@@ -520,6 +520,10 @@ export const addCategories = (userUID,transactionType,category, subCategory, pho
         photoURL: photoURL,
         categoryId: categoryId
     };
+
+    console.log(`transactionType: ${transactionType}`)
+    console.log(`category: ${category}`)
+    console.log(`subCategory: ${subCategory}`)
     
     const plusIcon = {
         transactionType: transactionType,
@@ -1201,6 +1205,68 @@ export const  retrieveSelectedDataIncomeAndExp = (userUID, selectedDate)=>{
                 }
             });
 
+            return IncomeAndExpensestData
+        }
+    })
+}
+
+export const  retrieveSelectedMonthDataIncomeAndExp = (userUID, selectedMonth)=>{
+    const IncomeAndExpensestData = []
+
+    const monthMap = {
+        "มกราคม": 1,
+        "กุมภาพันธ์": 2,
+        "มีนาคม": 3,
+        "เมษายน": 4,
+        "พฤษภาคม": 5,
+        "มิถุนายน": 6,
+        "กรกฎาคม": 7,
+        "สิงหาคม": 8,
+        "กันยายน": 9,
+        "ตุลาคม": 10,
+        "พฤศจิกายน": 11,
+        "ธันวาคม": 12
+      };
+
+    const formatDate1 = (monthName) => {
+        // ตรวจสอบว่าชื่อเดือนถูกต้องหรือไม่
+        if (!monthMap.hasOwnProperty(monthName)) {
+          return 'Invalid Month Name';
+        }
+      
+        // แปลงชื่อเดือนเป็นหมายเลขเดือน
+        const monthNumber = monthMap[monthName];
+        return monthNumber;
+      }
+
+    const selectedformattedMonth = formatDate1(selectedMonth);
+    
+    const formatDate2 = (dateString) => {
+        const date = new Date(dateString);
+        const options = { month: 'numeric' }; // เปลี่ยนเป็น 'short' หรือ 'numeric' ถ้าต้องการรูปแบบอื่น
+        return date.toLocaleString('th-TH', options);
+    }
+
+    return firestore()
+    .collection('financials')
+    .doc(userUID)
+    .get()
+    .then((data)=>{
+        if(data.exists){
+            const allData = data.data().transactions;
+            //console.log(allData);
+            allData.forEach(element => {
+                const formattedMonth = formatDate2(element.date);
+                if(formattedMonth == selectedformattedMonth){
+                    if(element.transactionType == 'รายได้'){
+                        IncomeAndExpensestData.push(element)
+                    }
+                    if(element.transactionType == 'ค่าใช้จ่าย'){
+                        IncomeAndExpensestData.push(element)
+                    }
+                }
+            });
+            console.log(IncomeAndExpensestData)
             return IncomeAndExpensestData
         }
     })
