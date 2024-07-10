@@ -276,11 +276,10 @@ export const AddInputScreen = ({ navigation })=>{
 
     const componentCheckBoxRepayDebt = ()=>{
         return(
-            <View style={{flex:1}}>
+            <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
                 <Text style={{color:'#FF0000'}}>*ระบบจะทำการสร้างหัวข้อสำหรับการชำระหนี้สินของรายการนี้ โปรดระบุว่าเป็นค่าใช้จ่ายแบบใด</Text>
-                <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                <View style={{flex:1, flexDirection:'row', justifyContent:'center', alignItems:'center',marginHorizontal:15,marginVertical:5}}>
                     <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <View style={{flex:2, flexDirection:'row'}}>
                             <Checkbox style={{flex:1}}
                                 status={checkBoxVariableExpenses ? 'checked' : 'unchecked'}
                                 onPress={()=>{
@@ -292,11 +291,10 @@ export const AddInputScreen = ({ navigation })=>{
                                 color="#0ABAB5"
                             />
                             <Text style={{flex:1, textAlignVertical:'center', color:checkBoxVariableExpenses ? '#0ABAB5' : 'gray'}}>ค่าใช้จ่ายผันแปร</Text>
-                        </View>
+                        
                     </View>
 
                     <View style={{flex:1, flexDirection:'row', alignItems:'center', justifyContent:'center'}}>
-                        <View style={{flex:2, flexDirection:'row'}}>
                             <Checkbox style={{flex:1}}
                                 status={checkBoxFixedExpenses ? 'checked' : 'unchecked'}
                                 onPress={()=>{
@@ -308,7 +306,7 @@ export const AddInputScreen = ({ navigation })=>{
                                 color="#0ABAB5"
                             />
                             <Text style={{flex:1, textAlignVertical:'center', color:checkBoxFixedExpenses ? '#0ABAB5' : 'gray'}}>ค่าใช้จ่ายคงที่</Text>
-                        </View>
+                        
                     </View>
                 </View>
             </View>
