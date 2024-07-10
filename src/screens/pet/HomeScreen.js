@@ -523,19 +523,19 @@ export const HomeScreen =({navigation})=>{
     }
     return(
         <View style={{flex:1}}>
-            <ImageBackground source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207709035797946448/pxArt_1.png?ex=65e0a1b0&is=65ce2cb0&hm=22d1404ba545efff694fcb96da06d26072e6b17849dd3daa83cd8100a6641ac8&=&format=webp&quality=lossless&width=390&height=640'}}
+            <ImageBackground source={{uri:'https://drive.google.com/uc?export=view&id=1gYEKR3keA_NJQlEE0WRp7zB2770DCsgG'}}
             resizeMode="cover" style={{flex: 1}}>
                 <View style={{flex:1,margin:5}}>
                     <View style={{flexDirection:'row', flex:1}}>
-                        <View style={{flexDirection:'row', height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'flex-start', marginRight:10}}>
-                            <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&=&format=webp&quality=lossless&width=27&height=27'}}
+                        <View style={{flexDirection:'row', height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'flex-start', alignItems:'center', marginRight:10}}>
+                            <Image source={{uri:'https://drive.google.com/uc?export=view&id=1lB6vcCq3Kng3852LIrvXfM-W36guffFI'}}
                                 height={25} width={25}>
                             </Image>
                             <Text style={{textAlignVertical:'center'}}>{coinBalance}</Text>
                         </View>
 
-                        <View style={{flexDirection:'row', height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'flex-start'}}>
-                            <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&=&format=webp&quality=lossless&width=26&height=26'}}
+                        <View style={{flexDirection:'row', height:'50%',width:'25%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa',justifyContent:'flex-start', alignItems:'center'}}>
+                            <Image source={{uri:'https://drive.google.com/uc?export=view&id=1JBKocVjx9NAa8p8kNwWc7NGTpgc39dIC'}}
                                 height={25} width={25}>
                             </Image>
                             <Text style={{textAlignVertical:'center'}}>{rubyBalance}</Text>
@@ -546,7 +546,7 @@ export const HomeScreen =({navigation})=>{
                                 navigation.navigate('EditHomeScreen')
                         }}
                         >
-                            <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1207713872203616256/Home.png?ex=65e0a631&is=65ce3131&hm=ce9840c9b6e95a321abf9ee467fd55df4d49c8534957b6d6289e4fd2e3fc4bcd&=&format=webp&quality=lossless&width=60&height=60'}}
+                            <Image source={{uri:'https://drive.google.com/uc?export=view&id=1shnRqlCPSzZtcbLXsjfixmP-9y4Nwtjd'}}
                                 width={55} height={55}>
                             </Image>
                         </TouchableOpacity>

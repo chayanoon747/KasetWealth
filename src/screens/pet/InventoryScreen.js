@@ -120,13 +120,13 @@ export const InventoryScreen=({navigation})=>{
         <SafeAreaView style={{ flex:1,backgroundColor:'#2C6264',paddingHorizontal:15,paddingVertical:5}}>
             <View style={{flexDirection:'row-reverse',height:35}}>
                 <View style={{flexDirection:'row', width:'30%',height:'80%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa', marginLeft:5}}>
-                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501387538524/Diamond.png?ex=65db6c77&is=65c8f777&hm=20833581ffe174c0c908177a5224439ae4146c9faceda2d6cae45c06b995b423&=&format=webp&quality=lossless&width=26&height=26'}}
+                    <Image source={{uri:'https://drive.google.com/uc?export=view&id=1JBKocVjx9NAa8p8kNwWc7NGTpgc39dIC'}}
                         width={25} height={25}>
                     </Image>
                     <Text style={{textAlignVertical:'center'}}>{rubyBalance}</Text>
                 </View>
                 <View style={{flexDirection:'row', width:'30%',height:'80%',borderWidth:2,borderRadius:15,backgroundColor:'#fffffa'}}>
-                    <Image source={{uri:'https://media.discordapp.net/attachments/1202281623585034250/1206277501626617856/Dollar_Coin.png?ex=65db6c77&is=65c8f777&hm=a72f70bdba7584048fdfd739bb0d289c5a47b48c1614e5fd75ed3083f44c3dfa&=&format=webp&quality=lossless&width=27&height=27'}}
+                    <Image source={{uri:'https://drive.google.com/uc?export=view&id=1lB6vcCq3Kng3852LIrvXfM-W36guffFI'}}
                         width={25} height={25}>
                     </Image>
                     <Text style={{textAlignVertical:'center'}}>{coinBalance}</Text>
