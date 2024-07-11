@@ -2794,3 +2794,16 @@ export const updateAllQuestSeenStatus = (userUID, questArray) => {
         return Promise.resolve(); // หรือสามารถใส่การคืนค่า Promise.reject() ได้เพื่อแสดงว่ามีข้อผิดพลาด
     }
 };
+
+const deleteDocument = (uid) => {
+    return firestore()
+        .collection('users')
+        .doc(uid)
+        .delete()
+        .then(() => {
+            console.log(`Document with ID ${uid} successfully deleted!`);
+        })
+        .catch((error) => {
+            console.error(`Error deleting document: ${error}`);
+        });
+};
