@@ -61,7 +61,7 @@ export const updateCurrentDate = (userUID)=>{
             console.log("Update CurrentDate successfully!");
 
         })
-        // กรณีเกิดข้อผิดพลาดในการ add ข้อมูล
+       
         .catch((error) => {
             console.error("Error update currentDate:", error);
             throw error;
