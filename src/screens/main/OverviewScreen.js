@@ -170,7 +170,7 @@ export const OverviewScreen = ({navigation})=>{
         setLastedDate(itemsdata.lastedDate)
         setIsFirstTransaction(itemsdata.isFirstTransaction)
         setGuageRiability(itemsdata.guageRiability)
-        setGuageRiability(getRiabilityGuage(lastedDate,currentDate,isFirstTransaction,allItemTransaction,itemsdata.guageRiability))
+        setGuageRiability(getReliabilityGuage(lastedDate,currentDate,isFirstTransaction,allItemTransaction,itemsdata.guageRiability))
         
         setIncomeWorkValue(getIncomeWorkValue(itemsdata.incomeWork))
         setIncomeAssetValue(getIncomeAssetValue(itemsdata.incomeAsset));
@@ -394,7 +394,7 @@ export const OverviewScreen = ({navigation})=>{
         return guageWealth.toFixed(2)
     }
     //ฟังก์ชันที่ต้องใช้ในการคำนวณระยะห่างระหว่างวัน
-    function findDateDifference(nowDate, oldDate) {
+    function findDateDifferent(nowDate, oldDate) {
         if(nowDate !== undefined && oldDate !== undefined){
             // แยกปี, เดือน, และวันออกจาก string วันที่
             const [nowYear, nowMonth, nowDay] = nowDate.split('-').map(Number);
@@ -455,66 +455,52 @@ export const OverviewScreen = ({navigation})=>{
         }
     }
 
-    const getRiabilityGuage = (lastedDate,currentDate,isFirstTransaction,alldata,oldGuageRiability)=>{
+    const getReliabilityGuage = (lastedDate,currentDate,isFirstTransaction,alldata,oldGuageReliability)=>{
         if(lastedDate !== undefined && currentDate !== undefined && isFirstTransaction == false){
-            let roundUpdate = Math.floor(findDateDifference(currentDate, lastedDate) / 3)
+            let roundUpdate = Math.floor(findDateDifferent(currentDate, lastedDate) / 3)
             if (roundUpdate < 1) {
-                // คืนค่าเริ่มต้นของ oldGuageRiability
-                return oldGuageRiability;
+                return oldGuageReliability;
             }
             if(roundUpdate >= 1){
-                if(isFirstTransaction == false){
-                    // let roundUpdate = (findDateDifference(currentDate,lastedDate))/3
-                    let riabilityGuage = oldGuageRiability
-
-                    let lastedDateinput = lastedDate;
-                    console.log(roundUpdate+" round Update Point")
-                    if(roundUpdate >= 1){
-                        for(let i = 0 ; i < roundUpdate ; i++){
-                            let doTransaction = 0
-                            
-                            for(let j = 0 ; j < 3;j++){
-                                //ทำใหม่
-                                console.log(lastedDateinput)
-                                let itemOnDate = getOnDateItem(alldata,lastedDateinput)
-                                //ทำใหม่
-                                let checkDoitemOnDate = getCheckDataDateTransaction(itemOnDate)     
-                                //console.log(checkDoitemOnDate)
-                                if(checkDoitemOnDate)
-                                { 
-                                    doTransaction += 1;
-                                    console.log(lastedDateinput+" มีการทำรายการ")
-                                    // เช็ควันถัดไป 1 วัน
-                                }
-                                lastedDateinput = addDaysToDate(lastedDateinput, 1);
-                                //console.log(lastedDateinput);
+                let reliabilityGuage = oldGuageReliability
+                let lastedDateinput = lastedDate;
+                console.log(roundUpdate+" round Update Point")
+                if(roundUpdate >= 1){
+                    for(let i = 0 ; i < roundUpdate ; i++){
+                        let doTransaction = 0
+                        for(let j = 0 ; j < 3;j++){
+                            console.log(lastedDateinput)
+                            let itemOnDate = getOnDateItem(alldata,lastedDateinput)
+                            let checkDoitemOnDate = getCheckDataDateTransaction(itemOnDate)     
+                            if(checkDoitemOnDate){ 
+                                doTransaction += 1;
+                                console.log(lastedDateinput+" มีการทำรายการ")
                             }
-                            if(doTransaction == 3){
-                                riabilityGuage += 1
-                            }else if(doTransaction == 2){
-                                riabilityGuage += 0.5
-                            }else if(doTransaction == 1){
-                                riabilityGuage -= 0.5 
-                            }else if(doTransaction == 0){
-                                riabilityGuage -= 1 
-                            }
+                            lastedDateinput = addDaysToDate(lastedDateinput, 1);
                         }
-                        if(riabilityGuage < 0){
-                            riabilityGuage = 0
+                        if(doTransaction == 3){
+                            reliabilityGuage += 1
+                        }else if(doTransaction == 2){
+                            reliabilityGuage += 0.5
+                        }else if(doTransaction == 1){
+                            reliabilityGuage -= 0.5 
+                        }else if(doTransaction == 0){
+                            reliabilityGuage -= 1 
                         }
-                        if(riabilityGuage > 10){
-                            riabilityGuage = 10
-                        }
-                        
-                        updateLastedDate(userUID,lastedDateinput,isFirstTransaction)
-                        updateGuageRiability(userUID,riabilityGuage)
-                        setLastedDate(lastedDateinput)
-                        setGuageRiability(riabilityGuage)
-                        return riabilityGuage
                     }
+                    if(reliabilityGuage < 0){
+                        reliabilityGuage = 0
+                    }
+                    if(reliabilityGuage > 10){
+                        reliabilityGuage = 10
+                    }
+                    updateLastedDate(userUID,lastedDateinput,isFirstTransaction)
+                    updateGuageRiability(userUID,reliabilityGuage)
+                    setLastedDate(lastedDateinput)
+                    setGuageRiability(reliabilityGuage)
+                    return reliabilityGuage
                 }
             }
-            
         }else{
             return 0
         }
